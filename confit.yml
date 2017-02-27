@@ -1,0 +1,48 @@
+generator-confit:
+  app:
+    _version: f02196cc5cb7941ca46ec46d23bd6aef0dfcaca0
+    buildProfile: Latest
+    copyrightOwner: Tyler Stewart
+    license: MIT
+    projectType: node
+    publicRepository: false
+    repositoryType: GitHub
+  paths:
+    _version: 7f33e41600b34cd6867478d8f2b3d6b2bbd42508
+    config:
+      configDir: config/
+    input:
+      srcDir: src/
+      unitTestDir: test/
+    output:
+      prodDir: dist/
+      reportDir: reports/
+  buildJS:
+    _version: df428a706d926204228c5d9ebdbd7b49908926d9
+    framework: []
+    frameworkScripts: []
+    outputFormat: ES6
+    sourceFormat: ES6
+  entryPoint:
+    _version: de20402bf85c703080ef6daf21e35325a3b9d604
+    entryPoints:
+      main:
+        - src/demo/index.js
+  testUnit:
+    _version: 4472a6d59b434226f463992d3c1914c77a6a115d
+    testDependencies: []
+  verify:
+    _version: 30ae86c5022840a01fc08833e238a82c683fa1c7
+    jsCodingStandard: Google
+  documentation:
+    _version: b1658da3278b16d1982212f5e8bc05348af20e0b
+    generateDocs: false
+  release:
+    _version: 47f220593935b502abf17cb34a396f692e453c49
+    checkCodeCoverage: true
+    commitMessageFormat: Conventional
+    useSemantic: true
+  sampleApp:
+    _version: 00c0a2c6fc0ed17fcccce2d548d35896121e58ba
+    createSampleApp: true
+  zzfinish: {}

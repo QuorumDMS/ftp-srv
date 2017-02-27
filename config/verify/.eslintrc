@@ -1,0 +1,53 @@
+# START_CONFIT_GENERATED_CONTENT
+confit:
+  extends: &confit-extends 
+    - google
+    - plugin:node/recommended
+    
+  plugins: &confit-plugins 
+    - node
+    
+  env: &confit-env
+    commonjs: true    # For Webpack, CommonJS
+    node: true
+    mocha: true
+    es6: true
+    
+  globals: &confit-globals {}
+  parser: &confit-parser espree
+
+  parserOptions: &confit-parserOptions
+    ecmaVersion: 6
+    sourceType: module
+    ecmaFeatures:
+      globalReturn: false
+      impliedStrict: true
+      jsx: false
+
+# END_CONFIT_GENERATED_CONTENT
+
+# Customise this section to meet your needs...
+
+extends: *confit-extends
+  # Uncomment this next line if you need to add more items to the array, and remove the "*confit-extends" from the line above
+  # <<: *confit-extends
+
+plugins: *confit-plugins
+  # Uncomment this next line if you need to add more items to the array, and remove the "*confit-plugins" from the line above
+  # <<: *confit-extends
+
+env:
+  <<: *confit-env
+
+globals:
+  <<: *confit-globals
+
+parser: *confit-parser
+
+parserOptions:
+  <<: *confit-parserOptions
+
+rules:
+  max-len:
+    - warn
+    - 200     # Line Length

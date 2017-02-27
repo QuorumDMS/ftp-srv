@@ -1,0 +1,14 @@
+{
+  "global": {
+    "statements": 80,
+    "branches": 80,
+    "functions": 60,
+    "lines": 80
+  },
+  "each": {
+    "statements": 40,
+    "branches": 50,
+    "functions": 20,
+    "lines": 40
+  }
+}

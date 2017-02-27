@@ -1,0 +1,65 @@
+{
+  "name": "ftp-js",
+  "version": "0.0.0",
+  "description": "A description of my awesome package",
+  "license": "MIT",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stewarttylerr/ftp.js"
+  },
+  "scripts": {
+    "pre-release": "npm-run-all verify test:coverage build ",
+    "build": "cross-env NODE_ENV=production npm run clean:prod",
+    "clean:prod": "rimraf dist/",
+    "commitmsg": "cz-customizable-ghooks",
+    "dev": "cross-env NODE_ENV=development npm run verify:watch",
+    "prepush": "npm-run-all verify test:coverage --silent",
+    "start": "npm run dev",
+    "test": "npm run test:unit",
+    "test:check-coverage": "cross-env NODE_ENV=test istanbul check-coverage reports/coverage/coverage.json --config config/testUnit/istanbul.js",
+    "test:coverage": "npm-run-all test:unit:once test:check-coverage --silent",
+    "test:unit": "chokidar 'src/**/*.js' 'test/**/*.js' -c 'npm run test:unit:once' --initial --silent",
+    "test:unit:once": "cross-env NODE_ENV=test istanbul cover --config config/testUnit/istanbul.js _mocha -- --opts config/testUnit/mocha.opts",
+    "upload-coverage": "cat reports/coverage/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "verify": "npm run verify:js --silent",
+    "verify:js": "eslint -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js success",
+    "verify:js:fix": "eslint --fix -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js:fix success",
+    "verify:js:watch": "chokidar 'src/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
+    "verify:watch": "npm run verify:js:watch --silent"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "config/release/commitMessageConfig.js"
+    }
+  },
+  "dependencies": {
+    "bunyan": "^1.8.5",
+    "lodash": "^4.17.4",
+    "minimist-string": "^1.0.2",
+    "uuid": "^3.0.1",
+    "when": "^3.7.8"
+  },
+  "devDependencies": {
+    "chokidar-cli": "1.2.0",
+    "cross-env": "3.1.4",
+    "cz-customizable": "4.0.0",
+    "cz-customizable-ghooks": "1.5.0",
+    "eslint": "3.14.1",
+    "eslint-config-google": "0.7.1",
+    "eslint-plugin-node": "3.0.5",
+    "husky": "0.13.1",
+    "istanbul": "0.4.5",
+    "mocha": "3.2.0",
+    "npm-run-all": "4.0.1",
+    "rimraf": "2.5.4"
+  },
+  "engines": {
+    "node": ">=4.x",
+    "npm": ">=3.9.5"
+  },
+  "private": true
+}
