@@ -6,7 +6,4 @@ bower_components/*
 # Config folder (optional - you might want to lint this...)
 config/*
 
-
-# Sample project
-src/demo/*
 # END_CONFIT_GENERATED_CONTENT

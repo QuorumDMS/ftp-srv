@@ -1,14 +1,14 @@
 {
   "global": {
-    "statements": 80,
-    "branches": 80,
-    "functions": 60,
+    "statements": 70,
+    "branches": 60,
+    "functions": 80,
     "lines": 80
   },
   "each": {
-    "statements": 40,
-    "branches": 50,
-    "functions": 20,
-    "lines": 40
+    "statements": 0,
+    "branches": 0,
+    "functions": 0,
+    "lines": 0
   }
 }

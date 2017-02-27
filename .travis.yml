@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "6"
+
+install: npm install
+
+script:
+  - npm run verify:js
+  - npm run test:coverage
+
+after_success:
+  - if [ $TRAVIS_BRANCH = 'master' ]; then npm run semantic-release; fi
