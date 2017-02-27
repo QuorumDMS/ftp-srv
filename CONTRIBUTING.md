@@ -1,7 +1,7 @@
 <!--[CN_HEADING]-->
 # Contributing
 
-Welcome! This document explains how you can contribute to making **ftp-js** even better.
+Welcome! This document explains how you can contribute to making **ftp-svr** even better.
 
 
 <!--[]-->
@@ -26,7 +26,7 @@ npm install
 
 Code is organised into modules which contain one-or-more components. This a great way to ensure maintainable code by encapsulation of behavior logic. A component is basically a self contained app usually in a single file or a folder with each concern as a file: style, template, specs, e2e, and component class. Here's how it looks:
 ```
-ftp-js/
+ftp-svr/
  ├──config/                       * configuration files live here (e.g. eslint, verify, testUnit)
  │
  ├──src/                          * source code files should be here
@@ -136,9 +136,6 @@ Command | Description
 Command | Description
 :------ | :----------
 <pre>npm run verify</pre> | Verify code style and syntax<ul><li>Verifies source *and test code* aginst customisable rules (unlike Webpack loaders)</li></ul>
-<pre>npm run verify:js</pre> | Verify Javascript code style and syntax
-<pre>npm run verify:js:fix</pre> | Verify Javascript code style and syntax and fix any errors that can be fixed automatically
-<pre>npm run verify:js:watch</pre> | Verify Javascript code style and syntax and watch files for changes
 <pre>npm run verify:watch</pre> | Runs verify task whenever JS or CSS code is changed
 
 

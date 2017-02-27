@@ -1,18 +1,17 @@
 # START_CONFIT_GENERATED_CONTENT
 confit:
-  extends: &confit-extends 
-    - google
+  extends: &confit-extends
     - plugin:node/recommended
-    
-  plugins: &confit-plugins 
+
+  plugins: &confit-plugins
     - node
-    
+
   env: &confit-env
     commonjs: true    # For Webpack, CommonJS
     node: true
     mocha: true
     es6: true
-    
+
   globals: &confit-globals {}
   parser: &confit-parser espree
 
@@ -51,3 +50,11 @@ rules:
   max-len:
     - warn
     - 200     # Line Length
+  node/no-unpublished-require:
+    - 2
+    - allowModules:
+      - chai
+      - dotenv
+      - ftp
+      - sinon
+      - sinon-as-promised
