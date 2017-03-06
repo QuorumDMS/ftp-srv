@@ -59,7 +59,7 @@ class FtpConnection {
       if (!loginListeners || !loginListeners.length) {
         if (!this.server.options.anoymous) throw new errors.GeneralError('No "login" listener setup', 500);
       } else {
-        return this.server.emit('login', {username, password});
+        return this.server.emit('login', {connection: this, username, password});
       }
     })
     .then(({fs, cwd} = {}) => {

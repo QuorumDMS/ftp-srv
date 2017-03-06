@@ -12,7 +12,7 @@ module.exports = function (hostname) {
         if (response.statusCode !== 200) {
           return reject(new errors.GeneralError('Unable to resolve hostname', response.statusCode));
         }
-        response.setEncoding('utf8');
+        response.setEncoding('utf-8');
         response.on('data', chunk => {
           ip += chunk;
         });
