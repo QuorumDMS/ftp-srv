@@ -5,6 +5,7 @@ const buyan = require('bunyan');
 const net = require('net');
 
 const Connection = require('./connection');
+const resolveHost = require('./helpers/resolve-host');
 
 class FtpServer {
   constructor(url, options = {}) {
@@ -37,11 +38,15 @@ class FtpServer {
   }
 
   listen() {
-    return when.promise((resolve, reject) => {
-      this.server.listen(this.url.port, err => {
-        if (err) return reject(err);
-        this.log.info({port: this.url.port}, 'Listening');
-        resolve();
+    return resolveHost(this.url.hostname)
+    .then(hostname => {
+      this.url.hostname = hostname;
+      return when.promise((resolve, reject) => {
+        this.server.listen(this.url.port, err => {
+          if (err) return reject(err);
+          this.log.info({port: this.url.port}, 'Listening');
+          resolve();
+        });
       });
     });
   }
