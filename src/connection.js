@@ -62,9 +62,9 @@ class FtpConnection {
         return this.server.emit('login', {username, password});
       }
     })
-    .then(({fs} = {}) => {
+    .then(({fs, cwd} = {}) => {
       this.authenticated = true;
-      this.fs = fs || new FileSystem(this);
+      this.fs = fs || new FileSystem(this, {cwd});
     });
   }
 

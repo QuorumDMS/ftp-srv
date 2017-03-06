@@ -1,7 +1,7 @@
 const {expect} = require('chai');
 const resolveHost = require('../../src/helpers/resolve-host');
 
-describe.only('helpers //resolve-host', function () {
+describe('helpers //resolve-host', function () {
   it('fetches ip address', done => {
     const hostname = '0.0.0.0';
     resolveHost(hostname)
