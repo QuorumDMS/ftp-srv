@@ -10,10 +10,11 @@ const resolveHost = require('./helpers/resolve-host');
 class FtpServer {
   constructor(url, options = {}) {
     this.options = _.merge({
-      log: buyan.createLogger({name: 'ftp.js'}),
+      log: buyan.createLogger({name: 'ftp-svr'}),
       anonymous: false,
       pasv_range: 22,
-      file_format: 'ls'
+      file_format: 'ls',
+      disabled_commands: []
     }, options);
 
     this.connections = {};
@@ -59,7 +60,7 @@ class FtpServer {
   }
 
   getGreetingMessage() {
-    return 'greetings';
+    return null;
   }
 
   getFeaturesMessage() {

@@ -72,8 +72,8 @@ class FileSystem {
     });
   }
 
-  delete(fileName) {
-    const path = nodePath.resolve(this.cwd, fileName);
+  delete(path) {
+    const path = nodePath.resolve(this.cwd, path);
     return fs.stat(path)
     .then(stat => {
       if (stat.isDirectory()) return fs.rmdir(path);

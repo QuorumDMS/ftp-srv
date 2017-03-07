@@ -6,6 +6,8 @@ class FtpCommands {
     this.connection = connection;
     this.registry = require('./registry');
     this.previousCommand = {};
+    this.disabledCommands = _.get(this.connection, 'server.options.disabled_commands', []).map(cmd => _.upperCase(cmd));
+    console.log(this.disabledCommands)
   }
 
   handle(command) {
@@ -14,6 +16,10 @@ class FtpCommands {
 
     if (!this.registry.hasOwnProperty(command.directive)) {
       return this.connection.reply(402, 'Command not allowed');
+    }
+
+    if (_.includes(this.disabledCommands, command.directive)) {
+      return this.connection.reply(502, 'Command forbidden');
     }
 
     const commandRegister = this.registry[command.directive];
