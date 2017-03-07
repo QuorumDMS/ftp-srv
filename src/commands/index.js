@@ -7,7 +7,6 @@ class FtpCommands {
     this.registry = require('./registry');
     this.previousCommand = {};
     this.disabledCommands = _.get(this.connection, 'server.options.disabled_commands', []).map(cmd => _.upperCase(cmd));
-    console.log(this.disabledCommands)
   }
 
   handle(command) {
