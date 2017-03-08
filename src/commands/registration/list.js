@@ -36,7 +36,7 @@ module.exports = {
       })
       return this.reply(150)
       .then(() => {
-        if (fileList.length) return this.reply(...fileList);
+        if (fileList.length) return this.reply({}, ...fileList);
       });
     })
     .then(() => {

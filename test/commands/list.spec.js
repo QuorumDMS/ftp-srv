@@ -81,9 +81,9 @@ describe(CMD, done => {
     CMDFN({log, command: {_: [CMD], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
-      expect(mockClient.reply.args[1][0]).to.have.property('raw');
-      expect(mockClient.reply.args[1][0]).to.have.property('message');
-      expect(mockClient.reply.args[1][0]).to.have.property('socket');
+      expect(mockClient.reply.args[1][1]).to.have.property('raw');
+      expect(mockClient.reply.args[1][1]).to.have.property('message');
+      expect(mockClient.reply.args[1][1]).to.have.property('socket');
       expect(mockClient.reply.args[2][0]).to.equal(226);
       done();
     })
