@@ -5,8 +5,11 @@ module.exports = {
   handler: function () {
     const registry = require('../registry');
     const features = Object.keys(registry)
-      .filter(cmd => registry[cmd].hasOwnProperty('feat'))
-      .reduce((feats, cmd) => _.concat(feats, registry[cmd].feat), [])
+      .reduce((feats, cmd) => {
+        const feat = _.get(registry[cmd], 'flags.feat', null);
+        if (feat) return _.concat(feats, feat);
+        return feats;
+      }, [])
       .map(feat => ` ${feat}`);
     return this.reply(211, 'Extensions supported', ...features, 'END');
   },

@@ -8,8 +8,8 @@ module.exports = {
     if (directive) {
       if (!registry.hasOwnProperty(directive)) return this.reply(502, `Unknown command ${directive}.`);
 
-      const {syntax, help, obsolete} = registry[directive];
-      const reply = _.concat([syntax, help, obsolete ? 'Obsolete' : null]);
+      const {syntax, description} = registry[directive];
+      const reply = _.concat([syntax.replace('{{cmd}}', directive), description]);
       return this.reply(214, ...reply);
     } else {
       const supportedCommands = _.chunk(Object.keys(registry), 5).map(chunk => chunk.join('\t'));
