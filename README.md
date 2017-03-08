@@ -60,10 +60,10 @@ __whitelist__ : `[]`
 
 __file_format__ : `ls`
 > Format to use for [file stat](https://nodejs.org/api/fs.html#fs_class_fs_stats) responses (such as with the `LIST` command).  
-Possible values:
-- `ls` : [bin/ls format](https://cr.yp.to/ftp/list/binls.html)
-- `ep` : [Easily Parsed LIST format](https://cr.yp.to/ftp/list/eplf.html)
-- `function` : pass in your own format function, returning a string:  
+Possible values:  
+ `ls` : [bin/ls format](https://cr.yp.to/ftp/list/binls.html)  
+ `ep` : [Easily Parsed LIST format](https://cr.yp.to/ftp/list/eplf.html)  
+ `function` : pass in your own format function, returning a string:  
 `function (fileStats) { ... }`
 
 __log__ : `bunyan`

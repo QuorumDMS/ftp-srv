@@ -21,7 +21,7 @@ describe(CMD, done => {
     }
   };
   const mockSocket = {};
-  const CMDFN = require(`../../src/commands/${CMD.toLowerCase()}`).bind(mockClient);
+  const CMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -54,7 +54,7 @@ describe(CMD, done => {
   describe('// check', function () {
     it('fails on no fs', done => {
       const badMockClient = { reply: () => {} };
-      const BADCMDFN = require(`../../src/commands/${CMD.toLowerCase()}`).bind(badMockClient);
+      const BADCMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
       BADCMDFN()
       .then(() => {
@@ -66,7 +66,7 @@ describe(CMD, done => {
 
     it('fails on no fs list command', done => {
       const badMockClient = { reply: () => {}, fs: {} };
-      const BADCMDFN = require(`../../src/commands/${CMD.toLowerCase()}`).bind(badMockClient);
+      const BADCMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
       BADCMDFN()
       .then(() => {

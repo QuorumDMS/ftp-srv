@@ -6,7 +6,6 @@ const fs = require('fs');
 const sinon = require('sinon');
 
 const FtpServer = require('../src');
-const FtpCommands = require('../src/commands');
 const FtpClient = require('ftp');
 
 describe('FtpServer', function () {

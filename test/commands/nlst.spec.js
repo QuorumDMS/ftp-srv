@@ -21,7 +21,7 @@ describe(CMD, done => {
     }
   };
   const mockSocket = {};
-  const CMDFN = require(`../../src/commands/list`).bind(mockClient);
+  const CMDFN = require(`../../src/commands/registration/list`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();

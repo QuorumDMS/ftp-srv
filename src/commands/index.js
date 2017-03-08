@@ -1,10 +1,12 @@
 const _ = require('lodash');
 const when = require('when');
 
+const REGISTRY = require('./registry');
+
 class FtpCommands {
   constructor(connection) {
+    console.log(REGISTRY)
     this.connection = connection;
-    this.registry = require('./registry');
     this.previousCommand = {};
     this.blacklist = _.get(this.connection, 'server.options.blacklist', []).map(cmd => _.upperCase(cmd));
     this.whitelist = _.get(this.connection, 'server.options.whitelist', []).map(cmd => _.upperCase(cmd));
@@ -14,7 +16,7 @@ class FtpCommands {
     const log = this.connection.log.child({command});
     log.trace('Handle command');
 
-    if (!this.registry.hasOwnProperty(command.directive)) {
+    if (!REGISTRY.hasOwnProperty(command.directive)) {
       return this.connection.reply(402, 'Command not allowed');
     }
 
@@ -26,8 +28,9 @@ class FtpCommands {
       return this.connection.reply(502, 'Command not whitelisted');
     }
 
-    const commandRegister = this.registry[command.directive];
-    if (!commandRegister.no_auth && !this.connection.authenticated) {
+    const commandRegister = REGISTRY[command.directive];
+    const commandFlags = _.get(commandRegister, 'flags', {});
+    if (!commandFlags.no_auth && !this.connection.authenticated) {
       return this.connection.reply(530);
     }
 
