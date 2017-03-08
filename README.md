@@ -50,9 +50,13 @@ __anonymous__ : `false`
 > Set whether a valid username or password combination is required.  
 If true, will not require the `PASS` command to be sent for login.
 
-__disabled_commands__ : `[]`
-> String array of commands to forbid.  
+__blacklist__ : `[]`
+> Commands listed will not be allowed.  
 `['RMD', 'RNFR', 'RNTO']`
+
+__whitelist__ : `[]`
+> If set, no other commands are allowed except for those explicitly listed.  
+`['USER', 'PASS', 'PWD']`
 
 __file_format__ : `ls`
 > Format to use for [file stat](https://nodejs.org/api/fs.html#fs_class_fs_stats) responses (such as with the `LIST` command).  
@@ -73,7 +77,9 @@ __login__ : `{connection, username, password}`
 ```
 resolve({
   fs, // [optional] custom file system class
-  cwd // [optional] initial working directory (if not using custom file system)
+  cwd, // [optional] initial working directory (if not using custom file system),
+  blacklist, // [optional] commands to forbid for this connection only
+  whitelist // [optional] if set, only these commands are allowed for this connection only
 })
 ```  
 

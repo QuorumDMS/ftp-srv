@@ -62,8 +62,10 @@ class FtpConnection {
         return this.server.emit('login', {connection: this, username, password});
       }
     })
-    .then(({fs, cwd} = {}) => {
+    .then(({fs, cwd, blacklist = [], whitelist = []} = {}) => {
       this.authenticated = true;
+      this.commands.blacklist = _.concat(this.commands.blacklist, blacklist);
+      this.commands.whitelist = _.concat(this.commands.whitelist, whitelist);
       this.fs = fs || new FileSystem(this, {cwd});
     });
   }

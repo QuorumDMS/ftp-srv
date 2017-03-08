@@ -6,7 +6,8 @@ class FtpCommands {
     this.connection = connection;
     this.registry = require('./registry');
     this.previousCommand = {};
-    this.disabledCommands = _.get(this.connection, 'server.options.disabled_commands', []).map(cmd => _.upperCase(cmd));
+    this.blacklist = _.get(this.connection, 'server.options.blacklist', []).map(cmd => _.upperCase(cmd));
+    this.whitelist = _.get(this.connection, 'server.options.whitelist', []).map(cmd => _.upperCase(cmd));
   }
 
   handle(command) {
@@ -17,8 +18,12 @@ class FtpCommands {
       return this.connection.reply(402, 'Command not allowed');
     }
 
-    if (_.includes(this.disabledCommands, command.directive)) {
-      return this.connection.reply(502, 'Command forbidden');
+    if (_.includes(this.blacklist, command.directive)) {
+      return this.connection.reply(502, 'Command blacklisted');
+    }
+
+    if (this.whitelist.length > 0 && !_.includes(this.whitelist, command.directive)) {
+      return this.connection.reply(502, 'Command not whitelisted');
     }
 
     const commandRegister = this.registry[command.directive];

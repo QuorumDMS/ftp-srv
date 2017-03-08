@@ -14,7 +14,8 @@ class FtpServer {
       anonymous: false,
       pasv_range: 22,
       file_format: 'ls',
-      disabled_commands: []
+      blacklist: [],
+      whitelist: []
     }, options);
 
     this.connections = {};
