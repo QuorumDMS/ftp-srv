@@ -1,7 +1,7 @@
 <!--[CN_HEADING]-->
 # Contributing
 
-Welcome! This document explains how you can contribute to making **ftp-svr** even better.
+Welcome! This document explains how you can contribute to making **ftp-srv** even better.
 
 
 <!--[]-->
@@ -26,7 +26,7 @@ npm install
 
 Code is organised into modules which contain one-or-more components. This a great way to ensure maintainable code by encapsulation of behavior logic. A component is basically a self contained app usually in a single file or a folder with each concern as a file: style, template, specs, e2e, and component class. Here's how it looks:
 ```
-ftp-svr/
+ftp-srv/
  ├──config/                       * configuration files live here (e.g. eslint, verify, testUnit)
  │
  ├──src/                          * source code files should be here

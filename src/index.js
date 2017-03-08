@@ -10,7 +10,7 @@ const resolveHost = require('./helpers/resolve-host');
 class FtpServer {
   constructor(url, options = {}) {
     this.options = _.merge({
-      log: buyan.createLogger({name: 'ftp-svr'}),
+      log: buyan.createLogger({name: 'ftp-srv'}),
       anonymous: false,
       pasv_range: 22,
       file_format: 'ls',
