@@ -29,7 +29,7 @@
 
 ```js
 const FtpSvr = require('ftp-srv');
-const ftpServer = new FtpSvr({ [options] ... });
+const ftpServer = new FtpSvr([url], { [options] ... });
 
 ftpServer.on('...', (data, resolve, reject) => { ... })
 
