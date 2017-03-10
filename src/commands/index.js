@@ -5,7 +5,6 @@ const REGISTRY = require('./registry');
 
 class FtpCommands {
   constructor(connection) {
-    console.log(REGISTRY)
     this.connection = connection;
     this.previousCommand = {};
     this.blacklist = _.get(this.connection, 'server.options.blacklist', []).map(cmd => _.upperCase(cmd));
@@ -31,7 +30,7 @@ class FtpCommands {
     const commandRegister = REGISTRY[command.directive];
     const commandFlags = _.get(commandRegister, 'flags', {});
     if (!commandFlags.no_auth && !this.connection.authenticated) {
-      return this.connection.reply(530);
+      return this.connection.reply(530, 'Command requires authentication');
     }
 
     if (!commandRegister.handler) {

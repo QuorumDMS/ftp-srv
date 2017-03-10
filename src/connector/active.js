@@ -8,12 +8,12 @@ class Active extends Connector {
     this.type = 'active';
   }
 
-  waitForConnection() {
+  waitForConnection({timeout = 5000, delay = 250} = {}) {
     return when.iterate(
       () => {},
       () => this.dataSocket && this.dataSocket.connected,
-      () => when().delay(250)
-    ).timeout(5000)
+      () => when().delay(delay)
+    ).timeout(timeout)
     .then(() => this.dataSocket);
   }
 

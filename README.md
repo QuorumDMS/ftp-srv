@@ -141,6 +141,11 @@ Options:
 
 > Used in `SITE CHMOD`
 
+`getUniqueName()`
+> Return a unique file name to write to
+
+> Used in `STOU`
+
 <!--[RM_CONTRIBUTING]-->
 ## Contributing
 

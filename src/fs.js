@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const nodePath = require('path');
+const uuid = require('uuid');
 const when = require('when');
 const whenNode = require('when/node');
 const syncFs = require('fs');
@@ -96,6 +97,10 @@ class FileSystem {
   chmod(path, mode) {
     path = nodePath.resolve(this.cwd, path);
     return fs.chmod(path, mode);
+  }
+
+  getUniqueName() {
+    return uuid.v4().replace(/\W/g, '');
   }
 }
 module.exports = FileSystem;

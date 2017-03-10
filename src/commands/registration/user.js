@@ -1,7 +1,6 @@
 module.exports = {
   directive: 'USER',
   handler: function ({log, command} = {}) {
-    console.log('HANDLE USER')
     if (this.username) return this.reply(530, 'Username already set');
     this.username = command._[1];
     if (this.server.options.anonymous === true) {

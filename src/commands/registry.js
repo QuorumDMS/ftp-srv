@@ -1,4 +1,5 @@
 const commands = [
+  require('./registration/abor'),
   require('./registration/allo'),
   require('./registration/appe'),
   require('./registration/auth'),
@@ -26,6 +27,7 @@ const commands = [
   require('./registration/size'),
   require('./registration/stat'),
   require('./registration/stor'),
+  require('./registration/stou'),
   require('./registration/stru'),
   require('./registration/syst'),
   require('./registration/type'),
