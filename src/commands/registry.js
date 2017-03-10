@@ -1,4 +1,5 @@
 const commands = [
+  require('./registration/abor'),
   require('./registration/allo'),
   require('./registration/appe'),
   require('./registration/auth'),

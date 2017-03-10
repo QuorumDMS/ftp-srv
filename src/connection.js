@@ -2,7 +2,7 @@ const _ = require('lodash');
 const uuid = require('uuid');
 const when = require('when');
 const sequence = require('when/sequence');
-const parseSentence = require('minimist-string');
+const parseCommandString = require('minimist-string');
 const net = require('net');
 
 const BaseConnector = require('./connector/base');
@@ -16,28 +16,26 @@ class FtpConnection {
     this.server = server;
     this.commandSocket = options.socket;
     this.id = uuid.v4();
-    this.log = options.log.child({ftp_session_id: this.commandSocket.ftp_session_id});
+    this.log = options.log.child({id: this.id});
     this.commands = new Commands(this);
     this.encoding = 'utf-8';
 
     this.connector = new BaseConnector(this);
 
     this.commandSocket.on('error', err => {
-      console.log('error', err)
+      this.server.server.emit('error', {connection: this, error: err});
     });
     this.commandSocket.on('data', data => {
       const messages = _.compact(data.toString('utf-8').split('\r\n'));
       const handleMessage = (message) => {
-        const command = parseSentence(message);
+        const command = parseCommandString(message);
         command.directive = _.upperCase(command._[0]);
         return this.commands.handle(command);
       };
 
       return sequence(messages.map(message => handleMessage.bind(this, message)));
     });
-    this.commandSocket.on('timeout', () => {
-      console.log('timeout')
-    });
+    this.commandSocket.on('timeout', () => {});
     this.commandSocket.on('close', () => {
       if (this.connector) this.connector.end();
       if (this.commandSocket && !this.commandSocket.destroyed) this.commandSocket.destroy();

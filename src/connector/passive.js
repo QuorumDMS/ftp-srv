@@ -10,15 +10,15 @@ class Passive extends Connector {
     this.type = 'passive';
   }
 
-  waitForConnection() {
+  waitForConnection({timeout = 5000, delay = 250} = {}) {
     if (!this.dataServer) {
       return when.reject(new errors.ConnectorError('Passive server not setup'));
     }
     return when.iterate(
       () => {},
-      () => this.dataServer && this.dataServer.listening && this.dataSocket,
-      () => when().delay(250)
-    ).timeout(5000)
+      () => this.dataServer && this.dataServer.listening && this.dataSocket && this.dataSocket.connected,
+      () => when().delay(delay)
+    ).timeout(timeout)
     .then(() => this.dataSocket);
   }
 
@@ -44,18 +44,18 @@ class Passive extends Connector {
           return this.connection.reply(550, 'Remote addresses do not match')
           .finally(() => this.connection.close());
         }
-        this.log.info({port}, 'Passive connection fulfilled.');
+        this.log.debug({port}, 'Passive connection fulfilled.');
 
         this.dataSocket = socket;
+        this.dataSocket.connected = true;
         this.dataSocket.setEncoding(this.connection.encoding);
-        this.dataSocket.on('data', data => {
-
-        });
         this.dataSocket.on('close', () => {
+          this.log.debug('Passive connection closed');
           this.end();
         });
       });
       this.dataServer.on('close', () => {
+        this.log.debug('Passive server closed');
         this.dataServer = null;
       });
 

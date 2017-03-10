@@ -21,8 +21,7 @@ class Connector {
     if (this.dataServer) this.dataServer.close();
     this.dataSocket = null;
     this.dataServer = null;
-
-    this.connection.connector = new Connector(this.connection);
+    this.type = false;
   }
 }
 module.exports = Connector;
