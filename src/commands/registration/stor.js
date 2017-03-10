@@ -7,6 +7,7 @@ module.exports = {
     if (!this.fs.write) return this.reply(402, 'Not supported by file system');
 
     const append = command.directive === 'APPE';
+    const fileName = command._[1];
 
     let dataSocket;
     return this.connector.waitForConnection()
@@ -14,12 +15,12 @@ module.exports = {
       this.commandSocket.pause();
       dataSocket = socket;
     })
-    .then(() => when(this.fs.write(command._[1], {append})))
+    .then(() => when(this.fs.write(fileName, {append})))
     .then(stream => {
       return when.promise((resolve, reject) => {
         stream.on('error', err => dataSocket.emit('error', err));
 
-        dataSocket.on('end', () => stream.end(() => resolve(this.reply(226))));
+        dataSocket.on('end', () => stream.end(() => resolve(this.reply(226, fileName))));
         dataSocket.on('error', err => reject(err));
         dataSocket.on('data', data => stream.write(data, this.encoding));
         this.reply(150).then(() => dataSocket.resume());

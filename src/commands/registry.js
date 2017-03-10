@@ -27,6 +27,7 @@ const commands = [
   require('./registration/size'),
   require('./registration/stat'),
   require('./registration/stor'),
+  require('./registration/stou'),
   require('./registration/stru'),
   require('./registration/syst'),
   require('./registration/type'),
