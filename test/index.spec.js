@@ -8,7 +8,7 @@ const sinon = require('sinon');
 const FtpServer = require('../src');
 const FtpClient = require('ftp');
 
-describe('FtpServer', function () {
+describe.only('FtpServer', function () {
   this.timeout(2000);
   let log = bunyan.createLogger({name: 'test', level: 10});
   let server;
@@ -20,7 +20,7 @@ describe('FtpServer', function () {
       pasv_range: process.env.PASV_RANGE
     });
     server.on('login', (data, resolve, reject) => {
-      resolve();
+      resolve({root: process.cwd()});
     });
     process.on('SIGINT', function() {
       server.close();
@@ -63,8 +63,17 @@ describe('FtpServer', function () {
     });
   });
 
-  it('CWD process.cwd()', done => {
-    const dir = require('path').resolve(process.cwd(), 'test');
+  it('CWD ..', done => {
+    const dir = '..';
+    client.cwd(`${dir}`, (err, data) => {
+      expect(err).to.not.exist;
+      expect(data).to.be.a('string');
+      done();
+    });
+  });
+
+  it('CWD test', done => {
+    const dir = 'test';
     client.cwd(`${dir}`, (err, data) => {
       expect(err).to.not.exist;
       expect(data).to.be.a('string');
