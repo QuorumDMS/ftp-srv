@@ -1,14 +1,14 @@
 const when = require('when');
 const {expect} = require('chai');
-const sinon = require('sinon')
+const sinon = require('sinon');
 
 const CMD = 'AUTH';
-describe(CMD, done => {
+describe(CMD, function () {
   let sandbox;
   const mockClient = {
     reply: () => when.resolve()
   };
-  const CMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -20,27 +20,27 @@ describe(CMD, done => {
   });
 
   it('TLS // not supported', done => {
-    CMDFN({command: {_: [CMD, 'TLS'], directive: CMD}})
+    cmdFn({command: {_: [CMD, 'TLS'], directive: CMD}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(504)
+      expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
     })
     .catch(done);
   });
 
   it('SSL // not supported', done => {
-    CMDFN({command: {_: [CMD, 'SSL'], directive: CMD}})
+    cmdFn({command: {_: [CMD, 'SSL'], directive: CMD}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(504)
+      expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
     })
     .catch(done);
   });
 
   it('bad // bad', done => {
-    CMDFN({command: {_: [CMD, 'bad'], directive: CMD}})
+    cmdFn({command: {_: [CMD, 'bad'], directive: CMD}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(504)
+      expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
     })
     .catch(done);

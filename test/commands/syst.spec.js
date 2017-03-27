@@ -2,7 +2,7 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const CMD = 'ALLO';
+const CMD = 'SYST';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
@@ -22,7 +22,7 @@ describe(CMD, function () {
   it('// successful', done => {
     cmdFn()
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(202);
+      expect(mockClient.reply.args[0][0]).to.equal(215);
       done();
     })
     .catch(done);

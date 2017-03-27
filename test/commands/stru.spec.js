@@ -2,7 +2,7 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const CMD = 'ALLO';
+const CMD = 'STRU';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
@@ -20,9 +20,18 @@ describe(CMD, function () {
   });
 
   it('// successful', done => {
-    cmdFn()
+    cmdFn({command: { _: [CMD, 'F'] } })
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(202);
+      expect(mockClient.reply.args[0][0]).to.equal(200);
+      done();
+    })
+    .catch(done);
+  });
+
+  it('// unsuccessful', done => {
+    cmdFn({command: { _: [CMD, 'X'] } })
+    .then(() => {
+      expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
     })
     .catch(done);

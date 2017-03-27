@@ -43,11 +43,11 @@ describe.skip('helpers // file-stat', function () {
     });
 
     it('formats correctly', () => {
-      function customerFormater(fileStat) {
-        return [fileStat.gid, fileStat.name, fileStat.size].join('\t');
+      function customerFormater(stat) {
+        return [stat.gid, stat.name, stat.size].join('\t');
       }
       const format = fileStat(STAT, customerFormater);
       expect(format).to.equal('100\ttest1\t527');
-    })
+    });
   });
 });

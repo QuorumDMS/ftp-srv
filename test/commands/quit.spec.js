@@ -1,17 +1,13 @@
-const when = require('when');
-const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
-require('sinon-as-promised');
 
 const CMD = 'QUIT';
-describe(CMD, done => {
+describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     close: () => {}
   };
-  const CMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -23,7 +19,7 @@ describe(CMD, done => {
   });
 
   it('// successful', done => {
-    CMDFN()
+    cmdFn()
     .then(() => {
       expect(mockClient.close.callCount).to.equal(1);
       done();

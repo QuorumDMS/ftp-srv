@@ -1,14 +1,13 @@
+/* eslint no-unused-expressions: 0 */
 require('dotenv').load();
-const _ = require('lodash');
 const {expect} = require('chai');
 const bunyan = require('bunyan');
 const fs = require('fs');
-const sinon = require('sinon');
 
 const FtpServer = require('../src');
 const FtpClient = require('ftp');
 
-describe.only('FtpServer', function () {
+describe('FtpServer', function () {
   this.timeout(2000);
   let log = bunyan.createLogger({name: 'test', level: 10});
   let server;
@@ -19,10 +18,10 @@ describe.only('FtpServer', function () {
       log,
       pasv_range: process.env.PASV_RANGE
     });
-    server.on('login', (data, resolve, reject) => {
+    server.on('login', (data, resolve) => {
       resolve({root: process.cwd()});
     });
-    process.on('SIGINT', function() {
+    process.on('SIGINT', function () {
       server.close();
     });
 
@@ -109,7 +108,7 @@ describe.only('FtpServer', function () {
           done();
         });
       });
-    })
+    });
 
     it('APPE test.txt', done => {
       const buffer = Buffer.from(', awesome!');
@@ -159,14 +158,14 @@ describe.only('FtpServer', function () {
     });
 
     it('MDTM awesome.txt', done => {
-      client.lastMod('awesome.txt', (err, date) => {
+      client.lastMod('awesome.txt', err => {
         expect(err).to.not.exist;
         done();
       });
     });
 
     it('SITE CHMOD 700 awesome.txt', done => {
-      client.site('CHMOD 600 awesome.txt', (err) => {
+      client.site('CHMOD 600 awesome.txt', err => {
         expect(err).to.not.exist;
         fs.stat('./test/awesome.txt', (fserr, stats) => {
           expect(fserr).to.not.exist;
@@ -184,7 +183,7 @@ describe.only('FtpServer', function () {
         done();
       });
     });
-  }
+  };
 
   it('TYPE A', done => {
     client.ascii(err => {

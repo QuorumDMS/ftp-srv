@@ -1,14 +1,14 @@
 const when = require('when');
 const {expect} = require('chai');
-const sinon = require('sinon')
+const sinon = require('sinon');
 
 const CMD = 'MODE';
-describe(CMD, done => {
+describe(CMD, function () {
   let sandbox;
   const mockClient = {
     reply: () => when.resolve()
   };
-  const CMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -20,18 +20,18 @@ describe(CMD, done => {
   });
 
   it('S // successful', done => {
-    CMDFN({command: {_: [CMD, 'S']}})
+    cmdFn({command: {_: [CMD, 'S']}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(200)
+      expect(mockClient.reply.args[0][0]).to.equal(200);
       done();
     })
     .catch(done);
   });
 
   it('Q // unsuccessful', done => {
-    CMDFN({command: {_: [CMD, 'Q']}})
+    cmdFn({command: {_: [CMD, 'Q']}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(504)
+      expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
     })
     .catch(done);
