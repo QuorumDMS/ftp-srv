@@ -45,12 +45,12 @@ ftpServer.listen()
 
 #### new FtpSrv(url, [options])
 
-- ##### url :: `ftp://127.0.0.1:21`
+- __url__ :: `ftp://127.0.0.1:21`
   - A full href url, indicating the protocol, and external IP with port to listen for connections.
   - Supported protocols:
     - `ftp`
   - To accept external connections, the hostname must be the box's external IP address. This can be fetched automatically by setting the hostname to `0.0.0.0`.
-- ##### options :: `{}`
+- __options__ :: `{}`
   - __pasv_range__ :: `22`
     - Starting port or min - max range to accept passive connections
       - Ports will be queried for an unused port in the range to use for the connection.
@@ -82,14 +82,14 @@ ftpServer.listen()
 #### "login" ({connection, username, password}, resolve, reject)
 > Occurs after `PASS` command is set, or after `USER` if `anonymous` is `true`
 
-- ##### connection
+- __connection__
   - Instance of the FTP client
-- ##### username
+- __username__
   - Username provided in the `USER` command
-- ##### password
+- __password__
   - Password provided in the `PASS` command
   - Only provided if `anonymous` is set to `false`
-- #### resolve ([{fs, cwd, blacklist, whitelist}])
+- __resolve ({fs, cwd, blacklist, whitelist})__
   - __fs__ _[optional]_
     - Optional file system class for connection to use
     - See [File System](#file-system) for implementation details
@@ -99,7 +99,7 @@ ftpServer.listen()
     - Commands that are forbidden for this connection only
   - __whitelist__ _[optional]_
     - If set, this connection will only be able to use the provided commands
-- #### reject (error)
+- __reject (error)__
   - __error__
     - Error object
 
@@ -109,59 +109,59 @@ ftpServer.listen()
 
 #### Functions
 `currentDirectory()`  
-> Returns a string of the current working directory
+Returns a string of the current working directory
 
 > Used in: `PWD`
 
 `get(fileName)`
-> Returns a file stat object of file or directory
+Returns a file stat object of file or directory
 
 > Used in: `STAT`, `SIZE`, `RNFR`, `MDTM`
 
 `list(path)`
-> Returns array of file and directory stat objects
+Returns array of file and directory stat objects
 
 > Used in `LIST`, `STAT`
 
 `chdir(path)`
-> Returns new directory relative to cwd
+Returns new directory relative to cwd
 
 > Used in `CWD`, `CDUP`
 
 `mkdir(path)`
-> Return a path to a newly created directory
+Return a path to a newly created directory
 
 > Used in `MKD`
 
 `write(fileName, options)`
-> Returns a writable stream   
+Returns a writable stream   
 Options:  
 `append` if true, append to existing file
 
 > Used in `STOR`, `APPE`
 
 `read(fileName)`
-> Returns a readable stream
+Returns a readable stream
 
 > Used in `RETR`
 
 `delete(path)`
-> Delete a file or directory
+Delete a file or directory
 
 > Used in `DELE`
 
 `rename(from, to)`
-> Rename a file or directory
+Rename a file or directory
 
 > Used in `RNFR`, `RNTO`
 
 `chmod(path)`
-> Modify a file or directory's permissions
+Modify a file or directory's permissions
 
 > Used in `SITE CHMOD`
 
 `getUniqueName()`
-> Return a unique file name to write to
+Return a unique file name to write to
 
 > Used in `STOU`
 
