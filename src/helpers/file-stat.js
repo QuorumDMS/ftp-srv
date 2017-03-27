@@ -6,14 +6,14 @@ module.exports = function (fileStat, format = 'ls') {
   if (typeof format === 'function') return format(fileStat);
 
   const formats = {
-    'ls': ls,
-    'ep': ep
+    ls: ls,
+    ep: ep
   };
   if (!formats.hasOwnProperty(format)) {
     throw new errors.FileSystemError('Bad file stat formatter');
   }
   return formats[format](fileStat);
-}
+};
 
 function ls(fileStat) {
   return [

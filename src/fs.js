@@ -90,7 +90,7 @@ class FileSystem {
     .then(stat => {
       if (stat.isDirectory()) return fs.rmdir(path);
       else return fs.unlink(path);
-    })
+    });
   }
 
   mkdir(path) {

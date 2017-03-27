@@ -3,7 +3,6 @@ const uuid = require('uuid');
 const when = require('when');
 const sequence = require('when/sequence');
 const parseCommandString = require('minimist-string');
-const net = require('net');
 
 const BaseConnector = require('./connector/base');
 const FileSystem = require('./fs');
@@ -27,7 +26,7 @@ class FtpConnection {
     });
     this.commandSocket.on('data', data => {
       const messages = _.compact(data.toString('utf-8').split('\r\n'));
-      const handleMessage = (message) => {
+      const handleMessage = message => {
         const command = parseCommandString(message);
         command.directive = _.upperCase(command._[0]);
         return this.commands.handle(command);
@@ -73,7 +72,7 @@ class FtpConnection {
       if (typeof options === 'number') options = {code: options}; // allow passing in code as first param
       if (!Array.isArray(letters)) letters = [letters];
       if (!letters.length) letters = [{}];
-      return when.map(letters, (promise, index) => {
+      return when.map(letters, promise => {
         return when(promise)
         .then(letter => {
           if (!letter) letter = {};
@@ -86,16 +85,16 @@ class FtpConnection {
           .then(message => {
             letter.message = message;
             return letter;
-          })
+          });
         });
       });
-    }
+    };
 
     const processLetter = (letter, index) => {
       return when.promise((resolve, reject) => {
         const seperator = !options.hasOwnProperty('eol') ?
-          (letters.length - 1 === index ? ' ' : '-') :
-          (options.eol ? ' ' : '-');
+          letters.length - 1 === index ? ' ' : '-' :
+          options.eol ? ' ' : '-';
         const packet = !letter.raw ? _.compact([letter.code || options.code, letter.message]).join(seperator) : letter.message;
 
         if (letter.socket && letter.socket.writable) {
@@ -109,10 +108,10 @@ class FtpConnection {
           });
         } else reject(new errors.SocketError('Socket not writable'));
       });
-    }
+    };
 
     return satisfyParameters()
-    .then(letters => sequence(letters.map((letter, index) => processLetter.bind(this, letter, index))))
+    .then(satisfiedLetters => sequence(satisfiedLetters.map((letter, index) => processLetter.bind(this, letter, index))))
     .catch(err => {
       this.log.error(err);
     });

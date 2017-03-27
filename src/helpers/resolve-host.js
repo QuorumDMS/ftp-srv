@@ -21,5 +21,5 @@ module.exports = function (hostname) {
         });
       });
     } else resolve(hostname);
-  })
-}
+  });
+};
