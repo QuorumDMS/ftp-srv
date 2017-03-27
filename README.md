@@ -113,54 +113,54 @@ Returns a string of the current working directory
 
 > Used in: `PWD`
 
-`get(fileName)`
+`get(fileName)`  
 Returns a file stat object of file or directory
 
 > Used in: `STAT`, `SIZE`, `RNFR`, `MDTM`
 
-`list(path)`
+`list(path)`  
 Returns array of file and directory stat objects
 
 > Used in `LIST`, `STAT`
 
-`chdir(path)`
+`chdir(path)`  
 Returns new directory relative to cwd
 
 > Used in `CWD`, `CDUP`
 
-`mkdir(path)`
+`mkdir(path)`  
 Return a path to a newly created directory
 
 > Used in `MKD`
 
-`write(fileName, options)`
+`write(fileName, options)`  
 Returns a writable stream   
 Options:  
 `append` if true, append to existing file
 
 > Used in `STOR`, `APPE`
 
-`read(fileName)`
+`read(fileName)`  
 Returns a readable stream
 
 > Used in `RETR`
 
-`delete(path)`
+`delete(path)`  
 Delete a file or directory
 
 > Used in `DELE`
 
-`rename(from, to)`
+`rename(from, to)`  
 Rename a file or directory
 
 > Used in `RNFR`, `RNTO`
 
-`chmod(path)`
+`chmod(path)`  
 Modify a file or directory's permissions
 
 > Used in `SITE CHMOD`
 
-`getUniqueName()`
+`getUniqueName()`  
 Return a unique file name to write to
 
 > Used in `STOU`
