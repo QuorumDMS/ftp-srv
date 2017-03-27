@@ -12,10 +12,10 @@ module.exports = {
     const port = portBytes[0] * 256 + portBytes[1];
 
     return this.connector.setupConnection(ip, port)
-    .then(socket => {
+    .then(() => {
       return this.reply(200);
-    })
+    });
   },
   syntax: '{{cmd}} [x,x,x,x,y,y]',
   description: 'Specifies an address and port to which the server should connect'
-}
+};

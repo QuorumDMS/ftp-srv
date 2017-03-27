@@ -7,4 +7,4 @@ module.exports = {
   },
   syntax: '{{cmd}} [path(optional)]',
   description: 'Returns a list of file names in a specified directory'
-}
+};

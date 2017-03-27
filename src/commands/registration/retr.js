@@ -12,7 +12,7 @@ module.exports = {
       this.commandSocket.pause();
       dataSocket = socket;
     })
-    .then(() => when(this.fs.read(command._[1])))
+    .then(() => when.try(this.fs.read.bind(this.fs), command._[1]))
     .then(stream => {
       return when.promise((resolve, reject) => {
         dataSocket.on('error', err => stream.emit('error', err));
@@ -34,8 +34,8 @@ module.exports = {
     .finally(() => {
       this.connector.end();
       this.commandSocket.resume();
-    })
+    });
   },
   syntax: '{{cmd}} [path]',
   description: 'Retrieve a copy of the file'
-}
+};

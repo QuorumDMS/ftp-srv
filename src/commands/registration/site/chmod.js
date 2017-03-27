@@ -10,5 +10,5 @@ module.exports = function ({log, command} = {}) {
   .catch(err => {
     log.error(err);
     return this.reply(500);
-  })
+  });
 };

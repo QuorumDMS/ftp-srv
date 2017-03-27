@@ -7,4 +7,4 @@ module.exports = {
   },
   syntax: '{{cmd}} [path]',
   description: 'Append to a file'
-}
+};

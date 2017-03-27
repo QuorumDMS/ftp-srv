@@ -14,10 +14,10 @@ module.exports = {
     const subCommand = {
       _: [subverb, ...subparameters],
       directive: subverb
-    }
+    };
     const handler = registry[subverb].handler.bind(this);
     return when.try(handler, { log: subLog, command: subCommand });
   },
   syntax: '{{cmd}} [subVerb] [subParams]',
   description: 'Sends site specific commands to remote server'
-}
+};

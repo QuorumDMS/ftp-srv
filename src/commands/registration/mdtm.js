@@ -7,10 +7,10 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
-    return when(this.fs.get(command._[1]))
+    return when.try(this.fs.get.bind(this.fs), command._[1])
     .then(fileStat => {
       const modificationTime = format(fileStat.mtime, 'YYYYMMDDHHmmss.SSS');
-      return this.reply(213, modificationTime)
+      return this.reply(213, modificationTime);
     })
     .catch(err => {
       log.error(err);
@@ -22,4 +22,4 @@ module.exports = {
   flags: {
     feat: 'MDTM'
   }
-}
+};
