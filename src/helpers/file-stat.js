@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const format = require('date-fns/format');
+const dateFns = require('date-fns');
 const errors = require('../errors');
 
 module.exports = function (fileStat, format = 'ls') {
@@ -35,7 +35,7 @@ function ls(fileStat) {
     fileStat.uid,
     fileStat.gid,
     _.padStart(fileStat.size, 12),
-    _.padStart(format(fileStat.mtime, 'MMM DD HH:mm'), 12),
+    _.padStart(dateFns.format(dateFns.parse(fileStat.mtime), 'MMM DD HH:mm'), 12),
     fileStat.name
   ].join(' ');
 }
@@ -44,7 +44,7 @@ function ep(fileStat) {
   const facts = [
     fileStat.dev && fileStat.ino ? `i${fileStat.dev.toString(16)}.${fileStat.ino.toString(16)}` : null,
     fileStat.size ? `s${fileStat.size}` : null,
-    fileStat.mtime ? `m${format(fileStat.mtime, 'X')}` : null,
+    fileStat.mtime ? `m${dateFns.format(dateFns.parse(fileStat.mtime), 'X')}` : null,
     fileStat.mode ? `up${fileStat.mode.toString(8).substr(fileStat.mode.toString(8).length - 3)}` : null,
     fileStat.isDirectory() ? 'r' : '/'
   ].join(',');
