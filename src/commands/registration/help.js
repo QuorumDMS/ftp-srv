@@ -21,4 +21,4 @@ module.exports = {
   flags: {
     no_auth: true
   }
-}
+};

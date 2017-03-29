@@ -14,7 +14,7 @@ module.exports = function (min = 22, max = undefined) {
       } else {
         reject(new errors.GeneralError('Unable to find open port', 500));
       }
-    })
+    });
     portCheckServer.on('listening', () => {
       const {port} = portCheckServer.address();
       portCheckServer.close(() => {

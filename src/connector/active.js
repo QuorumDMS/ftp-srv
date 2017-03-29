@@ -1,4 +1,4 @@
-const net = require('net');
+const {Socket} = require('net');
 const when = require('when');
 const Connector = require('./base');
 
@@ -20,11 +20,11 @@ class Active extends Connector {
   setupConnection(host, port) {
     const closeExistingServer = () => this.dataSocket ?
       when(this.dataSocket.destroy()) :
-      when.resolve()
+      when.resolve();
 
     return closeExistingServer()
     .then(() => {
-      this.dataSocket = new net.Socket();
+      this.dataSocket = new Socket();
       this.dataSocket.setEncoding(this.encoding);
       this.dataSocket.connect({ host, port }, () => {
         this.dataSocket.pause();

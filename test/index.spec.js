@@ -1,9 +1,8 @@
+/* eslint no-unused-expressions: 0 */
 require('dotenv').load();
-const _ = require('lodash');
 const {expect} = require('chai');
 const bunyan = require('bunyan');
 const fs = require('fs');
-const sinon = require('sinon');
 
 const FtpServer = require('../src');
 const FtpClient = require('ftp');
@@ -19,10 +18,10 @@ describe('FtpServer', function () {
       log,
       pasv_range: process.env.PASV_RANGE
     });
-    server.on('login', (data, resolve, reject) => {
-      resolve();
+    server.on('login', (data, resolve) => {
+      resolve({root: process.cwd()});
     });
-    process.on('SIGINT', function() {
+    process.on('SIGINT', function () {
       server.close();
     });
 
@@ -63,8 +62,17 @@ describe('FtpServer', function () {
     });
   });
 
-  it('CWD process.cwd()', done => {
-    const dir = require('path').resolve(process.cwd(), 'test');
+  it('CWD ..', done => {
+    const dir = '..';
+    client.cwd(`${dir}`, (err, data) => {
+      expect(err).to.not.exist;
+      expect(data).to.be.a('string');
+      done();
+    });
+  });
+
+  it('CWD test', done => {
+    const dir = 'test';
     client.cwd(`${dir}`, (err, data) => {
       expect(err).to.not.exist;
       expect(data).to.be.a('string');
@@ -100,7 +108,7 @@ describe('FtpServer', function () {
           done();
         });
       });
-    })
+    });
 
     it('APPE test.txt', done => {
       const buffer = Buffer.from(', awesome!');
@@ -150,14 +158,14 @@ describe('FtpServer', function () {
     });
 
     it('MDTM awesome.txt', done => {
-      client.lastMod('awesome.txt', (err, date) => {
+      client.lastMod('awesome.txt', err => {
         expect(err).to.not.exist;
         done();
       });
     });
 
     it('SITE CHMOD 700 awesome.txt', done => {
-      client.site('CHMOD 600 awesome.txt', (err) => {
+      client.site('CHMOD 600 awesome.txt', err => {
         expect(err).to.not.exist;
         fs.stat('./test/awesome.txt', (fserr, stats) => {
           expect(fserr).to.not.exist;
@@ -175,7 +183,7 @@ describe('FtpServer', function () {
         done();
       });
     });
-  }
+  };
 
   it('TYPE A', done => {
     client.ascii(err => {

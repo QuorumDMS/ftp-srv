@@ -2,17 +2,16 @@ const when = require('when');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
-require('sinon-as-promised')(when.Promise);
 
 const CMD = 'LIST';
-describe(CMD, done => {
+describe(CMD, function () {
   let sandbox;
   let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     fs: { list: () => {} },
     connector: {
-      waitForConnection: () => {},
+      waitForConnection: () => when({}),
       end: () => {}
     },
     commandSocket: {
@@ -20,14 +19,12 @@ describe(CMD, done => {
       pause: () => {}
     }
   };
-  const mockSocket = {};
-  const CMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
     sandbox.stub(mockClient, 'reply').resolves();
-    sandbox.stub(mockClient.connector, 'waitForConnection').resolves(mockSocket);
     sandbox.stub(mockClient.fs, 'list').resolves([{
       name: 'test1',
       dev: 2114,
@@ -54,9 +51,9 @@ describe(CMD, done => {
   describe('// check', function () {
     it('fails on no fs', done => {
       const badMockClient = { reply: () => {} };
-      const BADCMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      BADCMDFN()
+      badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(550);
         done();
@@ -66,9 +63,9 @@ describe(CMD, done => {
 
     it('fails on no fs list command', done => {
       const badMockClient = { reply: () => {}, fs: {} };
-      const BADCMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      BADCMDFN()
+      badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(402);
         done();
@@ -78,7 +75,7 @@ describe(CMD, done => {
   });
 
   it('. // successful', done => {
-    CMDFN({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {_: [CMD], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1][1]).to.have.property('raw');
@@ -94,7 +91,7 @@ describe(CMD, done => {
     mockClient.fs.list.restore();
     sandbox.stub(mockClient.fs, 'list').rejects(new Error());
 
-    CMDFN({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {_: [CMD], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(451);
       done();
@@ -103,10 +100,9 @@ describe(CMD, done => {
   });
 
   it('. // unsuccessful (timeout)', done => {
-    mockClient.connector.waitForConnection.restore();
-    sandbox.stub(mockClient.connector, 'waitForConnection').rejects(new when.TimeoutError());
+    sandbox.stub(mockClient.connector, 'waitForConnection').returns(when.reject(new when.TimeoutError()));
 
-    CMDFN({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {_: [CMD], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
       done();

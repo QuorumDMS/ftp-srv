@@ -1,3 +1,4 @@
+/* eslint no-return-assign: 0 */
 const commands = [
   require('./registration/abor'),
   require('./registration/allo'),

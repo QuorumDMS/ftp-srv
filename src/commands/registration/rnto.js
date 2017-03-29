@@ -11,7 +11,7 @@ module.exports = {
     const from = this.renameFrom;
     const to = command._[1];
 
-    return when(this.fs.rename(from, to))
+    return when.try(this.fs.rename.bind(this.fs), from, to)
     .then(() => {
       return this.reply(250);
     })
@@ -21,8 +21,8 @@ module.exports = {
     })
     .finally(() => {
       delete this.renameFrom;
-    })
+    });
   },
   syntax: '{{cmd}} [name]',
   description: 'Rename to'
-}
+};

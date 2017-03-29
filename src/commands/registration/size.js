@@ -6,7 +6,7 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
-    return when(this.fs.get(command._[1]))
+    return when.try(this.fs.get.bind(this.fs), command._[1])
     .then(fileStat => {
       return this.reply(213, {message: fileStat.size});
     })
@@ -20,4 +20,4 @@ module.exports = {
   flags: {
     feat: 'SIZE'
   }
-}
+};

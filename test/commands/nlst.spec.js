@@ -2,17 +2,16 @@ const when = require('when');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
-require('sinon-as-promised')(when.Promise);
 
 const CMD = 'NLST';
-describe(CMD, done => {
+describe(CMD, function () {
   let sandbox;
   let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     fs: { list: () => {} },
     connector: {
-      waitForConnection: () => {},
+      waitForConnection: () => when({}),
       end: () => {}
     },
     commandSocket: {
@@ -20,14 +19,12 @@ describe(CMD, done => {
       pause: () => {}
     }
   };
-  const mockSocket = {};
-  const CMDFN = require(`../../src/commands/registration/list`).handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
     sandbox.stub(mockClient, 'reply').resolves();
-    sandbox.stub(mockClient.connector, 'waitForConnection').resolves(mockSocket);
     sandbox.stub(mockClient.fs, 'list').resolves([{
       name: 'test1',
       dev: 2114,
@@ -52,7 +49,7 @@ describe(CMD, done => {
   });
 
   it('. // successful', done => {
-    CMDFN({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {_: [CMD], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1][1]).to.have.property('raw');

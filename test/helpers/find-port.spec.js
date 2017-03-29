@@ -1,3 +1,4 @@
+/* eslint no-unused-expressions: 0 */
 const {expect} = require('chai');
 const {Server} = require('net');
 const sinon = require('sinon');
@@ -10,7 +11,7 @@ describe('helpers // find-port', function () {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
-    sandbox.spy(Server.prototype, 'listen')
+    sandbox.spy(Server.prototype, 'listen');
   });
   afterEach(() => {
     sandbox.restore();
@@ -30,6 +31,7 @@ describe('helpers // find-port', function () {
     findPort(1, 2)
     .then(() => done('no'))
     .catch(err => {
+      expect(err).to.exist;
       done();
     });
   });

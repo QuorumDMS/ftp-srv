@@ -15,7 +15,7 @@ module.exports = {
       this.commandSocket.pause();
       dataSocket = socket;
     })
-    .then(() => when(this.fs.write(fileName, {append})))
+    .then(() => when.try(this.fs.write.bind(this.fs), fileName, {append}))
     .then(stream => {
       return when.promise((resolve, reject) => {
         stream.on('error', err => dataSocket.emit('error', err));
@@ -41,4 +41,4 @@ module.exports = {
   },
   syntax: '{{cmd}} [path]',
   description: 'Store data as a file at the server site'
-}
+};

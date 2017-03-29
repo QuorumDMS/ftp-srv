@@ -70,27 +70,28 @@ class FtpServer {
 
     if (features.length) {
       features.unshift('Features:');
-      features.push('.')
+      features.push('.');
     }
     return features.length ? features.join(' ') : 'Ready';
   }
 
-  setGreeting(gretting) {
+  setGreeting(greeting) {
     if (typeof greeting === 'string') {
       this.options.greeting = greeting;
     } else {
-      gretting.then(greeting => {
-        this.options.gretting = greeting;
-      })
+      greeting.then(greet => {
+        this.options.greeting = greet;
+      });
     }
   }
 
   disconnectClient(id) {
-    return when.promise((resolve, reject) => {
+    return when.promise(resolve => {
       const client = this.connections[id];
       if (!client) return resolve();
       delete this.connections[id];
-      return client.close(0);
+      client.close(0);
+      resolve();
     });
   }
 

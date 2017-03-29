@@ -46,8 +46,8 @@
     }
   },
   "dependencies": {
-    "bunyan": "^1.8.5",
-    "date-fns": "^1.28.0",
+    "bunyan": "^1.8.9",
+    "date-fns": "^1.28.2",
     "lodash": "^4.17.4",
     "minimist-string": "^1.0.2",
     "uuid": "^3.0.1",
@@ -71,8 +71,7 @@
     "npm-run-all": "4.0.1",
     "rimraf": "2.5.4",
     "semantic-release": "^6.3.2",
-    "sinon": "^1.17.7",
-    "sinon-as-promised": "^4.0.2"
+    "sinon": "^2.1.0"
   },
   "engines": {
     "node": ">=6.x",

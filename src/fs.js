@@ -9,10 +9,21 @@ const errors = require('./errors');
 
 class FileSystem {
   constructor(connection, {
+    root = '/',
     cwd = '/'
   } = {}) {
     this.connection = connection;
     this.cwd = cwd;
+    this.root = root;
+  }
+
+  _resolvePath(path) {
+    const pathParts = {
+      root: this.root,
+      base: nodePath.resolve(this.cwd, path)
+    };
+    path = nodePath.format(pathParts);
+    return path;
   }
 
   currentDirectory() {
@@ -20,13 +31,13 @@ class FileSystem {
   }
 
   get(fileName) {
-    const path = nodePath.resolve(this.cwd, fileName);
+    const path = this._resolvePath(fileName);
     return fs.stat(path)
     .then(stat => _.set(stat, 'name', fileName));
   }
 
   list(path = '.') {
-    path = nodePath.resolve(this.cwd, path);
+    path = this._resolvePath(path);
     return fs.readdir(path)
     .then(fileNames => {
       return when.map(fileNames, fileName => {
@@ -43,26 +54,26 @@ class FileSystem {
   }
 
   chdir(path = '.') {
-    path = nodePath.resolve(this.cwd, path);
+    path = this._resolvePath(path);
     return fs.stat(path)
     .tap(stat => {
       if (!stat.isDirectory()) throw new errors.FileSystemError('Not a valid directory');
     })
     .then(() => {
-      this.cwd = path;
-      return this.cwd;
+      this.cwd = path.replace(new RegExp(`^${this.root}`), '') || '/';
+      return this.currentDirectory();
     });
   }
 
   write(fileName, {append = false} = {}) {
-    const path = nodePath.resolve(this.cwd, fileName);
+    const path = this._resolvePath(fileName);
     const stream = syncFs.createWriteStream(path, {flags: !append ? 'w+' : 'a+'});
     stream.on('error', () => fs.unlink(path));
     return stream;
   }
 
   read(fileName) {
-    const path = nodePath.resolve(this.cwd, fileName);
+    const path = this._resolvePath(fileName);
     return fs.stat(path)
     .tap(stat => {
       if (stat.isDirectory()) throw new errors.FileSystemError('Cannot read a directory');
@@ -74,28 +85,28 @@ class FileSystem {
   }
 
   delete(path) {
-    path = nodePath.resolve(this.cwd, path);
+    path = this._resolvePath(path);
     return fs.stat(path)
     .then(stat => {
       if (stat.isDirectory()) return fs.rmdir(path);
       else return fs.unlink(path);
-    })
+    });
   }
 
   mkdir(path) {
-    path = nodePath.resolve(this.cwd, path);
+    path = this._resolvePath(path);
     return fs.mkdir(path)
     .then(() => path);
   }
 
   rename(from, to) {
-    const fromPath = nodePath.resolve(this.cwd, from);
-    const toPath = nodePath.resolve(this.cwd, to);
+    const fromPath = this._resolvePath(from);
+    const toPath = this._resolvePath(to);
     return fs.rename(fromPath, toPath);
   }
 
   chmod(path, mode) {
-    path = nodePath.resolve(this.cwd, path);
+    path = this._resolvePath(path);
     return fs.chmod(path, mode);
   }
 

@@ -5,4 +5,4 @@ module.exports = {
   },
   syntax: '{{cmd}}',
   description: 'Select options for a feature'
-}
+};

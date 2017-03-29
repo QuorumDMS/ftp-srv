@@ -1,18 +1,16 @@
-const when = require('when');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
-require('sinon-as-promised');
 
 const CMD = 'DELE';
-describe(CMD, done => {
+describe(CMD, function () {
   let sandbox;
   let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     fs: { delete: () => {} }
   };
-  const CMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -27,9 +25,9 @@ describe(CMD, done => {
   describe('// check', function () {
     it('fails on no fs', done => {
       const badMockClient = { reply: () => {} };
-      const BADCMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      BADCMDFN()
+      badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(550);
         done();
@@ -39,9 +37,9 @@ describe(CMD, done => {
 
     it('fails on no fs delete command', done => {
       const badMockClient = { reply: () => {}, fs: {} };
-      const BADCMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      BADCMDFN()
+      badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(402);
         done();
@@ -51,7 +49,7 @@ describe(CMD, done => {
   });
 
   it('test // successful', done => {
-    CMDFN({log, command: {_: [CMD, 'test'], directive: CMD}})
+    cmdFn({log, command: {_: [CMD, 'test'], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(250);
       expect(mockClient.fs.delete.args[0][0]).to.equal('test');
@@ -62,9 +60,9 @@ describe(CMD, done => {
 
   it('bad // unsuccessful', done => {
     mockClient.fs.delete.restore();
-    sandbox.stub(mockClient.fs, 'delete').rejects(new Error('Bad'))
+    sandbox.stub(mockClient.fs, 'delete').rejects(new Error('Bad'));
 
-    CMDFN({log, command: {_: [CMD, 'bad'], directive: CMD}})
+    cmdFn({log, command: {_: [CMD, 'bad'], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
       expect(mockClient.fs.delete.args[0][0]).to.equal('bad');

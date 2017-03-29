@@ -7,4 +7,4 @@ module.exports = {
   },
   syntax: '{{cmd}} [path]',
   description: 'Remove a directory'
-}
+};

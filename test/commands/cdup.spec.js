@@ -4,7 +4,7 @@ const {expect} = require('chai');
 const sinon = require('sinon');
 
 const CMD = 'CDUP';
-describe(CMD, done => {
+describe(CMD, function () {
   let sandbox;
   let log = bunyan.createLogger({name: CMD});
   const mockClient = {
@@ -13,7 +13,7 @@ describe(CMD, done => {
       chdir: () => when.resolve()
     }
   };
-  const CMDFN = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -26,7 +26,7 @@ describe(CMD, done => {
   });
 
   it('.. // successful', done => {
-    CMDFN({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {_: [CMD], directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(250);
       expect(mockClient.fs.chdir.args[0][0]).to.equal('..');

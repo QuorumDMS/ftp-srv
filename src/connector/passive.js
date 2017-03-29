@@ -25,7 +25,7 @@ class Passive extends Connector {
   setupServer() {
     const closeExistingServer = () => this.dataServer ?
       when.promise(resolve => this.dataServer.close(() => resolve())) :
-      when.resolve()
+      when.resolve();
 
     return closeExistingServer()
     .then(() => this.getPort())
@@ -78,7 +78,7 @@ class Passive extends Connector {
         [this.server.options.pasv_range];
       return findPort(min, max);
     } else return undefined;
-  };
+  }
 
 }
 module.exports = Passive;

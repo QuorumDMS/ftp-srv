@@ -2,7 +2,10 @@ module.exports = {
   directive: 'USER',
   handler: function ({log, command} = {}) {
     if (this.username) return this.reply(530, 'Username already set');
+
     this.username = command._[1];
+    if (!this.username) return this.reply(501, 'Must send username requirement');
+
     if (this.server.options.anonymous === true) {
       return this.login(this.username, '@anonymous')
       .then(() => {
@@ -20,4 +23,4 @@ module.exports = {
   flags: {
     no_auth: true
   }
-}
+};

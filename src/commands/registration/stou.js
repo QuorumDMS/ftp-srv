@@ -1,3 +1,5 @@
+const when = require('when');
+
 const stor = require('./stor').handler;
 
 module.exports = {
@@ -7,9 +9,11 @@ module.exports = {
     if (!this.fs.get || !this.fs.getUniqueName) return this.reply(402, 'Not supported by file system');
 
     const fileName = args.command._[1];
-    return this.fs.get(fileName)
-    .catch(() => fileName)                // does not exist, name is unique
-    .then(() => this.fs.getUniqueName())  // exists, must create new unique name
+    return when.try(() => {
+      return when.try(this.fs.get.bind(this.fs), fileName)
+      .then(() => when.try(this.fs.getUniqueName.bind(this.fs)))
+      .catch(() => when.resolve(fileName));
+    })
     .then(name => {
       args.command._[1] = name;
       return stor.call(this, args);

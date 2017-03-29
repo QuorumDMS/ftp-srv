@@ -16,7 +16,7 @@ module.exports = {
   flags: {
     no_auth: true
   }
-}
+};
 
 function handleTLS() {
   return this.reply(504);

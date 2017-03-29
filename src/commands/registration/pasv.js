@@ -2,7 +2,7 @@ const PassiveConnector = require('../../connector/passive');
 
 module.exports = {
   directive: 'PASV',
-  handler: function ({command} = {}) {
+  handler: function () {
     this.connector = new PassiveConnector(this);
     return this.connector.setupServer()
     .then(server => {
@@ -17,4 +17,4 @@ module.exports = {
   },
   syntax: '{{cmd}}',
   description: 'Initiate passive mode'
-}
+};

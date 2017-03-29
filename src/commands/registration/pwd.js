@@ -3,11 +3,11 @@ const escapePath = require('../../helpers/escape-path');
 
 module.exports = {
   directive: ['PWD', 'XPWD'],
-  handler: function ({log, command} = {}) {
+  handler: function ({log} = {}) {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.currentDirectory) return this.reply(402, 'Not supported by file system');
 
-    return when(this.fs.currentDirectory())
+    return when.try(this.fs.currentDirectory.bind(this.fs))
     .then(cwd => {
       const path = cwd ? `"${escapePath(cwd)}"` : undefined;
       return this.reply(257, path);
@@ -15,8 +15,8 @@ module.exports = {
     .catch(err => {
       log.error(err);
       return this.reply(550, err.message);
-    })
+    });
   },
   syntax: '{{cmd}}',
   description: 'Print current working directory'
-}
+};
