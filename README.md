@@ -89,10 +89,13 @@ ftpServer.listen()
 - __password__
   - Password provided in the `PASS` command
   - Only provided if `anonymous` is set to `false`
-- __resolve ({fs, cwd, blacklist, whitelist})__
+- __resolve ({fs, root, cwd, blacklist, whitelist})__
   - __fs__ _[optional]_
     - Optional file system class for connection to use
     - See [File System](#file-system) for implementation details
+  - __root__ _[optional]_
+    - If `fs` not provided, will set the root directory for the connection
+    - The user cannot traverse lower than this directory
   - __cwd__ _[optional]_
     - If `fs` not provided, will set the starting directory for the connection
   - __blacklist__ _[optional]_
