@@ -19,7 +19,7 @@ describe(CMD, function () {
       pause: () => {}
     }
   };
-  const cmdFn = require('../../src/commands/registration/list').handler.bind(mockClient);
+  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();

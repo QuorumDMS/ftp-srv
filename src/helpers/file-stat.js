@@ -35,7 +35,7 @@ function ls(fileStat) {
     fileStat.uid,
     fileStat.gid,
     _.padStart(fileStat.size, 12),
-    _.padStart(dateFns.format(dateFns.parse(fileStat.mtime), 'MMM DD HH:mm'), 12),
+    _.padStart(dateFns.format(fileStat.mtime, 'MMM DD HH:mm'), 12),
     fileStat.name
   ].join(' ');
 }

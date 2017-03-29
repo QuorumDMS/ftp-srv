@@ -1,8 +1,10 @@
 const {expect} = require('chai');
+const dateFns = require('date-fns');
+
 const fileStat = require('../../src/helpers/file-stat');
 const errors = require('../../src/errors');
 
-describe.skip('helpers // file-stat', function () {
+describe('helpers // file-stat', function () {
   const STAT = {
     name: 'test1',
     dev: 2114,
@@ -22,14 +24,14 @@ describe.skip('helpers // file-stat', function () {
     isDirectory: () => false
   };
 
-  describe('format - ls //', function () {
+  describe.skip('format - ls //', function () {
     it('formats correctly', () => {
       const format = fileStat(STAT, 'ls');
       expect(format).to.equal('-rwxrw-r-- 1 85 100          527 Oct 10 17:24 test1');
     });
   });
 
-  describe('format - ep //', function () {
+  describe.skip('format - ep //', function () {
     it('formats correctly', () => {
       const format = fileStat(STAT, 'ep');
       expect(format).to.equal('+i842.2dd69c9,s527,m1318289051,up644,/	test1');
