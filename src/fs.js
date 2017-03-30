@@ -13,8 +13,8 @@ class FileSystem {
     cwd = '/'
   } = {}) {
     this.connection = connection;
-    this.cwd = cwd;
-    this.root = root;
+    this.cwd = nodePath.resolve(cwd);
+    this.root = nodePath.resolve(root);
   }
 
   _resolvePath(path) {
@@ -60,7 +60,7 @@ class FileSystem {
       if (!stat.isDirectory()) throw new errors.FileSystemError('Not a valid directory');
     })
     .then(() => {
-      this.cwd = path.replace(new RegExp(`^${this.root}`), '') || '/';
+      this.cwd = path.substring(this.root.length) || '/';
       return this.currentDirectory();
     });
   }
