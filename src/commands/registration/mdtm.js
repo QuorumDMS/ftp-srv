@@ -1,5 +1,5 @@
 const when = require('when');
-const format = require('date-fns/format');
+const moment = require('moment');
 
 module.exports = {
   directive: 'MDTM',
@@ -9,7 +9,7 @@ module.exports = {
 
     return when.try(this.fs.get.bind(this.fs), command._[1])
     .then(fileStat => {
-      const modificationTime = format(fileStat.mtime, 'YYYYMMDDHHmmss.SSS');
+      const modificationTime = moment.utc(fileStat.mtime).format('YYYYMMDDHHmmss.SSS');
       return this.reply(213, modificationTime);
     })
     .catch(err => {
