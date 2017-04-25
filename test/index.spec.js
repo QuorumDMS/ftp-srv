@@ -235,4 +235,10 @@ describe('FtpServer', function () {
     });
   });
 
+  it('QUIT', done => {
+    client.once('close', done)
+    client.logout(err => {
+      expect(err).to.be.undefined;
+    });
+  });
 });

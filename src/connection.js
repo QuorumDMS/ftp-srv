@@ -42,12 +42,10 @@ class FtpConnection {
   }
 
   close(code = 421, message = 'Closing connection') {
-    return when(() => {
-      if (code) return this.reply(code, message);
-    })
-    .then(() => {
-      if (this.commandSocket) this.commandSocket.end();
-    });
+    return when
+      .resolve(code)
+      .then(code => code && this.reply(code, message))
+      .then(() => this.commandSocket && this.commandSocket.end());
   }
 
   login(username, password) {
