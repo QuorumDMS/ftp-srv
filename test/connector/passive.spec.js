@@ -46,7 +46,7 @@ describe('Connector - Passive //', function () {
   });
 
   it('has invalid pasv range', function (done) {
-    delete mockConnection.server.options.pasv_range;
+    mockConnection.server.options.pasv_range = -1;
 
     passive.setupServer()
     .then(() => done('should not happen'))

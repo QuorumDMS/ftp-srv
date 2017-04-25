@@ -20,6 +20,7 @@ const commands = [
   require('./registration/pasv'),
   require('./registration/port'),
   require('./registration/pwd'),
+  require('./registration/quit'),
   require('./registration/retr'),
   require('./registration/rmd'),
   require('./registration/rnfr'),
