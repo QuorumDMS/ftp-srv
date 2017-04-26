@@ -45,7 +45,7 @@ describe('Connector - Passive //', function () {
   });
 
   it('has invalid pasv range', function (done) {
-    delete mockConnection.server.options.pasv_range;
+    mockConnection.server.options.pasv_range = -1;
 
     passive.setupServer()
     .then(() => done('should not happen'))
@@ -84,7 +84,8 @@ describe('Connector - Passive //', function () {
       expect(passive.dataServer).to.exist;
 
       const {port} = passive.dataServer.address();
-      net.createConnection(port, () => {
+      net.createConnection(port);
+      passive.dataServer.once('connection', () => {
         expect(mockConnection.reply.callCount).to.equal(1);
         expect(mockConnection.reply.args[0][0]).to.equal(550);
         done();
