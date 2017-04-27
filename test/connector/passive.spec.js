@@ -27,6 +27,7 @@ describe('Connector - Passive //', function () {
     sandbox = sinon.sandbox.create();
 
     sandbox.spy(mockConnection, 'reply');
+    sandbox.spy(mockConnection, 'close');
 
     mockConnection.commandSocket.remoteAddress = '::ffff:127.0.0.1';
     mockConnection.server.options.pasv_range = '8000';
@@ -85,9 +86,11 @@ describe('Connector - Passive //', function () {
 
       const {port} = passive.dataServer.address();
       net.createConnection(port, () => {
-        expect(mockConnection.reply.callCount).to.equal(1);
-        expect(mockConnection.reply.args[0][0]).to.equal(550);
-        done();
+        setTimeout(() => {
+          expect(passive.connection.reply.callCount).to.equal(1);
+          expect(passive.connection.reply.args[0][0]).to.equal(550);
+          done();
+        }, 100);
       });
     })
     .catch(done);
