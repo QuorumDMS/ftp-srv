@@ -85,7 +85,8 @@ describe('Connector - Passive //', function () {
       expect(passive.dataServer).to.exist;
 
       const {port} = passive.dataServer.address();
-      net.createConnection(port, () => {
+      net.createConnection(port);
+      passive.dataServer.once('connection', () => {
         setTimeout(() => {
           expect(passive.connection.reply.callCount).to.equal(1);
           expect(passive.connection.reply.args[0][0]).to.equal(550);
