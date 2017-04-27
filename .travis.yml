@@ -2,6 +2,10 @@ language: node_js
 node_js:
   - "6"
 
+env:
+  FTP_URL: ftp://127.0.0.1:8880
+  PASV_RANGE: 8881
+
 install: npm install
 
 script:
