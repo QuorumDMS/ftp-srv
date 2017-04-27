@@ -132,7 +132,7 @@ Returns new directory relative to cwd
 > Used in `CWD`, `CDUP`
 
 `mkdir(path)`  
-Return a path to a newly created directory
+Returns a path to a newly created directory
 
 > Used in `MKD`
 
@@ -164,7 +164,7 @@ Modify a file or directory's permissions
 > Used in `SITE CHMOD`
 
 `getUniqueName()`  
-Return a unique file name to write to
+Returns a unique file name to write to
 
 > Used in `STOU`
 
