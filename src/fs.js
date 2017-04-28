@@ -1,11 +1,13 @@
 const _ = require('lodash');
 const nodePath = require('path');
+const url = require('url');
 const uuid = require('uuid');
 const when = require('when');
 const whenNode = require('when/node');
 const syncFs = require('fs');
 const fs = whenNode.liftAll(syncFs);
 const errors = require('./errors');
+const isWin = /^win/.test(process.platform);
 
 class FileSystem {
   constructor(connection, {
@@ -14,14 +16,20 @@ class FileSystem {
   } = {}) {
     this.connection = connection;
     this.cwd = nodePath.resolve(cwd);
+    if (isWin) {
+      this.cwd = url.parse(this.cwd).path;
+    }
     this.root = nodePath.resolve(root);
   }
 
   _resolvePath(path) {
-    const pathParts = {
+    let pathParts = {
       root: this.root,
       base: nodePath.resolve(this.cwd, path)
     };
+    if (isWin) {
+      pathParts.base = url.parse(pathParts.base).path;
+    }
     path = nodePath.format(pathParts);
     return path;
   }
