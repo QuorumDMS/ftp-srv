@@ -37,6 +37,8 @@ class FtpServer {
     });
     this.on = this.server.on.bind(this.server);
     this.listeners = this.server.listeners.bind(this.server);
+
+    process.on('SIGINT', () => this.close());
   }
 
   listen() {
