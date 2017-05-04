@@ -12,8 +12,13 @@ class FtpCommands {
   }
 
   handle(command) {
-    const log = this.connection.log.child({command});
-    log.trace('Handle command');
+    // Obfuscate password from logs
+    const logCommand = _.clone(command);
+    command.directive = _.upperCase(command._[0]);
+    if (command.directive === 'PASS') logCommand._[1] = '********';
+
+    const log = this.connection.log.child({directive: command.directive});
+    log.trace({command: logCommand}, 'Handle command');
 
     if (!REGISTRY.hasOwnProperty(command.directive)) {
       return this.connection.reply(402, 'Command not allowed');
