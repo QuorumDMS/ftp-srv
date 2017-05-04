@@ -13,17 +13,24 @@ class FileSystem {
     cwd = '/'
   } = {}) {
     this.connection = connection;
-    this.cwd = nodePath.resolve(cwd);
-    this.root = nodePath.resolve(root);
+    this.cwd = this._normalize(cwd);
+    this.root = this._normalize(root);
+  }
+
+  _normalize(path) {
+    return nodePath.normalize(path
+      .replace(/\\/g, '\/') // replaces \ with /
+      .replace(/\\\\/g, '\/') // replaces \\ with /
+      .replace(/\/\//g, '\/') // replaces // with /
+    );
   }
 
   _resolvePath(path) {
     const pathParts = {
       root: this.root,
-      base: nodePath.resolve(this.cwd, path)
+      base: nodePath.join(this.cwd, this._normalize(path))
     };
-    path = nodePath.format(pathParts);
-    return path;
+    return nodePath.format(pathParts);
   }
 
   currentDirectory() {
