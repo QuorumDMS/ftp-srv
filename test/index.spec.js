@@ -1,5 +1,4 @@
 /* eslint no-unused-expressions: 0 */
-require('dotenv').load();
 const {expect} = require('chai');
 const bunyan = require('bunyan');
 const fs = require('fs');
@@ -7,9 +6,12 @@ const fs = require('fs');
 const FtpServer = require('../src');
 const FtpClient = require('ftp');
 
+before(() => require('dotenv').load());
+
 describe('FtpServer', function () {
   this.timeout(2000);
-  let log = bunyan.createLogger({name: 'test', level: 10});
+  let log = bunyan.createLogger({name: 'test'});
+  log.level(process.env.LOG_LEVEL || 'debug');
   let server;
   let client;
 
@@ -21,14 +23,9 @@ describe('FtpServer', function () {
     server.on('login', (data, resolve) => {
       resolve({root: process.cwd()});
     });
-    process.on('SIGINT', function () {
-      server.close();
-    });
 
-    require('child_process').exec(`sudo kill $(sudo lsof -t -i:${server.url.port})`, () => {
-      server.listen()
-      .finally(() => done());
-    });
+    server.listen()
+    .then(() => done());
   });
   after(() => {
     server.close();
@@ -38,6 +35,7 @@ describe('FtpServer', function () {
     expect(server).to.exist;
     client = new FtpClient();
     client.once('ready', () => done());
+    client.once('error', err => done(err));
     client.connect({
       host: server.url.hostname,
       port: server.url.port,
@@ -236,7 +234,7 @@ describe('FtpServer', function () {
   });
 
   it('QUIT', done => {
-    client.once('close', done)
+    client.once('close', done);
     client.logout(err => {
       expect(err).to.be.undefined;
     });
