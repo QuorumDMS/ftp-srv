@@ -15,7 +15,7 @@ class FtpConnection {
     this.server = server;
     this.commandSocket = options.socket;
     this.id = uuid.v4();
-    this.log = options.log.child({id: this.id});
+    this.log = options.log.child({id: this.id, ip: this.ip});
     this.commands = new Commands(this);
     this.encoding = 'utf-8';
 
@@ -28,7 +28,6 @@ class FtpConnection {
       const messages = _.compact(data.toString('utf-8').split('\r\n'));
       const handleMessage = message => {
         const command = parseCommandString(message);
-        command.directive = _.upperCase(command._[0]);
         return this.commands.handle(command);
       };
 
@@ -41,10 +40,18 @@ class FtpConnection {
     });
   }
 
+  get ip() {
+    try {
+      return this.commandSocket.remoteAddress;
+    } catch (ex) {
+      return null;
+    }
+  }
+
   close(code = 421, message = 'Closing connection') {
     return when
       .resolve(code)
-      .then(code => code && this.reply(code, message))
+      .then(_code => _code && this.reply(_code, message))
       .then(() => this.commandSocket && this.commandSocket.end());
   }
 
