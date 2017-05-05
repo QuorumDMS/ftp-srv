@@ -9,7 +9,7 @@ module.exports = {
     if (!this.fs.rename) return this.reply(402, 'Not supported by file system');
 
     const from = this.renameFrom;
-    const to = command._[1];
+    const to = command.arg;
 
     return when.try(this.fs.rename.bind(this.fs), from, to)
     .then(() => {

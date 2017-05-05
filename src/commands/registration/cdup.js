@@ -3,7 +3,7 @@ const cwd = require('./cwd').handler;
 module.exports = {
   directive: ['CDUP', 'XCUP'],
   handler: function (args) {
-    args.command._ = [args.command._[0], '..'];
+    args.command.arg = '..';
     return cwd.call(this, args);
   },
   syntax: '{{cmd}}',

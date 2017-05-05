@@ -4,7 +4,7 @@ module.exports = {
   directive: 'HELP',
   handler: function ({command} = {}) {
     const registry = require('../registry');
-    const directive = _.upperCase(command._[1]);
+    const directive = _.upperCase(command.arg);
     if (directive) {
       if (!registry.hasOwnProperty(directive)) return this.reply(502, `Unknown command ${directive}.`);
 

@@ -6,7 +6,7 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
-    const fileName = command._[1];
+    const fileName = command.arg;
     return when.try(this.fs.get.bind(this.fs), fileName)
     .then(() => {
       this.renameFrom = fileName;

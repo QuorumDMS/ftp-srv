@@ -11,11 +11,22 @@ class FtpCommands {
     this.whitelist = _.get(this.connection, 'server.options.whitelist', []).map(cmd => _.upperCase(cmd));
   }
 
+  parse(message) {
+    const [directive, ...args] = message.replace(/"/g, '').split(' ');
+    const command = {
+      directive: _.chain(directive).trim().toUpper().value(),
+      arg: _.compact(args).join(' ') || null,
+      raw: message
+    };
+    return command;
+  }
+
   handle(command) {
+    if (typeof command === 'string') command = this.parse(command);
+
     // Obfuscate password from logs
-    const logCommand = _.cloneDeep(command);
-    command.directive = _.upperCase(command._[0]);
-    if (command.directive === 'PASS') logCommand._[1] = '********';
+    const logCommand = _.clone(command);
+    if (logCommand.directive === 'PASS') logCommand.arg = '********';
 
     const log = this.connection.log.child({directive: command.directive});
     log.trace({command: logCommand}, 'Handle command');

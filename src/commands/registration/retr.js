@@ -12,7 +12,7 @@ module.exports = {
       this.commandSocket.pause();
       dataSocket = socket;
     })
-    .then(() => when.try(this.fs.read.bind(this.fs), command._[1]))
+    .then(() => when.try(this.fs.read.bind(this.fs), command.arg))
     .then(stream => {
       return when.promise((resolve, reject) => {
         dataSocket.on('error', err => stream.emit('error', err));

@@ -6,7 +6,7 @@ module.exports = {
   directive: 'STAT',
   handler: function (args = {}) {
     const {log, command} = args;
-    const path = _.get(command, '_[1]');
+    const path = _.get(command, 'arg');
     if (path) {
       if (!this.fs) return this.reply(550, 'File system not instantiated');
       if (!this.fs.get) return this.reply(402, 'Not supported by file system');

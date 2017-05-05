@@ -8,14 +8,14 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.get || !this.fs.getUniqueName) return this.reply(402, 'Not supported by file system');
 
-    const fileName = args.command._[1];
+    const fileName = args.command.arg;
     return when.try(() => {
       return when.try(this.fs.get.bind(this.fs), fileName)
       .then(() => when.try(this.fs.getUniqueName.bind(this.fs)))
       .catch(() => when.resolve(fileName));
     })
     .then(name => {
-      args.command._[1] = name;
+      args.command.arg = name;
       return stor.call(this, args);
     });
   },

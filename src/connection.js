@@ -2,7 +2,6 @@ const _ = require('lodash');
 const uuid = require('uuid');
 const when = require('when');
 const sequence = require('when/sequence');
-const parseCommandString = require('minimist-string');
 
 const BaseConnector = require('./connector/base');
 const FileSystem = require('./fs');
@@ -26,12 +25,7 @@ class FtpConnection {
     });
     this.commandSocket.on('data', data => {
       const messages = _.compact(data.toString('utf-8').split('\r\n'));
-      const handleMessage = message => {
-        const command = parseCommandString(message);
-        return this.commands.handle(command);
-      };
-
-      return sequence(messages.map(message => handleMessage.bind(this, message)));
+      return sequence(messages.map(message => this.commands.handle.bind(this.commands, message)));
     });
     this.commandSocket.on('timeout', () => {});
     this.commandSocket.on('close', () => {
