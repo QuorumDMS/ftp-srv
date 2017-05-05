@@ -2,7 +2,7 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const stor = require('../../src/commands/registration/stor');
+const stor = require('../../../src/commands/registration/stor');
 
 const CMD = 'STOU';
 describe(CMD, function () {
@@ -10,7 +10,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => when.resolve()
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -56,12 +56,12 @@ describe(CMD, function () {
     mockClient.fs.get.restore();
     sandbox.stub(mockClient.fs, 'get').rejects({});
 
-    cmdFn({ command: { _: [CMD, 'good'] } })
+    cmdFn({ command: { arg: 'good' } })
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');
-      expect(call.command).to.have.property('_');
-      expect(call.command._).to.eql([CMD, 'good']);
+      expect(call.command).to.have.property('arg');
+      expect(call.command.arg).to.eql('good');
       expect(mockClient.fs.getUniqueName.callCount).to.equal(0);
       done();
     })
@@ -69,12 +69,12 @@ describe(CMD, function () {
   });
 
   it('// successful | generates unique name', done => {
-    cmdFn({ command: { _: [CMD, 'bad'] } })
+    cmdFn({ command: { arg: 'bad' } })
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');
-      expect(call.command).to.have.property('_');
-      expect(call.command._).to.eql([CMD, '4']);
+      expect(call.command).to.have.property('arg');
+      expect(call.command.arg).to.eql('4');
       expect(mockClient.fs.getUniqueName.callCount).to.equal(1);
       done();
     })

@@ -2,7 +2,7 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const ActiveConnector = require('../../src/connector/active');
+const ActiveConnector = require('../../../src/connector/active');
 
 const CMD = 'PORT';
 describe(CMD, function () {
@@ -10,7 +10,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => when.resolve()
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -32,7 +32,7 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful | invalid argument', done => {
-    cmdFn({ command: { _: [CMD, '1,2,3,4,5'] } })
+    cmdFn({ command: { arg: '1,2,3,4,5' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
       done();
@@ -41,7 +41,7 @@ describe(CMD, function () {
   });
 
   it('// successful', done => {
-    cmdFn({ command: { _: [CMD, '192,168,0,100,137,214'] } })
+    cmdFn({ command: { arg: '192,168,0,100,137,214' } })
     .then(() => {
       const [ip, port] = ActiveConnector.prototype.setupConnection.args[0];
       expect(mockClient.reply.args[0][0]).to.equal(200);

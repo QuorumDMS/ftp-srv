@@ -2,23 +2,22 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const CMD = 'RNFR';
+const CMD = 'CHMOD';
 describe(CMD, function () {
   let sandbox;
   const mockLog = { error: () => {} };
   const mockClient = { reply: () => when.resolve() };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../../src/commands/registration/site/${CMD.toLowerCase()}`).bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
-    mockClient.renameFrom = 'test';
     mockClient.fs = {
-      get: () => when.resolve()
+      chmod: () => when.resolve()
     };
 
     sandbox.spy(mockClient, 'reply');
-    sandbox.spy(mockClient.fs, 'get');
+    sandbox.spy(mockClient.fs, 'chmod');
   });
   afterEach(() => {
     sandbox.restore();
@@ -46,23 +45,23 @@ describe(CMD, function () {
     .catch(done);
   });
 
-  it('test // unsuccessful | file get fails', done => {
-    mockClient.fs.get.restore();
-    sandbox.stub(mockClient.fs, 'get').rejects(new Error('test'));
+  it('777 test // unsuccessful | file chmod fails', done => {
+    mockClient.fs.chmod.restore();
+    sandbox.stub(mockClient.fs, 'chmod').rejects(new Error('test'));
 
-    cmdFn({ log: mockLog, command: { _: [CMD, 'test'] } })
+    cmdFn({ log: mockLog, command: { arg: '777 test' } })
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(550);
+      expect(mockClient.reply.args[0][0]).to.equal(500);
       done();
     })
     .catch(done);
   });
 
-  it('test // successful', done => {
-    cmdFn({ log: mockLog, command: { _: [CMD, 'test'] } })
+  it('777 test // successful', done => {
+    cmdFn({ log: mockLog, command: { arg: '777 test' } })
     .then(() => {
-      expect(mockClient.fs.get.args[0][0]).to.equal('test');
-      expect(mockClient.reply.args[0][0]).to.equal(350);
+      expect(mockClient.fs.chmod.args[0]).to.eql(['test', 511]);
+      expect(mockClient.reply.args[0][0]).to.equal(200);
       done();
     })
     .catch(done);

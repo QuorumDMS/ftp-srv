@@ -11,7 +11,6 @@ before(() => require('dotenv').load());
 describe('FtpServer', function () {
   this.timeout(2000);
   let log = bunyan.createLogger({name: 'test'});
-  log.level(process.env.LOG_LEVEL || 'debug');
   let server;
   let client;
 

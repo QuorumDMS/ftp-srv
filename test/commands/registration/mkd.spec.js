@@ -10,7 +10,7 @@ describe(CMD, function () {
     reply: () => {},
     fs: { mkdir: () => {} }
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -25,7 +25,7 @@ describe(CMD, function () {
   describe('// check', function () {
     it('fails on no fs', done => {
       const badMockClient = { reply: () => {} };
-      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
       badCmdFn()
       .then(() => {
@@ -37,7 +37,7 @@ describe(CMD, function () {
 
     it('fails on no fs mkdir command', done => {
       const badMockClient = { reply: () => {}, fs: {} };
-      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
       badCmdFn()
       .then(() => {
@@ -49,7 +49,7 @@ describe(CMD, function () {
   });
 
   it('test // successful', done => {
-    cmdFn({log, command: {_: [CMD, 'test'], directive: CMD}})
+    cmdFn({log, command: {arg: 'test', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(257);
       expect(mockClient.fs.mkdir.args[0][0]).to.equal('test');
@@ -61,7 +61,7 @@ describe(CMD, function () {
   it('test // successful', done => {
     mockClient.fs.mkdir.restore();
     sandbox.stub(mockClient.fs, 'mkdir').resolves('test');
-    cmdFn({log, command: {_: [CMD, 'test'], directive: CMD}})
+    cmdFn({log, command: {arg: 'test', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(257);
       expect(mockClient.fs.mkdir.args[0][0]).to.equal('test');
@@ -74,7 +74,7 @@ describe(CMD, function () {
     mockClient.fs.mkdir.restore();
     sandbox.stub(mockClient.fs, 'mkdir').rejects(new Error('Bad'));
 
-    cmdFn({log, command: {_: [CMD, 'bad'], directive: CMD}})
+    cmdFn({log, command: {arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
       expect(mockClient.fs.mkdir.args[0][0]).to.equal('bad');

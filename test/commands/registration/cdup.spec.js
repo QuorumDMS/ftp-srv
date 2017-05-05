@@ -13,7 +13,7 @@ describe(CMD, function () {
       chdir: () => when.resolve()
     }
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -26,7 +26,7 @@ describe(CMD, function () {
   });
 
   it('.. // successful', done => {
-    cmdFn({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(250);
       expect(mockClient.fs.chdir.args[0][0]).to.equal('..');

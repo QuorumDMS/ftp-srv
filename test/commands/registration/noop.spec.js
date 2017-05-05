@@ -2,13 +2,13 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const CMD = 'ALLO';
+const CMD = 'NOOP';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
     reply: () => when.resolve()
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -22,7 +22,7 @@ describe(CMD, function () {
   it('// successful', done => {
     cmdFn()
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(202);
+      expect(mockClient.reply.args[0][0]).to.equal(200);
       done();
     })
     .catch(done);

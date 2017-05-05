@@ -19,7 +19,7 @@ describe(CMD, function () {
       pause: () => {}
     }
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -51,7 +51,7 @@ describe(CMD, function () {
   describe('// check', function () {
     it('fails on no fs', done => {
       const badMockClient = { reply: () => {} };
-      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
       badCmdFn()
       .then(() => {
@@ -63,7 +63,7 @@ describe(CMD, function () {
 
     it('fails on no fs list command', done => {
       const badMockClient = { reply: () => {}, fs: {} };
-      const badCmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
       badCmdFn()
       .then(() => {
@@ -75,7 +75,7 @@ describe(CMD, function () {
   });
 
   it('. // successful', done => {
-    cmdFn({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1][1]).to.have.property('raw');
@@ -91,7 +91,7 @@ describe(CMD, function () {
     mockClient.fs.list.restore();
     sandbox.stub(mockClient.fs, 'list').rejects(new Error());
 
-    cmdFn({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(451);
       done();
@@ -102,7 +102,7 @@ describe(CMD, function () {
   it('. // unsuccessful (timeout)', done => {
     sandbox.stub(mockClient.connector, 'waitForConnection').returns(when.reject(new when.TimeoutError()));
 
-    cmdFn({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
       done();

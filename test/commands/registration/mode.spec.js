@@ -2,13 +2,13 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const CMD = 'STRU';
+const CMD = 'MODE';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
     reply: () => when.resolve()
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -19,8 +19,8 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// successful', done => {
-    cmdFn({command: { _: [CMD, 'F'] } })
+  it('S // successful', done => {
+    cmdFn({command: {arg: 'S'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       done();
@@ -28,8 +28,8 @@ describe(CMD, function () {
     .catch(done);
   });
 
-  it('// unsuccessful', done => {
-    cmdFn({command: { _: [CMD, 'X'] } })
+  it('Q // unsuccessful', done => {
+    cmdFn({command: {arg: 'Q'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
