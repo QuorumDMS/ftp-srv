@@ -9,7 +9,7 @@ module.exports = {
 
     // 332 : require account name (ACCT)
 
-    const password = command._[1];
+    const password = command.arg;
     return this.login(this.username, password)
     .then(() => {
       return this.reply(230);

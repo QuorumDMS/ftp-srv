@@ -9,7 +9,7 @@ const ENCODING_TYPES = {
 module.exports = {
   directive: 'TYPE',
   handler: function ({command} = {}) {
-    const encoding = _.upperCase(command._[1]);
+    const encoding = _.upperCase(command.arg);
     if (!ENCODING_TYPES.hasOwnProperty(encoding)) return this.reply(501);
 
     this.encoding = ENCODING_TYPES[encoding];

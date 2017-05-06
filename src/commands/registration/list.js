@@ -13,7 +13,7 @@ module.exports = {
     const simple = command.directive === 'NLST';
 
     let dataSocket;
-    const directory = command._[1] || '.';
+    const directory = command.arg || '.';
     return this.connector.waitForConnection()
     .then(socket => {
       this.commandSocket.pause();

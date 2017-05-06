@@ -7,7 +7,7 @@ module.exports = {
     if (!this.fs.write) return this.reply(402, 'Not supported by file system');
 
     const append = command.directive === 'APPE';
-    const fileName = command._[1];
+    const fileName = command.arg;
 
     let dataSocket;
     return this.connector.waitForConnection()

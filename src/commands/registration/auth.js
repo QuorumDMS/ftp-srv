@@ -3,7 +3,7 @@ const _ = require('lodash');
 module.exports = {
   directive: 'AUTH',
   handler: function ({command} = {}) {
-    const method = _.upperCase(command._[1]);
+    const method = _.upperCase(command.arg);
 
     switch (method) {
       case 'TLS': return handleTLS.call(this);

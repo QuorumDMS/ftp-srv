@@ -7,7 +7,7 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.chdir) return this.reply(402, 'Not supported by file system');
 
-    return when.try(this.fs.chdir.bind(this.fs), command._[1])
+    return when.try(this.fs.chdir.bind(this.fs), command.arg)
     .then(cwd => {
       const path = cwd ? `"${escapePath(cwd)}"` : undefined;
       return this.reply(250, path);

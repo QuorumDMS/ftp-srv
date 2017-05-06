@@ -8,7 +8,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => when.resolve()
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -21,7 +21,7 @@ describe(CMD, function () {
   });
 
   it('A // successful', done => {
-    cmdFn({ command: { _: [CMD, 'A'] } })
+    cmdFn({ command: { arg: 'A' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.encoding).to.equal('utf-8');
@@ -31,7 +31,7 @@ describe(CMD, function () {
   });
 
   it('I // successful', done => {
-    cmdFn({ command: { _: [CMD, 'I'] } })
+    cmdFn({ command: { arg: 'I' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.encoding).to.equal('binary');
@@ -41,7 +41,7 @@ describe(CMD, function () {
   });
 
   it('L // successful', done => {
-    cmdFn({ command: { _: [CMD, 'L'] } })
+    cmdFn({ command: { arg: 'L' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.encoding).to.equal('binary');
@@ -51,7 +51,7 @@ describe(CMD, function () {
   });
 
   it('X // successful', done => {
-    cmdFn({ command: { _: [CMD, 'X'] } })
+    cmdFn({ command: { arg: 'X' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
       expect(mockClient.encoding).to.equal(null);

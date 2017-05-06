@@ -3,7 +3,7 @@ module.exports = {
   handler: function ({log, command} = {}) {
     if (this.username) return this.reply(530, 'Username already set');
 
-    this.username = command._[1];
+    this.username = command.arg;
     if (!this.username) return this.reply(501, 'Must send username requirement');
 
     if (this.server.options.anonymous === true) {

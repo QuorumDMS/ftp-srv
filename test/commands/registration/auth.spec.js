@@ -8,7 +8,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => when.resolve()
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -20,7 +20,7 @@ describe(CMD, function () {
   });
 
   it('TLS // not supported', done => {
-    cmdFn({command: {_: [CMD, 'TLS'], directive: CMD}})
+    cmdFn({command: { arg: 'TLS', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
@@ -29,7 +29,7 @@ describe(CMD, function () {
   });
 
   it('SSL // not supported', done => {
-    cmdFn({command: {_: [CMD, 'SSL'], directive: CMD}})
+    cmdFn({command: { arg: 'SSL', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
       done();
@@ -38,7 +38,7 @@ describe(CMD, function () {
   });
 
   it('bad // bad', done => {
-    cmdFn({command: {_: [CMD, 'bad'], directive: CMD}})
+    cmdFn({command: { arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
       done();

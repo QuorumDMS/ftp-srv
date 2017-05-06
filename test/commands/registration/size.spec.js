@@ -2,22 +2,21 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const CMD = 'CHMOD';
+const CMD = 'SIZE';
 describe(CMD, function () {
   let sandbox;
   const mockLog = { error: () => {} };
   const mockClient = { reply: () => when.resolve() };
-  const cmdFn = require(`../../../src/commands/registration/site/${CMD.toLowerCase()}`).bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
     mockClient.fs = {
-      chmod: () => when.resolve()
+      get: () => when.resolve({size: 1})
     };
 
     sandbox.spy(mockClient, 'reply');
-    sandbox.spy(mockClient.fs, 'chmod');
   });
   afterEach(() => {
     sandbox.restore();
@@ -45,23 +44,21 @@ describe(CMD, function () {
     .catch(done);
   });
 
-  it('777 test // unsuccessful | file chmod fails', done => {
-    mockClient.fs.chmod.restore();
-    sandbox.stub(mockClient.fs, 'chmod').rejects(new Error('test'));
+  it('// unsuccessful | file get fails', done => {
+    sandbox.stub(mockClient.fs, 'get').rejects(new Error('test'));
 
-    cmdFn({ log: mockLog, command: { _: [CMD, '777', 'test'] } })
+    cmdFn({ log: mockLog, command: { arg: 'test' } })
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(500);
+      expect(mockClient.reply.args[0][0]).to.equal(550);
       done();
     })
     .catch(done);
   });
 
-  it('777 test // successful', done => {
-    cmdFn({ log: mockLog, command: { _: [CMD, '777', 'test'] } })
+  it('// successful', done => {
+    cmdFn({ command: { arg: 'test' } })
     .then(() => {
-      expect(mockClient.fs.chmod.args[0]).to.eql(['test', 511]);
-      expect(mockClient.reply.args[0][0]).to.equal(200);
+      expect(mockClient.reply.args[0][0]).to.equal(213);
       done();
     })
     .catch(done);

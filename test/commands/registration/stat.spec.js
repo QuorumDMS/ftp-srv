@@ -7,7 +7,7 @@ describe(CMD, function () {
   let sandbox;
   const mockLog = { error: () => {} };
   const mockClient = { reply: () => when.resolve() };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -35,7 +35,7 @@ describe(CMD, function () {
   it('// unsuccessful | no file system', done => {
     delete mockClient.fs;
 
-    cmdFn({ command: { _: [CMD, 'test'] } })
+    cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
       done();
@@ -46,7 +46,7 @@ describe(CMD, function () {
   it('// unsuccessful | file system does not have functions', done => {
     mockClient.fs = {};
 
-    cmdFn({ command: { _: [CMD, 'test'] } })
+    cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
       done();
@@ -57,7 +57,7 @@ describe(CMD, function () {
   it('// unsuccessful | file get fails', done => {
     sandbox.stub(mockClient.fs, 'get').rejects(new Error('test'));
 
-    cmdFn({ log: mockLog, command: { _: [CMD, 'test'] } })
+    cmdFn({ log: mockLog, command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(450);
       done();
@@ -85,7 +85,7 @@ describe(CMD, function () {
       isDirectory: () => false
     });
 
-    cmdFn({ command: { _: [CMD, 'test'] } })
+    cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(212);
       done();
@@ -132,7 +132,7 @@ describe(CMD, function () {
       isDirectory: () => true
     });
 
-    cmdFn({ command: { _: [CMD, 'test'] } })
+    cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(213);
       done();

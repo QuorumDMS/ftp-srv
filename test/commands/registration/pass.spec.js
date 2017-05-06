@@ -12,7 +12,7 @@ describe(CMD, function () {
     server: { options: { anonymous: false } },
     username: 'user'
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -25,7 +25,7 @@ describe(CMD, function () {
   });
 
   it('pass // successful', done => {
-    cmdFn({log, command: {_: [CMD, 'pass'], directive: CMD}})
+    cmdFn({log, command: {arg: 'pass', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(230);
       expect(mockClient.login.args[0]).to.eql(['user', 'pass']);
@@ -37,7 +37,7 @@ describe(CMD, function () {
   it('// successful (anonymous)', done => {
     mockClient.server.options.anonymous = true;
     mockClient.authenticated = true;
-    cmdFn({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(230);
       expect(mockClient.login.callCount).to.equal(0);
@@ -52,7 +52,7 @@ describe(CMD, function () {
     mockClient.login.restore();
     sandbox.stub(mockClient, 'login').rejects('bad');
 
-    cmdFn({log, command: {_: [CMD, 'bad'], directive: CMD}})
+    cmdFn({log, command: {arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(530);
       done();
@@ -64,7 +64,7 @@ describe(CMD, function () {
     mockClient.login.restore();
     sandbox.stub(mockClient, 'login').rejects({});
 
-    cmdFn({log, command: {_: [CMD, 'bad'], directive: CMD}})
+    cmdFn({log, command: {arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(530);
       done();
@@ -74,7 +74,7 @@ describe(CMD, function () {
 
   it('bad // unsuccessful', done => {
     delete mockClient.username;
-    cmdFn({log, command: {_: [CMD, 'bad'], directive: CMD}})
+    cmdFn({log, command: {arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(503);
       done();

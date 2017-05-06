@@ -19,7 +19,7 @@ describe(CMD, function () {
       pause: () => {}
     }
   };
-  const cmdFn = require(`../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -49,7 +49,7 @@ describe(CMD, function () {
   });
 
   it('. // successful', done => {
-    cmdFn({log, command: {_: [CMD], directive: CMD}})
+    cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1][1]).to.have.property('raw');
