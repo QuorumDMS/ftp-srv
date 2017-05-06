@@ -13,7 +13,7 @@ class FtpCommands {
 
   handle(command) {
     // Obfuscate password from logs
-    const logCommand = _.clone(command);
+    const logCommand = _.cloneDeep(command);
     command.directive = _.upperCase(command._[0]);
     if (command.directive === 'PASS') logCommand._[1] = '********';
 
@@ -45,7 +45,7 @@ class FtpCommands {
     const handler = commandRegister.handler.bind(this.connection);
     return when.try(handler, { log, command, previous_command: this.previousCommand })
     .finally(() => {
-      this.previousCommand = _.clone(command);
+      this.previousCommand = _.cloneDeep(command);
     });
   }
 }
