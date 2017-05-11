@@ -1,7 +1,8 @@
 // Use JS to support loading of threshold data from external file
 var coverageConfig = {
   instrumentation: {
-    root: 'src/'
+    root: 'src/',
+    excludes: ['errors.js']
   },
   check: require('./thresholds.json'),
   reporting: {
