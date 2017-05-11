@@ -40,7 +40,7 @@ class FtpConnection {
 
   get ip() {
     try {
-      return this.commandSocket.remoteAddress;
+      return this.dataSocket ? this.dataSocket.remoteAddress : this.commandSocket.remoteAddress;
     } catch (ex) {
       return null;
     }
