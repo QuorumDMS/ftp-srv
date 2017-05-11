@@ -30,6 +30,7 @@ class Active extends Connector {
         this.dataSocket.pause();
         this.dataSocket.connected = true;
       });
+      this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this, context: 'dataSocket', error: err}));
     });
   }
 }

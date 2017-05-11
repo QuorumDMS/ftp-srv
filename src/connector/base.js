@@ -4,12 +4,18 @@ const errors = require('../errors');
 class Connector {
   constructor(connection) {
     this.connection = connection;
-    this.server = connection.server;
-    this.log = connection.log;
 
     this.dataSocket = null;
     this.dataServer = null;
     this.type = false;
+  }
+
+  get log() {
+    return this.connection.log;
+  }
+
+  get server() {
+    return this.connection.server;
   }
 
   waitForConnection() {
