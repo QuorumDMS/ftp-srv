@@ -12,7 +12,6 @@ const DEFAULT_MESSAGE = require('./messages');
 class FtpConnection {
   constructor(server, options) {
     this.server = server;
-    this.commandSocket = options.socket;
     this.id = uuid.v4();
     this.log = options.log.child({id: this.id, ip: this.ip});
     this.commands = new Commands(this);
@@ -20,13 +19,12 @@ class FtpConnection {
 
     this.connector = new BaseConnector(this);
 
+    this.commandSocket = options.socket;
     this.commandSocket.on('error', err => {
-      this.server.server.emit('error', {connection: this, error: err});
+      this.log.error(err, 'Client error');
+      this.server.emit('client-error', {connection: this, context: 'commandSocket', error: err});
     });
-    this.commandSocket.on('data', data => {
-      const messages = _.compact(data.toString('utf-8').split('\r\n'));
-      return sequence(messages.map(message => this.commands.handle.bind(this.commands, message)));
-    });
+    this.commandSocket.on('data', this._handleData.bind(this));
     this.commandSocket.on('timeout', () => {});
     this.commandSocket.on('close', () => {
       if (this.connector) this.connector.end();
@@ -34,9 +32,15 @@ class FtpConnection {
     });
   }
 
+  _handleData(data) {
+    const messages = _.compact(data.toString('utf-8').split('\r\n'));
+    this.log.trace(messages, 'Messages');
+    return sequence(messages.map(message => this.commands.handle.bind(this.commands, message)));
+  }
+
   get ip() {
     try {
-      return this.commandSocket.remoteAddress;
+      return this.dataSocket ? this.dataSocket.remoteAddress : this.commandSocket.remoteAddress;
     } catch (ex) {
       return null;
     }
@@ -55,7 +59,7 @@ class FtpConnection {
       if (!loginListeners || !loginListeners.length) {
         if (!this.server.options.anoymous) throw new errors.GeneralError('No "login" listener setup', 500);
       } else {
-        return this.server.emit('login', {connection: this, username, password});
+        return this.server.emitPromise('login', {connection: this, username, password});
       }
     })
     .then(({root, cwd, fs, blacklist = [], whitelist = []} = {}) => {

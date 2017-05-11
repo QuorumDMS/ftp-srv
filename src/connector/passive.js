@@ -1,5 +1,6 @@
 const net = require('net');
 const when = require('when');
+
 const Connector = require('./base');
 const findPort = require('../helpers/find-port');
 const errors = require('../errors');
@@ -31,9 +32,7 @@ class Passive extends Connector {
     .then(() => this.getPort())
     .then(port => {
       this.dataSocket = null;
-      this.dataServer = net.createServer({pauseOnConnect: true});
-      this.dataServer.maxConnections = 1;
-      this.dataServer.on('connection', socket => {
+      this.dataServer = net.createServer({ pauseOnConnect: true }, socket => {
         if (this.connection.commandSocket.remoteAddress !== socket.remoteAddress) {
           this.log.error({
             pasv_connection: socket.remoteAddress,
@@ -49,11 +48,14 @@ class Passive extends Connector {
         this.dataSocket = socket;
         this.dataSocket.connected = true;
         this.dataSocket.setEncoding(this.connection.encoding);
+        this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this, context: 'dataSocket', error: err}));
         this.dataSocket.on('close', () => {
           this.log.debug('Passive connection closed');
           this.end();
         });
       });
+      this.dataServer.maxConnections = 1;
+      this.dataServer.on('error', err => this.server.emit('client-error', {connection: this, context: 'dataServer', error: err}));
       this.dataServer.on('close', () => {
         this.log.debug('Passive server closed');
         this.dataServer = null;

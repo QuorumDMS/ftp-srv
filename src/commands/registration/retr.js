@@ -29,7 +29,7 @@ module.exports = {
     })
     .catch(err => {
       log.error(err);
-      return this.reply(551);
+      return this.reply(551, err.message);
     })
     .finally(() => {
       this.connector.end();

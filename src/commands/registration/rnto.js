@@ -17,7 +17,7 @@ module.exports = {
     })
     .catch(err => {
       log.error(err);
-      return this.reply(550);
+      return this.reply(550, err.message);
     })
     .finally(() => {
       delete this.renameFrom;

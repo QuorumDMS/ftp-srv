@@ -48,7 +48,7 @@ module.exports = {
     })
     .catch(err => {
       log.error(err);
-      return this.reply(err.code || 451, err.message || 'No directory');
+      return this.reply(451, err.message || 'No directory');
     })
     .finally(() => {
       this.connector.end();
