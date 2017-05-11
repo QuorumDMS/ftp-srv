@@ -2,6 +2,8 @@ const {expect} = require('chai');
 const resolveHost = require('../../src/helpers/resolve-host');
 
 describe('helpers //resolve-host', function () {
+  this.timeout(4000);
+
   it('fetches ip address', done => {
     const hostname = '0.0.0.0';
     resolveHost(hostname)

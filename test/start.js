@@ -14,7 +14,7 @@ const server = new FtpServer('ftp://127.0.0.1:8880', {
     cert: `${process.cwd()}/test/cert/server.crt`,
     ca: `${process.cwd()}/test/cert/server.csr`
   },
-  anonymous: true
+  file_format: 'ep'
 });
 server.on('login', ({username, password}, resolve, reject) => {
   if (username === 'test' && password === 'test' || username === 'anonymous') {
