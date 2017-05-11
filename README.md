@@ -9,20 +9,20 @@
 - [Features](#features)
 - [Install](#install)
 - [Usage](#usage)
-- [API](#api)
-- [Events](#events)
-- [File System](#file-system)
+  - [API](#api)
+  - [Events](#events)
+  - [Supported Commands](#supported-commands)
+  - [File System](#file-system)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Overview
-> `ftp-srv` is designed to be easy, exensible, and modern.  
-> Configuration is very minimal for a basic FTP server,
-but can easily grow to fit a larger scale project.
+`ftp-srv` is a modern and extensible FTP server designed to be simple yet configurable.
 
 ## Features
-- Supports passive and active connections
-- Allows extensible [file systems](#file-system) on a per connection basis
+- Extensible [file systems](#file-system) per connection
+- Passive and active transfers
+- Implicit TLS connections
 
 ## Install
 `npm install ftp-srv --save`  
@@ -33,9 +33,10 @@ but can easily grow to fit a larger scale project.
 // Quick start
 
 const FtpSvr = require('ftp-srv');
-const ftpServer = new FtpSvr(url, [{ options ... }]);
+const ftpServer = new FtpSvr('ftp://0.0.0.0:9876', { options ... });
 
-ftpServer.on('...', (data, resolve, reject) => { ... })
+ftpServer.on('login', (data, resolve, reject) => { ... });
+...
 
 ftpServer.listen()
 .then(() => { ... });
@@ -43,130 +44,148 @@ ftpServer.listen()
 
 ## API
 
-#### new FtpSrv(url, [options])
+### `new FtpSrv(url, [{options}])`
+#### `url`
+[URL string](https://nodejs.org/api/url.html#url_url_strings_and_url_objects) indicating the protocol, hostname, and port to listen on for connections.  
+Supported protocols:
+- `ftp` Plain FTP
+- `ftps` Implicit FTP over TLS
+_Note:_ The hostname must be the external IP address to accept external connections. Setting the hostname to `0.0.0.0` will automatically set the external IP.  
+__Default:__ `"ftp://127.0.0.1:21"`
 
-- __url__ :: `ftp://127.0.0.1:21`
-  - A full href url, indicating the protocol, and external IP with port to listen for connections.
-  - Supported protocols:
-    - `ftp`
-  - To accept external connections, the hostname must be the box's external IP address. This can be fetched automatically by setting the hostname to `0.0.0.0`.
-- __options__ :: `{}`
-  - __pasv_range__ :: `22`
-    - Starting port or min - max range to accept passive connections
-      - Ports will be queried for an unused port in the range to use for the connection.
-      - If none are found, the connection cannot be established
-    - If an integer is supplied: will indicate the minimum allowable port
-    - If a range is defined (`3000-3100`): only ports within that range will be used
-  - __anonymous__ :: `false`
-    - If true, will authenticate connections after passing the `USER` command. Passwords will not be required.
-  - __blacklist__ :: `[]`
-    - Array of commands to be blacklisted globally
-      - `['RMD', 'RNFR', 'RNTO']`
-    - A connection sending one of these commands will be replied with code `502`
-  - __whitelist__ :: `[]`
-    - If set, only commands within this array are allowed
-    - A connection sending any other command will be replied to with code `502`
-  - __file_format__ :: `ls`
-    - Set the format to use for file stat queries, such as `LIST`
-    - Possible values include:
-      - `ls` : [bin/ls format](https://cr.yp.to/ftp/list/binls.html)  
-      - `ep` : [Easily Parsed LIST format](https://cr.yp.to/ftp/list/eplf.html)  
-      - Function : pass in a function as the parameter to use your own
-        - Only one argument is passed in: a node [file stat](https://nodejs.org/api/fs.html#fs_class_fs_stats) object with additional file `name` parameter
-  - __log__ :: `bunyan.createLogger()`
-    - A [bunyan logger](https://github.com/trentm/node-bunyan) instance
-    - By default, one is created, but a custom instance can be passed in as well
+#### `options`
+
+- ##### `pasv_range`
+A starting port (eg `8000`) or a range (eg `"8000-9000"`) to accept passive connections.  
+This range is then queried for an available port to use when required.  
+__Default:__ `22`
+
+- ##### `greeting`
+A human readable array of lines or string to send when a client connects.  
+__Default:__ `null`
+
+- ##### `tls`
+Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit `ftps`.  
+__Default:__ `{}`
+
+- ##### `anonymous`
+If true, will call the event login after `USER`, not requiring a password from the user.  
+__Default:__ `false`
+
+- ##### `blacklist`
+Array of commands that are not allowed.  
+Response code `502` is sent to clients sending one of these commands.  
+__Example:__ `['RMD', 'RNFR', 'RNTO']` will not allow users to delete directories or rename any files.  
+__Default:__ `[]`
+
+- ##### `whitelist`
+Array of commands that are only allowed.  
+Response code `502` is sent to clients sending any other command.  
+__Default:__ `[]`
+
+- ##### `file_format`
+Sets the format to use for file stat queries such as `LIST`.  
+__Default:__ `"ls"`  
+__Allowable values:__
+  - `ls` [bin/ls format](https://cr.yp.to/ftp/list/binls.html)
+  - `ep` [Easily Parsed LIST format](https://cr.yp.to/ftp/list/eplf.html)
+  - `function () {}` A custom function returning a format or promise for one.
+    - Only one argument is passed in: a node [file stat](https://nodejs.org/api/fs.html#fs_class_fs_stats) object with additional file `name` parameter
+
+- ##### `log`
+A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
 
 ## Events
 
-#### "login" ({connection, username, password}, resolve, reject)
-> Occurs after `PASS` command is set, or after `USER` if `anonymous` is `true`
+The `FtpSvr` class extends the [node net.Server](https://nodejs.org/api/net.html#net_class_net_server). Some custom events can be resolved or rejected, such as `login`.
 
-- __connection__
-  - Instance of the FTP client
-- __username__
-  - Username provided in the `USER` command
-- __password__
-  - Password provided in the `PASS` command
-  - Only provided if `anonymous` is set to `false`
-- __resolve ({fs, root, cwd, blacklist, whitelist})__
-  - __fs__ _[optional]_
-    - Optional file system class for connection to use
-    - See [File System](#file-system) for implementation details
-  - __root__ _[optional]_
-    - If `fs` not provided, will set the root directory for the connection
-    - The user cannot traverse lower than this directory
-  - __cwd__ _[optional]_
-    - If `fs` not provided, will set the starting directory for the connection
-  - __blacklist__ _[optional]_
-    - Commands that are forbidden for this connection only
-  - __whitelist__ _[optional]_
-    - If set, this connection will only be able to use the provided commands
-- __reject (error)__
-  - __error__
-    - Error object
+### `login`
+```js
+on('login', {connection, username, password}, resolve, reject) => { ... }
+```
+
+Occurs when a client is attempting to login. Here you can resolve the login request by username and password.  
+`resolve` takes an object of arguments:
+- `fs`
+  - Set a custom file system class for this connection to use.
+  - See [File System](#file-system) for implementation details.
+- `root`
+  - If `fs` is not provided, this will set the root directory for the connection.
+  - The user cannot traverse lower than this directory.
+- `cwd`
+  - If `fs` is not provided, will set the starting directory for the connection
+  - This is relative to the `root` directory.
+- `blacklist`
+  - Commands that are forbidden for only this connection
+- `whitelist`
+  - If set, this connection will only be able to use the provided commands
+
+`reject` takes an error object
+
+### `client-error`
+```js
+on('client-error', {connection, context, error}) => { ... }
+```
+
+Occurs when an error occurs in the client connection.
+
+## Supported Commands
+
+See [commands](src/commands) for a list of all implemented FTP commands.
 
 ## File System
-> The default file system can be overriden to use your own implementation. This can allow for virtual file systems and more.  
-> Each connection can be given it's own file system depending on the user.
+The default file system can be overwritten to use your own implementation.  
+This can allow for virtual file systems, and more.  
+Each connection can set it's own file system based on the user.  
 
-#### Functions
-`currentDirectory()`  
-Returns a string of the current working directory
+Custom file systems can implement the following variables depending on the developers needs.
 
-> Used in: `PWD`
+### Methods
+#### [`currentDirectory()`](src/fs.js#L29)
+Returns a string of the current working directory  
+__Used in:__ `PWD`
 
-`get(fileName)`  
-Returns a file stat object of file or directory
+#### [`get(fileName)`](src/fs.js#L33)  
+Returns a file stat object of file or directory  
+__Used in:__ `STAT`, `SIZE`, `RNFR`, `MDTM`
 
-> Used in: `STAT`, `SIZE`, `RNFR`, `MDTM`
-
-`list(path)`  
+#### [`list(path)`](src/fs.js#L39)  
 Returns array of file and directory stat objects
 
-> Used in `LIST`, `STAT`
+__Used in:__ `LIST`, `STAT`
 
-`chdir(path)`  
-Returns new directory relative to cwd
+#### [`chdir(path)`](src/fs.js#L56)  
+Returns new directory relative to current directory  
+__Used in:__ `CWD`, `CDUP`
 
-> Used in `CWD`, `CDUP`
+#### [`mkdir(path)`](src/fs.js#L96)  
+Returns a path to a newly created directory  
+__Used in:__ `MKD`
 
-`mkdir(path)`  
-Returns a path to a newly created directory
-
-> Used in `MKD`
-
-`write(fileName, options)`  
+#### [`write(fileName, {append = false})`](src/fs.js#L68)  
 Returns a writable stream   
-Options:  
-`append` if true, append to existing file
+Options: `append` if true, append to existing file  
+__Used in:__ `STOR`, `APPE`
 
-> Used in `STOR`, `APPE`
+#### [`read(fileName)`](src/fs.js#L75)
+Returns a readable stream  
+__Used in:__ `RETR`
 
-`read(fileName)`  
-Returns a readable stream
+#### [`delete(path)`](src/fs.js#L87)
+Delete a file or directory  
+__Used in:__ `DELE`
 
-> Used in `RETR`
+#### [`rename(from, to)`](src/fs.js#L102)
+Rename a file or directory  
+__Used in:__ `RNFR`, `RNTO`
 
-`delete(path)`  
-Delete a file or directory
+#### [`chmod(path)`](src/fs.js#L108)  
+Modify a file or directory's permissions  
+__Used in:__ `SITE CHMOD`
 
-> Used in `DELE`
-
-`rename(from, to)`  
-Rename a file or directory
-
-> Used in `RNFR`, `RNTO`
-
-`chmod(path)`  
-Modify a file or directory's permissions
-
-> Used in `SITE CHMOD`
-
-`getUniqueName()`  
-Returns a unique file name to write to
-
-> Used in `STOU`
+#### [`getUniqueName()`](src/fs.js#L113)
+Returns a unique file name to write to  
+__Used in:__ `STOU`
 
 <!--[RM_CONTRIBUTING]-->
 ## Contributing
