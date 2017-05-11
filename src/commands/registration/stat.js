@@ -33,7 +33,7 @@ module.exports = {
       })
       .catch(err => {
         log.error(err);
-        return this.reply(450);
+        return this.reply(450, err.message);
       });
     } else {
       return this.reply(211, 'Status OK');

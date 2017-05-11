@@ -32,7 +32,7 @@ module.exports = {
     })
     .catch(err => {
       log.error(err);
-      return this.reply(553);
+      return this.reply(550, err.message);
     })
     .finally(() => {
       this.connector.end();

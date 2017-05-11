@@ -6,6 +6,7 @@ module.exports = {
     this.username = command.arg;
     if (!this.username) return this.reply(501, 'Must send username requirement');
 
+
     if (this.server.options.anonymous === true) {
       return this.login(this.username, '@anonymous')
       .then(() => {
@@ -13,7 +14,7 @@ module.exports = {
       })
       .catch(err => {
         log.error(err);
-        return this.reply(530, err || 'Authentication failed');
+        return this.reply(530, err.message || 'Authentication failed');
       });
     }
     return this.reply(331);
