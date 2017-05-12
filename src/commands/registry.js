@@ -33,7 +33,9 @@ const commands = [
   require('./registration/stru'),
   require('./registration/syst'),
   require('./registration/type'),
-  require('./registration/user')
+  require('./registration/user'),
+  require('./registration/pbsz'),
+  require('./registration/prot')
 ];
 
 const registry = commands.reduce((result, cmd) => {

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const ENCODING_TYPES = {
-  A: 'utf-8',
+  A: 'utf8',
   I: 'binary',
   L: 'binary'
 };

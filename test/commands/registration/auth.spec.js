@@ -6,7 +6,10 @@ const CMD = 'AUTH';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
-    reply: () => when.resolve()
+    reply: () => when.resolve(),
+    server: {
+      _tls: {}
+    }
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -19,10 +22,11 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('TLS // not supported', done => {
+  it('TLS // supported', done => {
     cmdFn({command: { arg: 'TLS', directive: CMD}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(504);
+      expect(mockClient.reply.args[0][0]).to.equal(234);
+      expect(mockClient.secure).to.equal(true);
       done();
     })
     .catch(done);
