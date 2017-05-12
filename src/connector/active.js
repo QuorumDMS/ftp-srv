@@ -1,4 +1,5 @@
 const {Socket} = require('net');
+const tls = require('tls');
 const when = require('when');
 const Connector = require('./base');
 
@@ -26,11 +27,20 @@ class Active extends Connector {
     .then(() => {
       this.dataSocket = new Socket();
       this.dataSocket.setEncoding(this.encoding);
+      this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
       this.dataSocket.connect({ host, port }, () => {
         this.dataSocket.pause();
+
+        if (this.connection.secure) {
+          const secureContext = tls.createSecureContext(this.server._tls);
+          const secureSocket = new tls.TLSSocket(this.dataSocket, {
+            isServer: true,
+            secureContext
+          });
+          this.dataSocket = secureSocket;
+        }
         this.dataSocket.connected = true;
       });
-      this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this, context: 'dataSocket', error: err}));
     });
   }
 }
