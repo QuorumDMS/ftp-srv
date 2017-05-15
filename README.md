@@ -1,9 +1,13 @@
-# ftp-srv [![npm version](https://badge.fury.io/js/ftp-srv.svg)](https://badge.fury.io/js/ftp-srv) [![Build Status](https://travis-ci.org/trs/ftp-srv.svg?branch=master)](https://travis-ci.org/trs/ftp-srv)  [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+![ftp-srv](logo.png)
+
+[![npm version](https://badge.fury.io/js/ftp-srv.svg)](https://badge.fury.io/js/ftp-srv) [![Build Status](https://travis-ci.org/trs/ftp-srv.svg?branch=master)](https://travis-ci.org/trs/ftp-srv)  [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 <!--[RM_DESCRIPTION]-->
 > Modern, extensible FTP Server
 
 <!--[]-->
+
+---
 
 - [Overview](#overview)
 - [Features](#features)
@@ -109,7 +113,7 @@ on('login', {connection, username, password}, resolve, reject) => { ... }
 
 Occurs when a client is attempting to login. Here you can resolve the login request by username and password.
 
-`connection` [client class object](lib/connection.js)  
+`connection` [client class object](src/connection.js)  
 `username` string of username from `USER` command  
 `password` string of password from `PASS` command  
 `resolve` takes an object of arguments:
@@ -136,7 +140,7 @@ on('client-error', {connection, context, error}) => { ... }
 
 Occurs when an error arises in the client connection.
 
-`connection` [client class object](lib/connection.js)  
+`connection` [client class object](src/connection.js)  
 `context` string of where the error occured  
 `error` error object
 
