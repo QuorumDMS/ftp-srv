@@ -22,7 +22,7 @@
 ## Features
 - Extensible [file systems](#file-system) per connection
 - Passive and active transfers
-- Implicit TLS connections
+- [Explicit](https://en.wikipedia.org/wiki/FTPS#Explicit) & [Implicit](https://en.wikipedia.org/wiki/FTPS#Implicit) TLS connections
 
 ## Install
 `npm install ftp-srv --save`  
@@ -45,45 +45,46 @@ ftpServer.listen()
 ## API
 
 ### `new FtpSrv(url, [{options}])`
-#### `url`
+#### url
 [URL string](https://nodejs.org/api/url.html#url_url_strings_and_url_objects) indicating the protocol, hostname, and port to listen on for connections.  
 Supported protocols:
 - `ftp` Plain FTP
-- `ftps` Implicit FTP over TLS
+- `ftps` Implicit FTP over TLS  
+
 _Note:_ The hostname must be the external IP address to accept external connections. Setting the hostname to `0.0.0.0` will automatically set the external IP.  
 __Default:__ `"ftp://127.0.0.1:21"`
 
-#### `options`
+#### options
 
-- ##### `pasv_range`
+##### `pasv_range`
 A starting port (eg `8000`) or a range (eg `"8000-9000"`) to accept passive connections.  
 This range is then queried for an available port to use when required.  
 __Default:__ `22`
 
-- ##### `greeting`
+##### `greeting`
 A human readable array of lines or string to send when a client connects.  
 __Default:__ `null`
 
-- ##### `tls`
-Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit `ftps`.  
+##### `tls`
+Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit (`ftps` protocol) or explicit (`AUTH TLS`) connections.  
 __Default:__ `{}`
 
-- ##### `anonymous`
+##### `anonymous`
 If true, will call the event login after `USER`, not requiring a password from the user.  
 __Default:__ `false`
 
-- ##### `blacklist`
+##### `blacklist`
 Array of commands that are not allowed.  
 Response code `502` is sent to clients sending one of these commands.  
 __Example:__ `['RMD', 'RNFR', 'RNTO']` will not allow users to delete directories or rename any files.  
 __Default:__ `[]`
 
-- ##### `whitelist`
+##### `whitelist`
 Array of commands that are only allowed.  
 Response code `502` is sent to clients sending any other command.  
 __Default:__ `[]`
 
-- ##### `file_format`
+##### `file_format`
 Sets the format to use for file stat queries such as `LIST`.  
 __Default:__ `"ls"`  
 __Allowable values:__
@@ -92,7 +93,7 @@ __Allowable values:__
   - `function () {}` A custom function returning a format or promise for one.
     - Only one argument is passed in: a node [file stat](https://nodejs.org/api/fs.html#fs_class_fs_stats) object with additional file `name` parameter
 
-- ##### `log`
+##### `log`
 A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
 
 ## Events
@@ -104,7 +105,11 @@ The `FtpSvr` class extends the [node net.Server](https://nodejs.org/api/net.html
 on('login', {connection, username, password}, resolve, reject) => { ... }
 ```
 
-Occurs when a client is attempting to login. Here you can resolve the login request by username and password.  
+Occurs when a client is attempting to login. Here you can resolve the login request by username and password.
+
+`connection` [client class object](lib/connection.js)  
+`username` string of username from `USER` command  
+`password` string of password from `PASS` command  
 `resolve` takes an object of arguments:
 - `fs`
   - Set a custom file system class for this connection to use.
@@ -127,11 +132,15 @@ Occurs when a client is attempting to login. Here you can resolve the login requ
 on('client-error', {connection, context, error}) => { ... }
 ```
 
-Occurs when an error occurs in the client connection.
+Occurs when an error arises in the client connection.
+
+`connection` [client class object](lib/connection.js)  
+`context` string of where the error occured  
+`error` error object
 
 ## Supported Commands
 
-See [commands](src/commands) for a list of all implemented FTP commands.
+See the [command registry](src/commands/registration) for a list of all implemented FTP commands.
 
 ## File System
 The default file system can be overwritten to use your own implementation.  
@@ -150,8 +159,7 @@ Returns a file stat object of file or directory
 __Used in:__ `STAT`, `SIZE`, `RNFR`, `MDTM`
 
 #### [`list(path)`](src/fs.js#L39)  
-Returns array of file and directory stat objects
-
+Returns array of file and directory stat objects  
 __Used in:__ `LIST`, `STAT`
 
 #### [`chdir(path)`](src/fs.js#L56)  

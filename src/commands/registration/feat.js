@@ -11,7 +11,9 @@ module.exports = {
         return feats;
       }, [])
       .map(feat => ` ${feat}`);
-    return this.reply(211, 'Extensions supported', ...features, 'END');
+    return features.length
+      ? this.reply(211, 'Extensions supported', ...features, 'End')
+      : this.reply(211, 'No features');
   },
   syntax: '{{cmd}}',
   description: 'Get the feature list implemented by the server',

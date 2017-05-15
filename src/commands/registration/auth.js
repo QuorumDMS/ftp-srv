@@ -14,7 +14,8 @@ module.exports = {
   syntax: '{{cmd}} [type]',
   description: 'Set authentication mechanism',
   flags: {
-    no_auth: true
+    no_auth: true,
+    feat: 'AUTH TLS'
   }
 };
 
