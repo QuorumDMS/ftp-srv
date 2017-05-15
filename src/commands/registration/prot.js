@@ -15,5 +15,8 @@ module.exports = {
     }
   },
   syntax: '{{cmd}}',
-  description: 'Data Channel Protection Level'
+  description: 'Data Channel Protection Level',
+  flags: {
+    no_auth: true
+  }
 };

@@ -6,5 +6,8 @@ module.exports = {
     return this.reply(200, this.bufferSize === 0 ? 'OK' : 'Buffer too large: PBSZ=0');
   },
   syntax: '{{cmd}}',
-  description: 'Protection Buffer Size'
+  description: 'Protection Buffer Size',
+  flags: {
+    no_auth: true
+  }
 };
