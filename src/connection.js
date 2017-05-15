@@ -35,7 +35,7 @@ class FtpConnection {
 
   _handleData(data) {
     const messages = _.compact(data.toString('utf8').split('\r\n'));
-    this.log.trace(messages, 'Messages');
+    this.log.trace(messages);
     return sequence(messages.map(message => this.commands.handle.bind(this.commands, message)));
   }
 
