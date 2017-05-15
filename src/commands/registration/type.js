@@ -15,6 +15,6 @@ module.exports = {
     this.encoding = ENCODING_TYPES[encoding];
     return this.reply(200);
   },
-  syntax: '{{cmd}} [mode]',
-  description: 'Set the transfer mode, binary (I) or utf-8 (A)'
+  syntax: '{{cmd}} <mode>',
+  description: 'Set the transfer mode, binary (I) or utf8 (A)'
 };

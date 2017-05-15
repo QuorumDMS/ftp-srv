@@ -39,6 +39,6 @@ module.exports = {
       this.commandSocket.resume();
     });
   },
-  syntax: '{{cmd}} [path]',
+  syntax: '{{cmd}} <path>',
   description: 'Store data as a file at the server site'
 };

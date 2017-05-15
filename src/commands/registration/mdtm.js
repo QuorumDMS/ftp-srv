@@ -17,7 +17,7 @@ module.exports = {
       return this.reply(550, err.message);
     });
   },
-  syntax: '{{cmd}} [path]',
+  syntax: '{{cmd}} <path>',
   description: 'Return the last-modified time of a specified file',
   flags: {
     feat: 'MDTM'

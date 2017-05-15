@@ -36,6 +36,6 @@ module.exports = {
       this.commandSocket.resume();
     });
   },
-  syntax: '{{cmd}} [path]',
+  syntax: '{{cmd}} <path>',
   description: 'Retrieve a copy of the file'
 };

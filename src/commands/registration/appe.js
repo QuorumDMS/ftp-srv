@@ -5,6 +5,6 @@ module.exports = {
   handler: function (args) {
     return stor.call(this, args);
   },
-  syntax: '{{cmd}} [path]',
+  syntax: '{{cmd}} <path>',
   description: 'Append to a file'
 };

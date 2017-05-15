@@ -17,6 +17,6 @@ module.exports = {
       return this.reply(550, err.message);
     });
   },
-  syntax: '{{cmd}} [name]',
+  syntax: '{{cmd}} <name>',
   description: 'Rename from'
 };

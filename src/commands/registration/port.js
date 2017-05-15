@@ -15,6 +15,6 @@ module.exports = {
     return this.connector.setupConnection(ip, port)
     .then(() => this.reply(200));
   },
-  syntax: '{{cmd}} x,x,x,x,y,y',
+  syntax: '{{cmd}} <x>,<x>,<x>,<x>,<y>,<y>',
   description: 'Specifies an address and port to which the server should connect'
 };

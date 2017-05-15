@@ -17,6 +17,6 @@ module.exports = {
       return this.reply(550, err.message);
     });
   },
-  syntax: '{{cmd}}[path]',
+  syntax: '{{cmd}} <path>',
   description: 'Change working directory'
 };

@@ -11,7 +11,7 @@ module.exports = {
       default: return this.reply(504);
     }
   },
-  syntax: '{{cmd}} [type]',
+  syntax: '{{cmd}} <type>',
   description: 'Set authentication mechanism',
   flags: {
     no_auth: true,

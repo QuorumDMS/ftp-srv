@@ -23,6 +23,6 @@ module.exports = {
       delete this.renameFrom;
     });
   },
-  syntax: '{{cmd}} [name]',
+  syntax: '{{cmd}} <name>',
   description: 'Rename to'
 };

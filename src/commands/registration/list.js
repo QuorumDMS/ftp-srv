@@ -55,6 +55,6 @@ module.exports = {
       this.commandSocket.resume();
     });
   },
-  syntax: '{{cmd}} [path(optional)]',
+  syntax: '{{cmd}} [<path>]',
   description: 'Returns information of a file or directory if specified, else information of the current working directory is returned'
 };
