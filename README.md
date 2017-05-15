@@ -70,7 +70,9 @@ Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_creates
 __Default:__ `{}`
 
 ##### `anonymous`
-If true, will call the event login after `USER`, not requiring a password from the user.  
+If true, will allow clients to authenticate using the username `anonymous`, not requiring a password from the user.  
+Can also set as a string which allows users to authenticate using the username provided.  
+The `login` event is then sent with the provided username and `@anonymous` as the password.  
 __Default:__ `false`
 
 ##### `blacklist`
