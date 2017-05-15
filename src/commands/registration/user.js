@@ -7,7 +7,6 @@ module.exports = {
     this.username = command.arg;
     if (!this.username) return this.reply(501, 'Must provide username');
 
-
     if (this.server.options.anonymous === true && this.username === 'anonymous' ||
         this.username === this.server.options.anonymous) {
       return this.login(this.username, '@anonymous')

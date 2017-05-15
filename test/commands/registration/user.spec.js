@@ -40,7 +40,7 @@ describe(CMD, function () {
   it('test // successful | anonymous login', done => {
     mockClient.server.options = {anonymous: true};
 
-    cmdFn({ command: { arg: 'test' } })
+    cmdFn({ command: { arg: 'anonymous' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(230);
       expect(mockClient.login.callCount).to.equal(1);
@@ -71,15 +71,24 @@ describe(CMD, function () {
     .catch(done);
   });
 
-  it('test // unsuccessful | login function rejects', done => {
+  it('test // successful | regular login if anonymous is true', done => {
     mockClient.server.options = {anonymous: true};
-
-    mockClient.login.restore();
-    sandbox.stub(mockClient, 'login').rejects(new Error('test'));
 
     cmdFn({ log: mockLog, command: { arg: 'test' } })
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(530);
+      expect(mockClient.reply.args[0][0]).to.equal(331);
+      expect(mockClient.login.callCount).to.equal(0);
+      done();
+    })
+    .catch(done);
+  });
+
+  it('test // successful | anonymous login with set username', done => {
+    mockClient.server.options = {anonymous: 'sillyrabbit'};
+
+    cmdFn({ log: mockLog, command: { arg: 'sillyrabbit' } })
+    .then(() => {
+      expect(mockClient.reply.args[0][0]).to.equal(230);
       expect(mockClient.login.callCount).to.equal(1);
       done();
     })
