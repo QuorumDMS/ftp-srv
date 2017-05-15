@@ -67,7 +67,7 @@ __Default:__ `null`
 
 ##### `tls`
 Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit (`ftps` protocol) or explicit (`AUTH TLS`) connections.  
-__Default:__ `{}`
+__Default:__ `false`
 
 ##### `anonymous`
 If true, will allow clients to authenticate using the username `anonymous`, not requiring a password from the user.  

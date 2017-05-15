@@ -19,11 +19,14 @@ class FtpServer {
       blacklist: [],
       whitelist: [],
       greeting: null,
-      tls: {}
+      tls: false
     }, options);
     this._greeting = this.setupGreeting(this.options.greeting);
     this._features = this.setupFeaturesMessage();
     this._tls = this.setupTLS(this.options.tls);
+
+    delete this.options.greeting;
+    delete this.options.tls;
 
     this.connections = {};
     this.log = this.options.log;
@@ -58,7 +61,7 @@ class FtpServer {
   }
 
   get isTLS() {
-    return this.url.protocol === 'ftps:';
+    return this.url.protocol === 'ftps:' && this._tls;
   }
 
   listen() {
@@ -68,7 +71,11 @@ class FtpServer {
       return when.promise((resolve, reject) => {
         this.server.listen(this.url.port, err => {
           if (err) return reject(err);
-          this.log.info({ip: this.url.hostname, port: this.url.port}, `Listening${this.isTLS ? ' (TLS)' : ''}`);
+          this.log.info({
+            protocol: this.url.protocol.replace(/\W/g, ''),
+            ip: this.url.hostname,
+            port: this.url.port
+          }, 'Listening');
           resolve();
         });
       });
@@ -87,6 +94,7 @@ class FtpServer {
   }
 
   setupTLS(_tls) {
+    if (!tls) return false;
     return _.assign(_tls, {
       cert: _tls.cert ? fs.readFileSync(_tls.cert) : undefined,
       key: _tls.key ? fs.readFileSync(_tls.key) : undefined,
