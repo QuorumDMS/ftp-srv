@@ -5,6 +5,6 @@ module.exports = {
   handler: function (args) {
     return list.call(this, args);
   },
-  syntax: '{{cmd}} [path(optional)]',
+  syntax: '{{cmd}} [<path>]',
   description: 'Returns a list of file names in a specified directory'
 };

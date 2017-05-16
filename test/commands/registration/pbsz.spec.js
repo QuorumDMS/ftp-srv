@@ -2,14 +2,13 @@ const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const CMD = 'AUTH';
+const CMD = 'PBSZ';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
     reply: () => when.resolve(),
-    server: {
-      _tls: {}
-    }
+    server: {},
+    secure: true
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -22,29 +21,34 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('TLS // supported', done => {
-    cmdFn({command: { arg: 'TLS', directive: CMD}})
+  it('// unsuccessful', done => {
+    cmdFn()
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(234);
-      expect(mockClient.secure).to.equal(true);
+      expect(mockClient.reply.args[0][0]).to.equal(202);
       done();
     })
     .catch(done);
   });
 
-  it('SSL // not supported', done => {
-    cmdFn({command: { arg: 'SSL', directive: CMD}})
+  it('// successful', done => {
+    mockClient.server._tls = {};
+
+    cmdFn({command: {arg: '0'}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(504);
+      expect(mockClient.reply.args[0][0]).to.equal(200);
+      expect(mockClient.bufferSize).to.equal(0);
       done();
     })
     .catch(done);
   });
 
-  it('bad // bad', done => {
-    cmdFn({command: { arg: 'bad', directive: CMD}})
+  it('// successful', done => {
+    mockClient.server._tls = {};
+
+    cmdFn({command: {arg: '10'}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(504);
+      expect(mockClient.reply.args[0][0]).to.equal(200);
+      expect(mockClient.bufferSize).to.equal(10);
       done();
     })
     .catch(done);

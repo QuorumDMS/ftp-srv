@@ -1,4 +1,5 @@
 const net = require('net');
+const tls = require('tls');
 const when = require('when');
 
 const Connector = require('./base');
@@ -12,9 +13,7 @@ class Passive extends Connector {
   }
 
   waitForConnection({timeout = 5000, delay = 250} = {}) {
-    if (!this.dataServer) {
-      return when.reject(new errors.ConnectorError('Passive server not setup'));
-    }
+    if (!this.dataServer) return when.reject(new errors.ConnectorError('Passive server not setup'));
     return when.iterate(
       () => {},
       () => this.dataServer && this.dataServer.listening && this.dataSocket && this.dataSocket.connected,
@@ -31,8 +30,7 @@ class Passive extends Connector {
     return closeExistingServer()
     .then(() => this.getPort())
     .then(port => {
-      this.dataSocket = null;
-      this.dataServer = net.createServer({ pauseOnConnect: true }, socket => {
+      const connectionHandler = socket => {
         if (this.connection.commandSocket.remoteAddress !== socket.remoteAddress) {
           this.log.error({
             pasv_connection: socket.remoteAddress,
@@ -45,17 +43,29 @@ class Passive extends Connector {
         }
         this.log.debug({port}, 'Passive connection fulfilled.');
 
-        this.dataSocket = socket;
+        if (this.connection.secure) {
+          const secureContext = tls.createSecureContext(this.server._tls);
+          const secureSocket = new tls.TLSSocket(socket, {
+            isServer: true,
+            secureContext
+          });
+          this.dataSocket = secureSocket;
+        } else {
+          this.dataSocket = socket;
+        }
         this.dataSocket.connected = true;
         this.dataSocket.setEncoding(this.connection.encoding);
-        this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this, context: 'dataSocket', error: err}));
+        this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
         this.dataSocket.on('close', () => {
           this.log.debug('Passive connection closed');
           this.end();
         });
-      });
+      };
+
+      this.dataSocket = null;
+      this.dataServer = net.createServer({ pauseOnConnect: true }, connectionHandler);
       this.dataServer.maxConnections = 1;
-      this.dataServer.on('error', err => this.server.emit('client-error', {connection: this, context: 'dataServer', error: err}));
+      this.dataServer.on('error', err => this.server.emit('client-error', {connection: this.connection, context: 'dataServer', error: err}));
       this.dataServer.on('close', () => {
         this.log.debug('Passive server closed');
         this.dataServer = null;

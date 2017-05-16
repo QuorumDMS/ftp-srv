@@ -12,6 +12,6 @@ module.exports = {
     const handler = registry[subCommand.directive].handler.bind(this);
     return when.try(handler, { log: subLog, command: subCommand });
   },
-  syntax: '{{cmd}} [subVerb] [subParams]',
+  syntax: '{{cmd}} <subVerb> [...<subParams>]',
   description: 'Sends site specific commands to remote server'
 };

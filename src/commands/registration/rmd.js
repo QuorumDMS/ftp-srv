@@ -5,6 +5,6 @@ module.exports = {
   handler: function (args) {
     return dele.call(this, args);
   },
-  syntax: '{{cmd}} [path]',
+  syntax: '{{cmd}} <path>',
   description: 'Remove a directory'
 };

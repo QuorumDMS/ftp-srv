@@ -24,7 +24,7 @@ describe(CMD, function () {
     cmdFn({ command: { arg: 'A' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
-      expect(mockClient.encoding).to.equal('utf-8');
+      expect(mockClient.encoding).to.equal('utf8');
       done();
     })
     .catch(done);

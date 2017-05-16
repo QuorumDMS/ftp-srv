@@ -15,7 +15,8 @@ class FtpConnection {
     this.id = uuid.v4();
     this.log = options.log.child({id: this.id, ip: this.ip});
     this.commands = new Commands(this);
-    this.encoding = 'utf-8';
+    this.encoding = 'utf8';
+    this.bufferSize = false;
 
     this.connector = new BaseConnector(this);
 
@@ -33,8 +34,8 @@ class FtpConnection {
   }
 
   _handleData(data) {
-    const messages = _.compact(data.toString('utf-8').split('\r\n'));
-    this.log.trace(messages, 'Messages');
+    const messages = _.compact(data.toString('utf8').split('\r\n'));
+    this.log.trace(messages);
     return sequence(messages.map(message => this.commands.handle.bind(this.commands, message)));
   }
 

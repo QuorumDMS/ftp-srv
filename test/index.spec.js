@@ -17,7 +17,12 @@ describe('FtpServer', function () {
   before(done => {
     server = new FtpServer(process.env.FTP_URL, {
       log,
-      pasv_range: process.env.PASV_RANGE
+      pasv_range: process.env.PASV_RANGE,
+      tls: {
+        key: `${process.cwd()}/test/cert/server.key`,
+        cert: `${process.cwd()}/test/cert/server.crt`,
+        ca: `${process.cwd()}/test/cert/server.csr`
+      }
     });
     server.on('login', (data, resolve) => {
       resolve({root: process.cwd()});
@@ -59,41 +64,41 @@ describe('FtpServer', function () {
     });
   });
 
-  it('CWD ..', done => {
-    const dir = '..';
-    client.cwd(`${dir}`, (err, data) => {
-      expect(err).to.not.exist;
-      expect(data).to.be.a('string');
-      done();
-    });
-  });
-
-  it('CWD test', done => {
-    const dir = 'test';
-    client.cwd(`${dir}`, (err, data) => {
-      expect(err).to.not.exist;
-      expect(data).to.be.a('string');
-      done();
-    });
-  });
-
-  it('PWD', done => {
-    client.pwd((err, data) => {
-      expect(err).to.not.exist;
-      expect(data).to.be.a('string');
-      done();
-    });
-  });
-
-  it('LIST .', done => {
-    client.list('.', (err, data) => {
-      expect(err).to.not.exist;
-      expect(data).to.be.an('array');
-      done();
-    });
-  });
-
   const runFileSystemTests = () => {
+    it('CWD ..', done => {
+      const dir = '..';
+      client.cwd(`${dir}`, (err, data) => {
+        expect(err).to.not.exist;
+        expect(data).to.be.a('string');
+        done();
+      });
+    });
+
+    it('CWD test', done => {
+      const dir = 'test';
+      client.cwd(`${dir}`, (err, data) => {
+        expect(err).to.not.exist;
+        expect(data).to.be.a('string');
+        done();
+      });
+    });
+
+    it('PWD', done => {
+      client.pwd((err, data) => {
+        expect(err).to.not.exist;
+        expect(data).to.be.a('string');
+        done();
+      });
+    });
+
+    it('LIST .', done => {
+      client.list('.', (err, data) => {
+        expect(err).to.not.exist;
+        expect(data).to.be.an('array');
+        done();
+      });
+    });
+
     it('STOR test.txt', done => {
       const buffer = Buffer.from('test text file');
       client.put(buffer, 'test.txt', err => {
@@ -180,6 +185,47 @@ describe('FtpServer', function () {
         done();
       });
     });
+
+    it('MKD tmp', done => {
+      if (fs.existsSync('./test/tmp')) {
+        fs.rmdirSync('./test/tmp');
+      }
+      client.mkdir('tmp', err => {
+        expect(err).to.not.exist;
+        expect(fs.existsSync('./test/tmp')).to.equal(true);
+        done();
+      });
+    });
+
+    it('CWD tmp', done => {
+      client.cwd('tmp', (err, data) => {
+        expect(err).to.not.exist;
+        expect(data).to.be.a('string');
+        done();
+      });
+    });
+
+    it('CDUP', done => {
+      client.cdup(err => {
+        expect(err).to.not.exist;
+        done();
+      });
+    });
+
+    it('RMD tmp', done => {
+      client.rmdir('tmp', err => {
+        expect(err).to.not.exist;
+        expect(fs.existsSync('./test/tmp')).to.equal(false);
+        done();
+      });
+    });
+
+    it('CDUP', done => {
+      client.cdup(err => {
+        expect(err).to.not.exist;
+        done();
+      });
+    });
   };
 
   it('TYPE A', done => {
@@ -198,39 +244,26 @@ describe('FtpServer', function () {
   });
   runFileSystemTests();
 
-  it('MKD tmp', done => {
-    if (fs.existsSync('./test/tmp')) {
-      fs.rmdirSync('./test/tmp');
-    }
-    client.mkdir('tmp', err => {
-      expect(err).to.not.exist;
-      expect(fs.existsSync('./test/tmp')).to.equal(true);
-      done();
+  it('AUTH TLS', done => {
+    client.end();
+    client.once('close', () => {
+      client = new FtpClient();
+      client.once('ready', () => done());
+      client.once('error', err => done(err));
+      client.connect({
+        host: server.url.hostname,
+        port: server.url.port,
+        user: 'test',
+        password: 'test',
+        secure: true,
+        secureOptions: {
+          rejectUnauthorized: false,
+          checkServerIdentity: () => undefined
+        }
+      });
     });
   });
-
-  it('CWD tmp', done => {
-    client.cwd('tmp', (err, data) => {
-      expect(err).to.not.exist;
-      expect(data).to.be.a('string');
-      done();
-    });
-  });
-
-  it('CDUP', done => {
-    client.cdup(err => {
-      expect(err).to.not.exist;
-      done();
-    });
-  });
-
-  it('RMD tmp', done => {
-    client.rmdir('tmp', err => {
-      expect(err).to.not.exist;
-      expect(fs.existsSync('./test/tmp')).to.equal(false);
-      done();
-    });
-  });
+  runFileSystemTests();
 
   it('QUIT', done => {
     client.once('close', done);

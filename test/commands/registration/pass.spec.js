@@ -10,7 +10,7 @@ describe(CMD, function () {
     reply: () => {},
     login: () => {},
     server: { options: { anonymous: false } },
-    username: 'user'
+    username: 'anonymous'
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -28,18 +28,18 @@ describe(CMD, function () {
     cmdFn({log, command: {arg: 'pass', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(230);
-      expect(mockClient.login.args[0]).to.eql(['user', 'pass']);
+      expect(mockClient.login.args[0]).to.eql(['anonymous', 'pass']);
       done();
     })
     .catch(done);
   });
 
-  it('// successful (anonymous)', done => {
+  it('// successful (already authenticated)', done => {
     mockClient.server.options.anonymous = true;
     mockClient.authenticated = true;
     cmdFn({log, command: {directive: CMD}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(230);
+      expect(mockClient.reply.args[0][0]).to.equal(202);
       expect(mockClient.login.callCount).to.equal(0);
       mockClient.server.options.anonymous = false;
       mockClient.authenticated = false;

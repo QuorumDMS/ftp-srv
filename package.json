@@ -14,7 +14,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stewarttylerr/ftp-srv"
+    "url": "https://github.com/trs/ftp-srv"
   },
   "scripts": {
     "pre-release": "npm-run-all verify test:coverage build ",

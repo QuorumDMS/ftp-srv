@@ -16,7 +16,7 @@ module.exports = {
       return this.reply(211, 'Supported commands:', ...supportedCommands, 'Use "HELP [command]" for syntax help.');
     }
   },
-  syntax: '{{cmd}} [command(optional)]',
+  syntax: '{{cmd}} [<command>]',
   description: 'Returns usage documentation on a command if specified, else a general help document is returned',
   flags: {
     no_auth: true

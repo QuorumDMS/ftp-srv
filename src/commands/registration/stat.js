@@ -39,6 +39,6 @@ module.exports = {
       return this.reply(211, 'Status OK');
     }
   },
-  syntax: '{{cmd}} [path(optional)]',
+  syntax: '{{cmd}} [<path>]',
   description: 'Returns the current status'
 };

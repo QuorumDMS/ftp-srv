@@ -15,7 +15,7 @@ module.exports = {
       return this.reply(550, err.message);
     });
   },
-  syntax: '{{cmd}} [path]',
+  syntax: '{{cmd}} <path>',
   description: 'Return the size of a file',
   flags: {
     feat: 'SIZE'
