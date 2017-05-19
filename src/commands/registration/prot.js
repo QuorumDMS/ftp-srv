@@ -3,7 +3,7 @@ const _ = require('lodash');
 module.exports = {
   directive: 'PROT',
   handler: function ({command} = {}) {
-    if (!this.server._tls || !this.secure) return this.reply(202, 'Not suppored');
+    if (!this.secure) return this.reply(202, 'Not suppored');
     if (!this.bufferSize && typeof this.bufferSize !== 'number') return this.reply(503);
 
     switch (_.toUpper(command.arg)) {

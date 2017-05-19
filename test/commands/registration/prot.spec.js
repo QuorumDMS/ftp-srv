@@ -7,8 +7,7 @@ describe(CMD, function () {
   let sandbox;
   const mockClient = {
     reply: () => when.resolve(),
-    server: {},
-    secure: true
+    server: {}
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -32,6 +31,7 @@ describe(CMD, function () {
 
   it('// unsuccessful - no bufferSize', done => {
     mockClient.server._tls = {};
+    mockClient.secure = true;
 
     cmdFn({command: {arg: 'P'}})
     .then(() => {
@@ -43,6 +43,7 @@ describe(CMD, function () {
 
   it('// successful', done => {
     mockClient.bufferSize = 0;
+    mockClient.secure = true;
 
     cmdFn({command: {arg: 'p'}})
     .then(() => {
@@ -53,6 +54,7 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful - unsupported', done => {
+    mockClient.secure = true;
     cmdFn({command: {arg: 'C'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(536);
@@ -62,6 +64,7 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful - unknown', done => {
+    mockClient.secure = true;
     cmdFn({command: {arg: 'QQ'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
