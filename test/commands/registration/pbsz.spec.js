@@ -7,8 +7,7 @@ describe(CMD, function () {
   let sandbox;
   const mockClient = {
     reply: () => when.resolve(),
-    server: {},
-    secure: true
+    server: {}
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -31,6 +30,7 @@ describe(CMD, function () {
   });
 
   it('// successful', done => {
+    mockClient.secure = true;
     mockClient.server._tls = {};
 
     cmdFn({command: {arg: '0'}})
@@ -43,6 +43,7 @@ describe(CMD, function () {
   });
 
   it('// successful', done => {
+    mockClient.secure = true;
     mockClient.server._tls = {};
 
     cmdFn({command: {arg: '10'}})
