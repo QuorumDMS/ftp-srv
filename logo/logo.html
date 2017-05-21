@@ -2,20 +2,20 @@
 <html>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
       body {
         padding: 0;
         margin: 0;
       }
       h1 {
-        display: flex;
+        display: inline-block;
         margin: 0;
-        padding: 0 2px;
-        font-size: 70px;
+        margin-left: -4px;
+        padding: 0px;
+        font-size: 68px;
         font-family: 'Source Code Pro', monospace;
         font-weight: bold;
-        line-height: 0.9em;
+        line-height: 0.8em;
         letter-spacing: -3px;
         color: #333;
         -webkit-font-smoothing: antialiased;
@@ -23,24 +23,25 @@
           1px 0px 0px #ccc, 0px 1px 0px #eee,
           2px 1px 0px #ccc, 1px 2px 0px #eee,
           3px 2px 0px #ccc, 2px 3px 0px #eee,
-          4px 3px 0px #ccc, 3px 4px 0px #eee,
-          5px 4px 0px #ccc, 4px 5px 0px #eee,
-          6px 5px 0px #ccc, 5px 6px 0px #eee,
-          7px 6px 0px #ccc;
+          4px 3px 0px #ccc;
       }
-      h1 > i {
-        font-size: 40px !important;
-        color: #03A9F4;
-        align-self: center;
-        letter-spacing: 2px;
+      h1 > span {
+        display: block;
+        padding: 0;
+        margin: 0;
+        padding-top: 6px;
+      }
+      img {
+        display: inline-block;
+        vertical-align: top;
       }
     </style>
   </head>
 
   <body>
     <h1>
-      <i class="fa fa-paper-plane"></i>
       <span>ftp-srv</span>
     </h1>
+    <img src="icon.svg" width="76px" height="76px" />
   </body>
 </html>
