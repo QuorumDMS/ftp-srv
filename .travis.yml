@@ -12,5 +12,8 @@ script:
   - npm run verify:js
   - npm run test:coverage
 
+after_script:
+  - npm run upload-coverage
+
 after_success:
   - if [ $TRAVIS_BRANCH = 'master' ]; then npm run semantic-release; fi
