@@ -18,13 +18,18 @@ module.exports = {
     .then(() => when.try(this.fs.write.bind(this.fs), fileName, {append}))
     .then(stream => {
       return when.promise((resolve, reject) => {
-        stream.on('error', err => dataSocket.emit('error', err));
+        stream.once('error', err => dataSocket.emit('error', err));
+        stream.once('finish', () => resolve(this.reply(226, fileName)));
 
-        dataSocket.on('end', () => stream.end(() => resolve(this.reply(226, fileName))));
-        dataSocket.on('error', err => reject(err));
+        // Emit `close` if stream has a close listener, otherwise emit `finish` with the end() method
+        // It is assumed that the `close` handler will call the end() method
+        dataSocket.once('end', () => stream.listenerCount('close') ? stream.emit('close') : stream.end());
+        dataSocket.once('error', err => reject(err));
         dataSocket.on('data', data => stream.write(data, this.encoding));
+
         this.reply(150).then(() => dataSocket.resume());
-      });
+      })
+      .finally(() => when.try(stream.destroy.bind(stream)));
     })
     .catch(when.TimeoutError, err => {
       log.error(err);
