@@ -8,18 +8,20 @@ module.exports = {
   directive: 'LIST',
   handler: function ({log, command} = {}) {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
+    if (!this.fs.get) return this.reply(402, 'Not supported by file system');
     if (!this.fs.list) return this.reply(402, 'Not supported by file system');
 
     const simple = command.directive === 'NLST';
 
     let dataSocket;
-    const directory = command.arg || '.';
+    const path = command.arg || '.';
     return this.connector.waitForConnection()
     .then(socket => {
       this.commandSocket.pause();
       dataSocket = socket;
     })
-    .then(() => when.try(this.fs.list.bind(this.fs), directory))
+    .then(() => when.try(this.fs.get.bind(this.fs), path))
+    .then(stat => stat.isDirectory() ? when.try(this.fs.list.bind(this.fs), path) : [stat])
     .then(files => {
       const getFileMessage = file => {
         if (simple) return file.name;
