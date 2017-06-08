@@ -68,7 +68,8 @@ class FileSystem {
   write(fileName, {append = false} = {}) {
     const {fsPath} = this._resolvePath(fileName);
     const stream = syncFs.createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+'});
-    stream.on('error', () => fs.unlink(fsPath));
+    stream.once('error', () => fs.unlink(fsPath));
+    stream.once('close', () => stream.end());
     return stream;
   }
 

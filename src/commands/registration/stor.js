@@ -18,11 +18,13 @@ module.exports = {
     .then(() => when.try(this.fs.write.bind(this.fs), fileName, {append}))
     .then(stream => {
       return when.promise((resolve, reject) => {
-        stream.on('error', err => dataSocket.emit('error', err));
+        stream.once('error', err => dataSocket.emit('error', err));
+        stream.once('finish', () => resolve(this.reply(226, fileName)));
 
-        dataSocket.on('end', () => stream.end(() => resolve(this.reply(226, fileName))));
-        dataSocket.on('error', err => reject(err));
+        dataSocket.once('end', () => stream.emit('close'));
+        dataSocket.once('error', err => reject(err));
         dataSocket.on('data', data => stream.write(data, this.encoding));
+
         this.reply(150).then(() => dataSocket.resume());
       });
     })
