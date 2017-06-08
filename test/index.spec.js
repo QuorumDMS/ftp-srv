@@ -95,6 +95,16 @@ describe('FtpServer', function () {
       client.list('.', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.be.an('array');
+        expect(data.length).to.be.above(1);
+        done();
+      });
+    });
+
+    it('LIST index.spec.js', done => {
+      client.list('index.spec.js', (err, data) => {
+        expect(err).to.not.exist;
+        expect(data).to.be.an('array');
+        expect(data.length).to.be.equal(1);
         done();
       });
     });

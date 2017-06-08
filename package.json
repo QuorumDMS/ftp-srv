@@ -12,6 +12,9 @@
   ],
   "license": "MIT",
   "main": "src/index.js",
+  "files": [
+    "src"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/trs/ftp-srv"
@@ -46,33 +49,33 @@
     }
   },
   "dependencies": {
-    "bunyan": "^1.8.9",
+    "bunyan": "^1.8.10",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "uuid": "^3.0.1",
     "when": "^3.7.8"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.0.2",
     "chokidar-cli": "1.2.0",
-    "coveralls": "2.11.15",
-    "cross-env": "3.1.4",
-    "cz-customizable": "4.0.0",
+    "coveralls": "2.13.1",
+    "cross-env": "5.0.1",
+    "cz-customizable": "5.0.0",
     "cz-customizable-ghooks": "1.5.0",
     "dotenv": "^4.0.0",
-    "eslint": "3.14.1",
-    "eslint-config-google": "0.7.1",
-    "eslint-plugin-node": "3.0.5",
+    "eslint": "3.19.0",
+    "eslint-config-google": "0.8.0",
+    "eslint-plugin-node": "5.0.0",
     "ftp": "^0.3.10",
     "html-convert": "^2.1.7",
-    "husky": "0.13.1",
+    "husky": "0.13.4",
     "istanbul": "0.4.5",
-    "mocha": "3.2.0",
+    "mocha": "3.4.2",
     "mocha-pretty-bunyan-nyan": "^1.0.4",
-    "npm-run-all": "4.0.1",
-    "rimraf": "2.5.4",
-    "semantic-release": "^6.3.2",
-    "sinon": "^2.1.0"
+    "npm-run-all": "4.0.2",
+    "rimraf": "2.6.1",
+    "semantic-release": "^6.3.6",
+    "sinon": "^2.3.2"
   },
   "engines": {
     "node": ">=6.x",

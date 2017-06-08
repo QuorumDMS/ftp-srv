@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - "6"
+  - "node"
 
 env:
   FTP_URL: ftp://127.0.0.1:8880
@@ -15,5 +16,9 @@ script:
 after_script:
   - npm run upload-coverage
 
-after_success:
-  - if [ $TRAVIS_BRANCH = 'master' ]; then npm run semantic-release; fi
+deploy:
+  provider: script
+  script: npm run semantic-release
+  on:
+    branch: master
+    node: "6"

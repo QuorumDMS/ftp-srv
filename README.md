@@ -163,11 +163,11 @@ __Used in:__ `PWD`
 
 #### [`get(fileName)`](src/fs.js#L33)  
 Returns a file stat object of file or directory  
-__Used in:__ `STAT`, `SIZE`, `RNFR`, `MDTM`
+__Used in:__ `LIST`, `NLST`, `STAT`, `SIZE`, `RNFR`, `MDTM`
 
 #### [`list(path)`](src/fs.js#L39)  
 Returns array of file and directory stat objects  
-__Used in:__ `LIST`, `STAT`
+__Used in:__ `LIST`, `NLST`, `STAT`
 
 #### [`chdir(path)`](src/fs.js#L56)  
 Returns new directory relative to current directory  
