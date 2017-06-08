@@ -21,7 +21,9 @@ module.exports = {
         stream.once('error', err => dataSocket.emit('error', err));
         stream.once('finish', () => resolve(this.reply(226, fileName)));
 
-        dataSocket.once('end', () => stream.emit('close'));
+        // Emit `close` if stream has a close listener, otherwise emit `finish` with the end() method
+        // It is assumed that the `close` handler will call the end() method
+        dataSocket.once('end', () => stream.listenerCount('close') ? stream.emit('close') : stream.end());
         dataSocket.once('error', err => reject(err));
         dataSocket.on('data', data => stream.write(data, this.encoding));
 
