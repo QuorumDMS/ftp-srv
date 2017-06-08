@@ -26,7 +26,8 @@ module.exports = {
         dataSocket.on('data', data => stream.write(data, this.encoding));
 
         this.reply(150).then(() => dataSocket.resume());
-      });
+      })
+      .finally(() => when.try(stream.destroy.bind(stream)));
     })
     .catch(when.TimeoutError, err => {
       log.error(err);
