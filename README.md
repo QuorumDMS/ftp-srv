@@ -150,11 +150,26 @@ Occurs when an error arises in the client connection.
 See the [command registry](src/commands/registration) for a list of all implemented FTP commands.
 
 ## File System
-The default file system can be overwritten to use your own implementation.  
+The default [file system](src/fs.js) can be overwritten to use your own implementation.  
 This can allow for virtual file systems, and more.  
 Each connection can set it's own file system based on the user.  
 
-Custom file systems can implement the following variables depending on the developers needs.
+The default file system is exported and can be extended as needed:
+```js
+const {FtpSrv, FileSystem} = require('ftp-srv');
+
+class MyFileSystem extends FileSystem {
+  constructor() {
+    super(...arguments);
+  }
+
+  get(fileName) {
+    ...
+  }
+}
+```
+
+Custom file systems can implement the following variables depending on the developers needs:
 
 ### Methods
 #### [`currentDirectory()`](src/fs.js#L29)

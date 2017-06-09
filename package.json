@@ -8,10 +8,11 @@
     "ftp-srv",
     "ftp-svr",
     "ftpd",
-    "server"
+    "server",
+    "ftpserver"
   ],
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "ftp-srv.js",
   "files": [
     "src"
   ],
