@@ -8,7 +8,8 @@
     "ftp-srv",
     "ftp-svr",
     "ftpd",
-    "server"
+    "server",
+    "ftpserver"
   ],
   "license": "MIT",
   "main": "ftp-srv.js",
