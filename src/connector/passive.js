@@ -89,7 +89,8 @@ class Passive extends Connector {
         this.server.options.pasv_range.split('-').map(v => v ? parseInt(v) : v) :
         [this.server.options.pasv_range];
       return findPort(min, max);
-    } else return undefined;
+    }
+    throw new errors.ConnectorError('Invalid pasv_range');
   }
 
 }
