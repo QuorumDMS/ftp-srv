@@ -20,38 +20,32 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// unsuccessful', done => {
-    cmdFn()
+  it('// unsuccessful', () => {
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(202);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful', done => {
+  it('// successful', () => {
     mockClient.secure = true;
     mockClient.server._tls = {};
 
-    cmdFn({command: {arg: '0'}})
+    return cmdFn({command: {arg: '0'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.bufferSize).to.equal(0);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful', done => {
+  it('// successful', () => {
     mockClient.secure = true;
     mockClient.server._tls = {};
 
-    cmdFn({command: {arg: '10'}})
+    return cmdFn({command: {arg: '10'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.bufferSize).to.equal(10);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

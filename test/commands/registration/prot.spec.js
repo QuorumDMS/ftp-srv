@@ -20,56 +20,46 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// unsuccessful', done => {
-    cmdFn()
+  it('// unsuccessful', () => {
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(202);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful - no bufferSize', done => {
+  it('// unsuccessful - no bufferSize', () => {
     mockClient.server._tls = {};
     mockClient.secure = true;
 
-    cmdFn({command: {arg: 'P'}})
+    return cmdFn({command: {arg: 'P'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(503);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful', done => {
+  it('// successful', () => {
     mockClient.bufferSize = 0;
     mockClient.secure = true;
 
-    cmdFn({command: {arg: 'p'}})
+    return cmdFn({command: {arg: 'p'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful - unsupported', done => {
+  it('// unsuccessful - unsupported', () => {
     mockClient.secure = true;
-    cmdFn({command: {arg: 'C'}})
+    return cmdFn({command: {arg: 'C'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(536);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful - unknown', done => {
+  it('// unsuccessful - unknown', () => {
     mockClient.secure = true;
-    cmdFn({command: {arg: 'QQ'}})
+    return cmdFn({command: {arg: 'QQ'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

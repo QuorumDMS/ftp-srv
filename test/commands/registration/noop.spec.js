@@ -19,12 +19,10 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// successful', done => {
-    cmdFn()
+  it('// successful', () => {
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

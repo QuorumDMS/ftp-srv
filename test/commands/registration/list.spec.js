@@ -87,33 +87,31 @@ describe(CMD, function () {
   });
 
   describe('// check', function () {
-    it('fails on no fs', done => {
+    it('fails on no fs', () => {
       const badMockClient = { reply: () => {} };
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      badCmdFn()
+
+      return badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(550);
-        done();
-      })
-      .catch(done);
+      });
     });
 
-    it('fails on no fs list command', done => {
+    it('fails on no fs list command', () => {
       const badMockClient = { reply: () => {}, fs: {} };
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      badCmdFn()
+
+      return badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(402);
-        done();
-      })
-      .catch(done);
+      });
     });
   });
 
-  it('. // successful', done => {
-    cmdFn({log, command: {directive: CMD}})
+  it('. // successful', () => {
+    return cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1].length).to.equal(3);
@@ -121,12 +119,10 @@ describe(CMD, function () {
       expect(mockClient.reply.args[1][1]).to.have.property('message');
       expect(mockClient.reply.args[1][1]).to.have.property('socket');
       expect(mockClient.reply.args[2][0]).to.equal(226);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('testfile.txt // successful', done => {
+  it('testfile.txt // successful', () => {
     mockClient.fs.get.restore();
     sandbox.stub(mockClient.fs, 'get').resolves({
       name: 'testfile.txt',
@@ -147,7 +143,7 @@ describe(CMD, function () {
       isDirectory: () => false
     });
 
-    cmdFn({log, command: {directive: CMD, arg: 'testfile.txt'}})
+    return cmdFn({log, command: {directive: CMD, arg: 'testfile.txt'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1].length).to.equal(2);
@@ -155,31 +151,25 @@ describe(CMD, function () {
       expect(mockClient.reply.args[1][1]).to.have.property('message');
       expect(mockClient.reply.args[1][1]).to.have.property('socket');
       expect(mockClient.reply.args[2][0]).to.equal(226);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('. // unsuccessful', done => {
+  it('. // unsuccessful', () => {
     mockClient.fs.list.restore();
     sandbox.stub(mockClient.fs, 'list').rejects(new Error());
 
-    cmdFn({log, command: {directive: CMD}})
+    return cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(451);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('. // unsuccessful (timeout)', done => {
+  it('. // unsuccessful (timeout)', () => {
     sandbox.stub(mockClient.connector, 'waitForConnection').returns(when.reject(new when.TimeoutError()));
 
-    cmdFn({log, command: {directive: CMD}})
+    return cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

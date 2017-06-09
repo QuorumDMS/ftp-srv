@@ -19,39 +19,31 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// successful', done => {
-    cmdFn({command: { directive: CMD }})
+  it('// successful', () => {
+    return cmdFn({command: { directive: CMD }})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(211);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('help // successful', done => {
-    cmdFn({command: { arg: 'help', directive: CMD}})
+  it('help // successful', () => {
+    return cmdFn({command: { arg: 'help', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(214);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('help // successful', done => {
-    cmdFn({command: { arg: 'allo', directive: CMD}})
+  it('allo // successful', () => {
+    return cmdFn({command: { arg: 'allo', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(214);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('bad // unsuccessful', done => {
-    cmdFn({command: { arg: 'bad', directive: CMD}})
+  it('bad // unsuccessful', () => {
+    return cmdFn({command: { arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(502);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

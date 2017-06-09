@@ -25,58 +25,48 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// unsuccessful | no renameFrom set', done => {
+  it('// unsuccessful | no renameFrom set', () => {
     delete mockClient.renameFrom;
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(503);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | no file system', done => {
+  it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | file system does not have functions', done => {
+  it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('new // unsuccessful | rename fails', done => {
+  it('new // unsuccessful | rename fails', () => {
     mockClient.fs.rename.restore();
     sandbox.stub(mockClient.fs, 'rename').rejects(new Error('test'));
 
-    cmdFn({ log: mockLog, command: { arg: 'new' } })
+    return cmdFn({ log: mockLog, command: { arg: 'new' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('new // successful', done => {
-    cmdFn({ command: { arg: 'new' } })
+  it('new // successful', () => {
+    return cmdFn({ command: { arg: 'new' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(250);
       expect(mockClient.fs.rename.args[0]).to.eql(['test', 'new']);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

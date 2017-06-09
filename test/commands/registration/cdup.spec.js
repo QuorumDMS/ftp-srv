@@ -25,13 +25,11 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('.. // successful', done => {
-    cmdFn({log, command: {directive: CMD}})
+  it('.. // successful', () => {
+    return cmdFn({log, command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(250);
       expect(mockClient.fs.chdir.args[0][0]).to.equal('..');
-      done();
-    })
-    .catch(done);
+    });
   });
 });

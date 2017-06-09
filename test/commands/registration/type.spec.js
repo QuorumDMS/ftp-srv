@@ -20,43 +20,35 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('A // successful', done => {
-    cmdFn({ command: { arg: 'A' } })
+  it('A // successful', () => {
+    return cmdFn({ command: { arg: 'A' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.encoding).to.equal('utf8');
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('I // successful', done => {
-    cmdFn({ command: { arg: 'I' } })
+  it('I // successful', () => {
+    return cmdFn({ command: { arg: 'I' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.encoding).to.equal('binary');
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('L // successful', done => {
-    cmdFn({ command: { arg: 'L' } })
+  it('L // successful', () => {
+    return cmdFn({ command: { arg: 'L' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.encoding).to.equal('binary');
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('X // successful', done => {
-    cmdFn({ command: { arg: 'X' } })
+  it('X // successful', () => {
+    return cmdFn({ command: { arg: 'X' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
       expect(mockClient.encoding).to.equal(null);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

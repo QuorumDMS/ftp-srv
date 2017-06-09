@@ -23,61 +23,53 @@ describe(CMD, function () {
   });
 
   describe('// check', function () {
-    it('fails on no fs', done => {
+    it('fails on no fs', () => {
       const badMockClient = { reply: () => {} };
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      badCmdFn()
+
+      return badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(550);
-        done();
-      })
-      .catch(done);
+      });
     });
 
-    it('fails on no fs currentDirectory command', done => {
+    it('fails on no fs currentDirectory command', () => {
       const badMockClient = { reply: () => {}, fs: {} };
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
-      badCmdFn()
+
+      return badCmdFn()
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(402);
-        done();
-      })
-      .catch(done);
+      });
     });
   });
 
-  it('// successful', done => {
-    cmdFn({log, command: { arg: 'test', directive: CMD}})
+  it('// successful', () => {
+    return cmdFn({log, command: { arg: 'test', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(257);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful', done => {
+  it('// successful', () => {
     mockClient.fs.currentDirectory.restore();
     sandbox.stub(mockClient.fs, 'currentDirectory').resolves('/test');
 
-    cmdFn({log, command: {arg: 'test', directive: CMD}})
+    return cmdFn({log, command: {arg: 'test', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(257);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful', done => {
+  it('// unsuccessful', () => {
     mockClient.fs.currentDirectory.restore();
     sandbox.stub(mockClient.fs, 'currentDirectory').rejects(new Error('Bad'));
 
-    cmdFn({log, command: {arg: 'bad', directive: CMD}})
+    return cmdFn({log, command: {arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
-      done();
-    })
-    .catch(done);
+    });
   });
 });
