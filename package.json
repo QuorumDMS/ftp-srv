@@ -11,7 +11,7 @@
     "server"
   ],
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "ftp-srv.js",
   "files": [
     "src"
   ],
