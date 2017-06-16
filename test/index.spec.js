@@ -14,7 +14,7 @@ describe('FtpServer', function () {
   let server;
   let client;
 
-  before(done => {
+  before(() => {
     server = new FtpServer(process.env.FTP_URL, {
       log,
       pasv_range: process.env.PASV_RANGE,
@@ -22,14 +22,14 @@ describe('FtpServer', function () {
         key: `${process.cwd()}/test/cert/server.key`,
         cert: `${process.cwd()}/test/cert/server.crt`,
         ca: `${process.cwd()}/test/cert/server.csr`
-      }
+      },
+      greeting: ['hello', 'world']
     });
     server.on('login', (data, resolve) => {
       resolve({root: process.cwd()});
     });
 
-    server.listen()
-    .then(() => done());
+    return server.listen();
   });
   after(() => {
     server.close();

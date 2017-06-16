@@ -3,6 +3,7 @@ const {expect} = require('chai');
 const sinon = require('sinon');
 
 const net = require('net');
+const tls = require('tls');
 
 const ActiveConnector = require('../../src/connector/active');
 const findPort = require('../../src/helpers/find-port');
@@ -33,34 +34,49 @@ describe('Connector - Active //', function () {
     server.close(done);
   });
 
-  it('sets up a connection', function (done) {
-    active.setupConnection('127.0.0.1', PORT)
+  it('sets up a connection', function () {
+    return active.setupConnection('127.0.0.1', PORT)
     .then(() => {
       expect(active.dataSocket).to.exist;
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('destroys existing connection, then sets up a connection', function (done) {
+  it('destroys existing connection, then sets up a connection', function () {
     const destroyFnSpy = sandbox.spy(active.dataSocket, 'destroy');
 
-    active.setupConnection('127.0.0.1', PORT)
+    return active.setupConnection('127.0.0.1', PORT)
     .then(() => {
       expect(destroyFnSpy.callCount).to.equal(1);
       expect(active.dataSocket).to.exist;
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('waits for connection', function (done) {
-    active.setupConnection('127.0.0.1', PORT)
+  it('waits for connection', function () {
+    return active.setupConnection('127.0.0.1', PORT)
     .then(() => {
       expect(active.dataSocket).to.exist;
       return active.waitForConnection();
     })
-    .then(() => done())
-    .catch(done);
+    .then(dataSocket => {
+      expect(dataSocket.connected).to.equal(true);
+      expect(dataSocket instanceof net.Socket).to.equal(true);
+      expect(dataSocket instanceof tls.TLSSocket).to.equal(false);
+    });
+  });
+
+  it('upgrades to a secure connection', function () {
+    mockConnection.secure = true;
+    mockConnection.server = { _tls: {} };
+
+    return active.setupConnection('127.0.0.1', PORT)
+    .then(() => {
+      expect(active.dataSocket).to.exist;
+      return active.waitForConnection();
+    })
+    .then(dataSocket => {
+      expect(dataSocket.connected).to.equal(true);
+      expect(dataSocket instanceof net.Socket).to.equal(true);
+      expect(dataSocket instanceof tls.TLSSocket).to.equal(true);
+    });
   });
 });

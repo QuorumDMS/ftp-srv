@@ -20,6 +20,10 @@ describe('Connector - Passive //', function () {
   };
   let sandbox;
 
+  function shouldNotResolve() {
+    throw new Error('Should not resolve');
+  }
+
   before(() => {
     passive = new PassiveConnector(mockConnection);
   });
@@ -36,45 +40,49 @@ describe('Connector - Passive //', function () {
     sandbox.restore();
   });
 
-  it('cannot wait for connection with no server', function (done) {
-    passive.waitForConnection()
-    .then(() => done('should not happen'))
+  it('cannot wait for connection with no server', function () {
+    return passive.waitForConnection()
+    .then(shouldNotResolve)
     .catch(err => {
       expect(err.name).to.equal('ConnectorError');
-      done();
     });
   });
 
-  it('has invalid pasv range', function (done) {
+  it('no pasv range provided', function () {
+    delete mockConnection.server.options.pasv_range;
+
+    return passive.setupServer()
+    .then(shouldNotResolve)
+    .catch(err => {
+      expect(err.name).to.equal('ConnectorError');
+    });
+  });
+
+  it('has invalid pasv range', function () {
     mockConnection.server.options.pasv_range = -1;
 
-    passive.setupServer()
-    .then(() => done('should not happen'))
+    return passive.setupServer()
+    .then(shouldNotResolve)
     .catch(err => {
       expect(err.name).to.equal('RangeError');
-      done();
     });
   });
 
-  it('sets up a server', function (done) {
-    passive.setupServer()
+  it('sets up a server', function () {
+    return passive.setupServer()
     .then(() => {
       expect(passive.dataServer).to.exist;
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('destroys existing server, then sets up a server', function (done) {
+  it('destroys existing server, then sets up a server', function () {
     const closeFnSpy = sandbox.spy(passive.dataServer, 'close');
 
-    passive.setupServer()
+    return passive.setupServer()
     .then(() => {
       expect(closeFnSpy.callCount).to.equal(1);
       expect(passive.dataServer).to.exist;
-      done();
-    })
-    .catch(done);
+    });
   });
 
   it('refuses connection with different remote address', function (done) {
@@ -97,8 +105,8 @@ describe('Connector - Passive //', function () {
     .catch(done);
   });
 
-  it('accepts connection', function (done) {
-    passive.setupServer()
+  it('accepts connection', function () {
+    return passive.setupServer()
     .then(() => {
       expect(passive.dataServer).to.exist;
 
@@ -109,8 +117,6 @@ describe('Connector - Passive //', function () {
     .then(() => {
       expect(passive.dataSocket).to.exist;
       passive.end();
-      done();
-    })
-    .catch(done);
+    });
   });
 });

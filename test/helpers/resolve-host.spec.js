@@ -1,36 +1,51 @@
 const {expect} = require('chai');
+const sinon = require('sinon');
 const resolveHost = require('../../src/helpers/resolve-host');
 
 describe('helpers //resolve-host', function () {
   this.timeout(4000);
 
-  it('fetches ip address', done => {
+  let sandbox;
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+  });
+  afterEach(() => sandbox.restore());
+
+  it('fetches ip address', () => {
     const hostname = '0.0.0.0';
-    resolveHost(hostname)
+    return resolveHost(hostname)
     .then(resolvedHostname => {
       expect(resolvedHostname).to.match(/^\d+\.\d+\.\d+\.\d+$/);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('fetches ip address', done => {
+  it('fetches ip address', () => {
     const hostname = null;
-    resolveHost(hostname)
+    return resolveHost(hostname)
     .then(resolvedHostname => {
       expect(resolvedHostname).to.match(/^\d+\.\d+\.\d+\.\d+$/);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('does nothing', done => {
+  it('does nothing', () => {
     const hostname = '127.0.0.1';
-    resolveHost(hostname)
+    return resolveHost(hostname)
     .then(resolvedHostname => {
       expect(resolvedHostname).to.equal(hostname);
-      done();
-    })
-    .catch(done);
+    });
+  });
+
+  it('fails on getting hostname', () => {
+    sandbox.stub(require('http'), 'get').callsFake(function (url, cb) {
+      cb({
+        statusCode: 420
+      });
+    });
+
+    return resolveHost(null)
+    .then(() => expect(1).to.equal(2))
+    .catch(err => {
+      expect(err.code).to.equal(420);
+    });
   });
 });

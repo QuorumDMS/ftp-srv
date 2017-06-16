@@ -18,12 +18,10 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// successful', done => {
-    cmdFn()
+  it('// successful', () => {
+    return cmdFn()
     .then(() => {
       expect(mockClient.close.callCount).to.equal(1);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

@@ -23,49 +23,41 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// successful', done => {
-    cmdFn()
+  it('// successful', () => {
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(211);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | no file system', done => {
+  it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    cmdFn({ command: { arg: 'test' } })
+    return cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | file system does not have functions', done => {
+  it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    cmdFn({ command: { arg: 'test' } })
+    return cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | file get fails', done => {
+  it('// unsuccessful | file get fails', () => {
     sandbox.stub(mockClient.fs, 'get').rejects(new Error('test'));
 
-    cmdFn({ log: mockLog, command: { arg: 'test' } })
+    return cmdFn({ log: mockLog, command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(450);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful | file', done => {
+  it('// successful | file', () => {
     sandbox.stub(mockClient.fs, 'get').returns({
       name: 'test_file',
       dev: 2114,
@@ -85,15 +77,13 @@ describe(CMD, function () {
       isDirectory: () => false
     });
 
-    cmdFn({ command: { arg: 'test' } })
+    return cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(212);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful | directory', done => {
+  it('// successful | directory', () => {
     sandbox.stub(mockClient.fs, 'list').returns([{
       name: 'test_file',
       dev: 2114,
@@ -132,11 +122,9 @@ describe(CMD, function () {
       isDirectory: () => true
     });
 
-    cmdFn({ command: { arg: 'test' } })
+    return cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(213);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

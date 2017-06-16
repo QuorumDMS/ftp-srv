@@ -17,22 +17,19 @@ describe('helpers // find-port', function () {
     sandbox.restore();
   });
 
-  it('finds a port', done => {
-    findPort(1)
+  it('finds a port', () => {
+    return findPort(1)
     .then(port => {
       expect(Server.prototype.listen.callCount).to.be.above(1);
       expect(port).to.be.above(1);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('does not find a port', done => {
-    findPort(1, 2)
-    .then(() => done('no'))
+  it('does not find a port', () => {
+    return findPort(1, 2)
+    .then(() => expect(1).to.equal(2)) // should not happen
     .catch(err => {
       expect(err).to.exist;
-      done();
     });
   });
 });

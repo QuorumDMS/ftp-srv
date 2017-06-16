@@ -25,29 +25,25 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// successful | no active connection', done => {
+  it('// successful | no active connection', () => {
     mockClient.connector.waitForConnection.restore();
     sandbox.stub(mockClient.connector, 'waitForConnection').rejects();
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.connector.waitForConnection.callCount).to.equal(1);
       expect(mockClient.connector.end.callCount).to.equal(0);
       expect(mockClient.reply.args[0][0]).to.equal(226);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful | active connection', done => {
-    cmdFn()
+  it('// successful | active connection', () => {
+    return cmdFn()
     .then(() => {
       expect(mockClient.connector.waitForConnection.callCount).to.equal(1);
       expect(mockClient.connector.end.callCount).to.equal(1);
       expect(mockClient.reply.args[0][0]).to.equal(426);
       expect(mockClient.reply.args[1][0]).to.equal(226);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

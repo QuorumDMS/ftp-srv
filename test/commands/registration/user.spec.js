@@ -28,70 +28,80 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('test // successful | prompt for password', done => {
-    cmdFn({ command: { arg: 'test' } })
+  it('test // successful | prompt for password', () => {
+    return cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(331);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('test // successful | anonymous login', done => {
+  it('test // successful | anonymous login', () => {
     mockClient.server.options = {anonymous: true};
 
-    cmdFn({ command: { arg: 'anonymous' } })
+    return cmdFn({ command: { arg: 'anonymous' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(230);
       expect(mockClient.login.callCount).to.equal(1);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('test // unsuccessful | no username provided', done => {
-    cmdFn({ command: { } })
+  it('test // unsuccessful | no username provided', () => {
+    return cmdFn({ command: { } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
       expect(mockClient.login.callCount).to.equal(0);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('test // unsuccessful | already set username', done => {
+  it('test // unsuccessful | already set username', () => {
     mockClient.username = 'test';
 
-    cmdFn({ command: { arg: 'test' } })
+    return cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(530);
       expect(mockClient.login.callCount).to.equal(0);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('test // successful | regular login if anonymous is true', done => {
+  it('test // successful | regular login if anonymous is true', () => {
     mockClient.server.options = {anonymous: true};
 
-    cmdFn({ log: mockLog, command: { arg: 'test' } })
+    return cmdFn({ log: mockLog, command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(331);
       expect(mockClient.login.callCount).to.equal(0);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('test // successful | anonymous login with set username', done => {
+  it('test // successful | anonymous login with set username', () => {
     mockClient.server.options = {anonymous: 'sillyrabbit'};
 
-    cmdFn({ log: mockLog, command: { arg: 'sillyrabbit' } })
+    return cmdFn({ log: mockLog, command: { arg: 'sillyrabbit' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(230);
       expect(mockClient.login.callCount).to.equal(1);
-      done();
-    })
-    .catch(done);
+    });
+  });
+
+  it('test // unsuccessful | anonymous login fails', () => {
+    mockClient.server.options = {anonymous: true};
+    mockClient.login.restore();
+    sandbox.stub(mockClient, 'login').rejects(new Error('test'));
+
+    return cmdFn({ log: mockLog, command: { arg: 'anonymous' } })
+    .then(() => {
+      expect(mockClient.reply.args[0][0]).to.equal(530);
+      expect(mockClient.login.callCount).to.equal(1);
+    });
+  });
+
+  it('test // successful | does not login if already authenticated', () => {
+    mockClient.authenticated = true;
+
+    return cmdFn({ log: mockLog, command: { arg: 'sillyrabbit' } })
+    .then(() => {
+      expect(mockClient.reply.args[0][0]).to.equal(230);
+      expect(mockClient.login.callCount).to.equal(0);
+    });
   });
 });

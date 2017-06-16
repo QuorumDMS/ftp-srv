@@ -19,21 +19,17 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('S // successful', done => {
-    cmdFn({command: {arg: 'S'}})
+  it('S // successful', () => {
+    return cmdFn({command: {arg: 'S'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('Q // unsuccessful', done => {
-    cmdFn({command: {arg: 'Q'}})
+  it('Q // unsuccessful', () => {
+    return cmdFn({command: {arg: 'Q'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

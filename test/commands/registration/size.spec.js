@@ -22,45 +22,37 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// unsuccessful | no file system', done => {
+  it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | file system does not have functions', done => {
+  it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | file get fails', done => {
+  it('// unsuccessful | file get fails', () => {
     sandbox.stub(mockClient.fs, 'get').rejects(new Error('test'));
 
-    cmdFn({ log: mockLog, command: { arg: 'test' } })
+    return cmdFn({ log: mockLog, command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful', done => {
-    cmdFn({ command: { arg: 'test' } })
+  it('// successful', () => {
+    return cmdFn({ command: { arg: 'test' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(213);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

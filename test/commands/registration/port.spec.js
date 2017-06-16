@@ -22,33 +22,27 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// unsuccessful | no argument', done => {
-    cmdFn()
+  it('// unsuccessful | no argument', () => {
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | invalid argument', done => {
-    cmdFn({ command: { arg: '1,2,3,4,5' } })
+  it('// unsuccessful | invalid argument', () => {
+    return cmdFn({ command: { arg: '1,2,3,4,5' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful', done => {
-    cmdFn({ command: { arg: '192,168,0,100,137,214' } })
+  it('// successful', () => {
+    return cmdFn({ command: { arg: '192,168,0,100,137,214' } })
     .then(() => {
       const [ip, port] = ActiveConnector.prototype.setupConnection.args[0];
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(ip).to.equal('192.168.0.100');
       expect(port).to.equal(35286);
-      done();
-    })
-    .catch(done);
+    });
   });
 });

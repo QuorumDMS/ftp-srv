@@ -30,54 +30,46 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// unsuccessful | no file system', done => {
+  it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// unsuccessful | file system does not have functions', done => {
+  it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    cmdFn()
+    return cmdFn()
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful | given name is unique', done => {
+  it('// successful | given name is unique', () => {
     mockClient.fs.get.restore();
     sandbox.stub(mockClient.fs, 'get').rejects({});
 
-    cmdFn({ command: { arg: 'good' } })
+    return cmdFn({ command: { arg: 'good' } })
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');
       expect(call.command).to.have.property('arg');
       expect(call.command.arg).to.eql('good');
       expect(mockClient.fs.getUniqueName.callCount).to.equal(0);
-      done();
-    })
-    .catch(done);
+    });
   });
 
-  it('// successful | generates unique name', done => {
-    cmdFn({ command: { arg: 'bad' } })
+  it('// successful | generates unique name', () => {
+    return cmdFn({ command: { arg: 'bad' } })
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');
       expect(call.command).to.have.property('arg');
       expect(call.command.arg).to.eql('4');
       expect(mockClient.fs.getUniqueName.callCount).to.equal(1);
-      done();
-    })
-    .catch(done);
+    });
   });
 });
