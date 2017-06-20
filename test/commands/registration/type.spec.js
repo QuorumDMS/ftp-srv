@@ -13,7 +13,7 @@ describe(CMD, function () {
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
-    mockClient.encoding = null;
+    mockClient.transferType = null;
     sandbox.spy(mockClient, 'reply');
   });
   afterEach(() => {
@@ -24,7 +24,7 @@ describe(CMD, function () {
     return cmdFn({ command: { arg: 'A' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
-      expect(mockClient.encoding).to.equal('utf8');
+      expect(mockClient.transferType).to.equal('ascii');
     });
   });
 
@@ -32,7 +32,7 @@ describe(CMD, function () {
     return cmdFn({ command: { arg: 'I' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
-      expect(mockClient.encoding).to.equal('binary');
+      expect(mockClient.transferType).to.equal('binary');
     });
   });
 
@@ -40,7 +40,7 @@ describe(CMD, function () {
     return cmdFn({ command: { arg: 'L' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
-      expect(mockClient.encoding).to.equal('binary');
+      expect(mockClient.transferType).to.equal('binary');
     });
   });
 
@@ -48,7 +48,7 @@ describe(CMD, function () {
     return cmdFn({ command: { arg: 'X' } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
-      expect(mockClient.encoding).to.equal(null);
+      expect(mockClient.transferType).to.equal(null);
     });
   });
 });

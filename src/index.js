@@ -94,7 +94,7 @@ class FtpServer {
   }
 
   setupTLS(_tls) {
-    if (!tls) return false;
+    if (!_tls) return false;
     return _.assign({}, _tls, {
       cert: _tls.cert ? fs.readFileSync(_tls.cert) : undefined,
       key: _tls.key ? fs.readFileSync(_tls.key) : undefined,

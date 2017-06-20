@@ -25,7 +25,7 @@ module.exports = {
         // It is assumed that the `close` handler will call the end() method
         dataSocket.once('end', () => stream.listenerCount('close') ? stream.emit('close') : stream.end());
         dataSocket.once('error', err => reject(err));
-        dataSocket.on('data', data => stream.write(data, this.encoding));
+        dataSocket.on('data', data => stream.write(data, this.transferType));
 
         this.reply(150).then(() => dataSocket.resume());
       })

@@ -17,7 +17,7 @@ module.exports = {
       return when.promise((resolve, reject) => {
         dataSocket.on('error', err => stream.emit('error', err));
 
-        stream.on('data', data => dataSocket.write(data, this.encoding));
+        stream.on('data', data => dataSocket.write(data, this.transferType));
         stream.on('end', () => resolve(this.reply(226)));
         stream.on('error', err => reject(err));
         this.reply(150).then(() => dataSocket.resume());
