@@ -109,12 +109,12 @@ describe('FtpServer', function () {
       });
     });
 
-    it('STOR test.txt', done => {
+    it('STOR tést.txt', done => {
       const buffer = Buffer.from('test text file');
-      client.put(buffer, 'test.txt', err => {
+      client.put(buffer, 'tést.txt', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/test.txt')).to.equal(true);
-        fs.readFile('./test/test.txt', (fserr, data) => {
+        expect(fs.existsSync('./test/tést.txt')).to.equal(true);
+        fs.readFile('./test/tést.txt', (fserr, data) => {
           expect(fserr).to.not.exist;
           expect(data.toString()).to.equal('test text file');
           done();
@@ -122,11 +122,11 @@ describe('FtpServer', function () {
       });
     });
 
-    it('APPE test.txt', done => {
+    it('APPE tést.txt', done => {
       const buffer = Buffer.from(', awesome!');
-      client.append(buffer, 'test.txt', err => {
+      client.append(buffer, 'tést.txt', err => {
         expect(err).to.not.exist;
-        fs.readFile('./test/test.txt', (fserr, data) => {
+        fs.readFile('./test/tést.txt', (fserr, data) => {
           expect(fserr).to.not.exist;
           expect(data.toString()).to.equal('test text file, awesome!');
           done();
@@ -134,8 +134,8 @@ describe('FtpServer', function () {
       });
     });
 
-    it('RETR test.txt', done => {
-      client.get('test.txt', (err, stream) => {
+    it('RETR tést.txt', done => {
+      client.get('tést.txt', (err, stream) => {
         expect(err).to.not.exist;
         let text = '';
         stream.on('data', data => {
@@ -148,10 +148,10 @@ describe('FtpServer', function () {
       });
     });
 
-    it('RNFR test.txt, RNTO awesome.txt', done => {
-      client.rename('test.txt', 'awesome.txt', err => {
+    it('RNFR tést.txt, RNTO awesome.txt', done => {
+      client.rename('tést.txt', 'awesome.txt', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/test.txt')).to.equal(false);
+        expect(fs.existsSync('./test/tést.txt')).to.equal(false);
         expect(fs.existsSync('./test/awesome.txt')).to.equal(true);
         fs.readFile('./test/awesome.txt', (fserr, data) => {
           expect(fserr).to.not.exist;
@@ -196,19 +196,19 @@ describe('FtpServer', function () {
       });
     });
 
-    it('MKD tmp', done => {
-      if (fs.existsSync('./test/tmp')) {
-        fs.rmdirSync('./test/tmp');
+    it('MKD témp', done => {
+      if (fs.existsSync('./test/témp')) {
+        fs.rmdirSync('./test/témp');
       }
-      client.mkdir('tmp', err => {
+      client.mkdir('témp', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/tmp')).to.equal(true);
+        expect(fs.existsSync('./test/témp')).to.equal(true);
         done();
       });
     });
 
-    it('CWD tmp', done => {
-      client.cwd('tmp', (err, data) => {
+    it('CWD témp', done => {
+      client.cwd('témp', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.be.a('string');
         done();
@@ -222,10 +222,10 @@ describe('FtpServer', function () {
       });
     });
 
-    it('RMD tmp', done => {
-      client.rmdir('tmp', err => {
+    it('RMD témp', done => {
+      client.rmdir('témp', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/tmp')).to.equal(false);
+        expect(fs.existsSync('./test/témp')).to.equal(false);
         done();
       });
     });

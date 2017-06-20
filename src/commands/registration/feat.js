@@ -9,7 +9,7 @@ module.exports = {
         const feat = _.get(registry[cmd], 'flags.feat', null);
         if (feat) return _.concat(feats, feat);
         return feats;
-      }, [])
+      }, ['UTF8'])
       .map(feat => ` ${feat}`);
     return features.length
       ? this.reply(211, 'Extensions supported', ...features, 'End')

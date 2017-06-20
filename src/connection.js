@@ -15,7 +15,7 @@ class FtpConnection {
     this.id = uuid.v4();
     this.log = options.log.child({id: this.id, ip: this.ip});
     this.commands = new Commands(this);
-    this.encoding = 'utf8';
+    this.transferType = 'binary';
     this.bufferSize = false;
 
     this.connector = new BaseConnector(this);
@@ -84,7 +84,7 @@ class FtpConnection {
 
           if (!letter.socket) letter.socket = options.socket ? options.socket : this.commandSocket;
           if (!letter.message) letter.message = DEFAULT_MESSAGE[options.code] || 'No information';
-          if (!letter.encoding) letter.encoding = this.encoding;
+          if (!letter.encoding) letter.encoding = 'utf8';
           return when(letter.message) // allow passing in a promise as a message
           .then(message => {
             letter.message = message;
@@ -102,7 +102,7 @@ class FtpConnection {
         const packet = !letter.raw ? _.compact([letter.code || options.code, letter.message]).join(seperator) : letter.message;
 
         if (letter.socket && letter.socket.writable) {
-          this.log.trace({port: letter.socket.address().port, packet}, 'Reply');
+          this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, packet}, 'Reply');
           letter.socket.write(packet + '\r\n', letter.encoding, err => {
             if (err) {
               this.log.error(err);
