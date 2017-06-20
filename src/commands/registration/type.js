@@ -1,20 +1,20 @@
-const _ = require('lodash');
-
-const ENCODING_TYPES = {
-  A: 'utf8',
-  I: 'binary',
-  L: 'binary'
-};
 
 module.exports = {
   directive: 'TYPE',
   handler: function ({command} = {}) {
-    const encoding = _.upperCase(command.arg);
-    if (!ENCODING_TYPES.hasOwnProperty(encoding)) return this.reply(501);
 
-    this.encoding = ENCODING_TYPES[encoding];
-    return this.reply(200);
+    if (/^A[0-9]?$/i.test(command.arg)) {
+      this.transferType = 'ascii';
+    } else if (/^L[0-9]?$/i.test(command.arg) || /^I$/i.test(command.arg)) {
+      this.transferType = 'binary';
+    } else {
+      return this.reply(501);
+    }
+    return this.reply(200, `Switch to "${this.transferType}" transfer mode.`);
   },
   syntax: '{{cmd}} <mode>',
-  description: 'Set the transfer mode, binary (I) or utf8 (A)'
+  description: 'Set the transfer mode, binary (I) or ascii (A)',
+  flags: {
+    feat: 'TYPE A,I,L'
+  }
 };
