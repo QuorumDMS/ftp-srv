@@ -10,7 +10,10 @@ module.exports = {
         if (feat) return _.concat(feats, feat);
         return feats;
       }, ['UTF8'])
-      .map(feat => ` ${feat}`);
+      .map(feat => ({
+        message: ` ${feat}`,
+        raw: true
+      }));
     return features.length
       ? this.reply(211, 'Extensions supported', ...features, 'End')
       : this.reply(211, 'No features');
