@@ -18,6 +18,8 @@ class FtpConnection {
     this.transferType = 'binary';
     this.encoding = 'utf8';
     this.bufferSize = false;
+    this.restByteCount = 0;
+    this._secure = false;
 
     this.connector = new BaseConnector(this);
 
@@ -46,6 +48,13 @@ class FtpConnection {
     } catch (ex) {
       return null;
     }
+  }
+
+  get secure() {
+    return this.server.isTLS || this._secure;
+  }
+  set secure(sec) {
+    this._secure = sec;
   }
 
   close(code = 421, message = 'Closing connection') {

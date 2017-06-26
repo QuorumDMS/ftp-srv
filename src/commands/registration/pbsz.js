@@ -8,6 +8,7 @@ module.exports = {
   syntax: '{{cmd}}',
   description: 'Protection Buffer Size',
   flags: {
-    no_auth: true
+    no_auth: true,
+    feat: 'PBSZ'
   }
 };
