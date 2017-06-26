@@ -15,8 +15,9 @@ module.exports = {
       this.commandSocket.pause();
       dataSocket = socket;
     })
-    .then(() => when.try(this.fs.write.bind(this.fs), fileName, {append}))
+    .then(() => when.try(this.fs.write.bind(this.fs), fileName, {append, start: this.restByteCount}))
     .then(stream => {
+      this.restByteCount = 0;
       return when.promise((resolve, reject) => {
         stream.once('error', err => dataSocket.emit('error', err));
         stream.once('finish', () => resolve(this.reply(226, fileName)));

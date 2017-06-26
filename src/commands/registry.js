@@ -21,6 +21,7 @@ const commands = [
   require('./registration/port'),
   require('./registration/pwd'),
   require('./registration/quit'),
+  require('./registration/rest'),
   require('./registration/retr'),
   require('./registration/rmd'),
   require('./registration/rnfr'),

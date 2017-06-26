@@ -18,7 +18,7 @@ class FtpConnection {
     this.transferType = 'binary';
     this.encoding = 'utf8';
     this.bufferSize = false;
-    this.restByteCount = 0;
+    this._restByteCount = 0;
     this._secure = false;
 
     this.connector = new BaseConnector(this);
@@ -50,6 +50,13 @@ class FtpConnection {
     }
   }
 
+  get restByteCount() {
+    return this._restByteCount > 0 ? this._restByteCount : undefined;
+  }
+  set restByteCount(rbc) {
+    this._restByteCount = rbc;
+  }
+
   get secure() {
     return this.server.isTLS || this._secure;
   }
@@ -68,7 +75,7 @@ class FtpConnection {
     return when.try(() => {
       const loginListeners = this.server.listeners('login');
       if (!loginListeners || !loginListeners.length) {
-        if (!this.server.options.anoymous) throw new errors.GeneralError('No "login" listener setup', 500);
+        if (!this.server.options.anonymous) throw new errors.GeneralError('No "login" listener setup', 500);
       } else {
         return this.server.emitPromise('login', {connection: this, username, password});
       }

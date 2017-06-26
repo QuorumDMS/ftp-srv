@@ -65,22 +65,22 @@ class FileSystem {
     });
   }
 
-  write(fileName, {append = false} = {}) {
+  write(fileName, {append = false, start = undefined} = {}) {
     const {fsPath} = this._resolvePath(fileName);
-    const stream = syncFs.createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+'});
+    const stream = syncFs.createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+', start});
     stream.once('error', () => fs.unlink(fsPath));
     stream.once('close', () => stream.end());
     return stream;
   }
 
-  read(fileName) {
+  read(fileName, {start = undefined} = {}) {
     const {fsPath} = this._resolvePath(fileName);
     return fs.stat(fsPath)
     .tap(stat => {
       if (stat.isDirectory()) throw new errors.FileSystemError('Cannot read a directory');
     })
     .then(() => {
-      const stream = syncFs.createReadStream(fsPath, {flags: 'r'});
+      const stream = syncFs.createReadStream(fsPath, {flags: 'r', start});
       return stream;
     });
   }
