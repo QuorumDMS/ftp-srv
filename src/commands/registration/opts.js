@@ -8,6 +8,8 @@ const OPTIONS = {
 module.exports = {
   directive: 'OPTS',
   handler: function ({command} = {}) {
+    if (!_.has(command, 'arg')) return this.reply(501);
+
     const [_option, ...args] = command.arg.split(' ');
     const option = _.toUpper(_option);
 
@@ -26,6 +28,7 @@ function utf8([setting] = []) {
     case 'OFF':
       this.encoding = 'ascii';
       return this.reply(200, 'UTF8 encoding off');
-    default: this.reply(501);
+    default:
+      return this.reply(501, 'Unknown setting for option');
   }
 }
