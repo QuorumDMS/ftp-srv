@@ -2,7 +2,6 @@
 module.exports = {
   directive: 'TYPE',
   handler: function ({command} = {}) {
-
     if (/^A[0-9]?$/i.test(command.arg)) {
       this.transferType = 'ascii';
     } else if (/^L[0-9]?$/i.test(command.arg) || /^I$/i.test(command.arg)) {

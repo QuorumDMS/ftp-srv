@@ -41,7 +41,7 @@ class Passive extends Connector {
           return this.connection.reply(550, 'Remote addresses do not match')
           .finally(() => this.connection.close());
         }
-        this.log.debug({port}, 'Passive connection fulfilled.');
+        this.log.trace({port, remoteAddress: socket.remoteAddress}, 'Passive connection fulfilled.');
 
         if (this.connection.secure) {
           const secureContext = tls.createSecureContext(this.server._tls);
@@ -57,7 +57,7 @@ class Passive extends Connector {
         this.dataSocket.setEncoding(this.connection.transferType);
         this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
         this.dataSocket.on('close', () => {
-          this.log.debug('Passive connection closed');
+          this.log.trace('Passive connection closed');
           this.end();
         });
       };
@@ -67,7 +67,7 @@ class Passive extends Connector {
       this.dataServer.maxConnections = 1;
       this.dataServer.on('error', err => this.server.emit('client-error', {connection: this.connection, context: 'dataServer', error: err}));
       this.dataServer.on('close', () => {
-        this.log.debug('Passive server closed');
+        this.log.trace('Passive server closed');
         this.dataServer = null;
       });
 
@@ -75,7 +75,7 @@ class Passive extends Connector {
         this.dataServer.listen(port, err => {
           if (err) reject(err);
           else {
-            this.log.info({port}, 'Passive connection listening');
+            this.log.debug({port}, 'Passive connection listening');
             resolve(this.dataServer);
           }
         });

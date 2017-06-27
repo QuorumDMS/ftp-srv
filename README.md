@@ -192,13 +192,17 @@ __Used in:__ `CWD`, `CDUP`
 Returns a path to a newly created directory  
 __Used in:__ `MKD`
 
-#### [`write(fileName, {append = false})`](src/fs.js#L68)  
+#### [`write(fileName, {append, start})`](src/fs.js#L68)  
 Returns a writable stream   
-Options: `append` if true, append to existing file  
+Options:  
+ `append` if true, append to existing file  
+ `start` if set, specifies the byte offset to write to  
 __Used in:__ `STOR`, `APPE`
 
-#### [`read(fileName)`](src/fs.js#L75)
+#### [`read(fileName, {start})`](src/fs.js#L75)
 Returns a readable stream  
+Options:  
+ `start` if set, specifies the byte offset to read from  
 __Used in:__ `RETR`
 
 #### [`delete(path)`](src/fs.js#L87)
@@ -206,11 +210,11 @@ Delete a file or directory
 __Used in:__ `DELE`
 
 #### [`rename(from, to)`](src/fs.js#L102)
-Rename a file or directory  
+Renames a file or directory  
 __Used in:__ `RNFR`, `RNTO`
 
 #### [`chmod(path)`](src/fs.js#L108)  
-Modify a file or directory's permissions  
+Modifies a file or directory's permissions  
 __Used in:__ `SITE CHMOD`
 
 #### [`getUniqueName()`](src/fs.js#L113)

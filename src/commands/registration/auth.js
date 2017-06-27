@@ -20,7 +20,8 @@ module.exports = {
 };
 
 function handleTLS() {
-  if (!this.server._tls) return this.reply(504);
+  if (!this.server._tls) return this.reply(502);
+  if (this.secure) return this.reply(202);
 
   return this.reply(234)
   .then(() => {

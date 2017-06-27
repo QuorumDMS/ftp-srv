@@ -15,12 +15,7 @@ module.exports = {
     {value: 'WIP',      name: 'WIP:      Work in progress'}
   ],
 
-  scopes: [
-    {name: 'accounts'},
-    {name: 'admin'},
-    {name: 'exampleScope'},
-    {name: 'changeMe'}
-  ],
+  scopes: [],
 
   // it needs to match the value for field type. Eg.: 'fix'
   /*
@@ -39,5 +34,5 @@ module.exports = {
   allowBreakingChanges: ['feat', 'fix'],
 
   // Appends the branch name to the footer of the commit. Useful for tracking commits after branches have been merged
-  appendBranchNameToCommitMessage: true
+  appendBranchNameToCommitMessage: false
 };

@@ -1,8 +1,8 @@
-const when = require('when');
 const {expect} = require('chai');
 const sinon = require('sinon');
+const when = require('when');
 
-const CMD = 'OPTS';
+const CMD = 'REST';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
@@ -26,33 +26,33 @@ describe(CMD, function () {
     });
   });
 
-  it('BAD // unsuccessful', () => {
-    return cmdFn({command: {arg: 'BAD', directive: CMD}})
-    .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(500);
-    });
-  });
-
-  it('UTF8 BAD // unsuccessful', () => {
-    return cmdFn({command: {arg: 'UTF8 BAD', directive: CMD}})
+  it('-1 // unsuccessful', () => {
+    return cmdFn({command: { arg: '-1', directive: CMD } })
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
     });
   });
 
-  it('UTF8 OFF // successful', () => {
-    return cmdFn({command: {arg: 'UTF8 OFF', directive: CMD}})
+  it('bad // unsuccessful', () => {
+    return cmdFn({command: { arg: 'bad', directive: CMD } })
     .then(() => {
-      expect(mockClient.encoding).to.equal('ascii');
-      expect(mockClient.reply.args[0][0]).to.equal(200);
+      expect(mockClient.reply.args[0][0]).to.equal(501);
     });
   });
 
-  it('UTF8 ON // successful', () => {
-    return cmdFn({command: {arg: 'UTF8 ON', directive: CMD}})
+  it('1 // successful', () => {
+    return cmdFn({command: { arg: '1', directive: CMD } })
     .then(() => {
-      expect(mockClient.encoding).to.equal('utf8');
-      expect(mockClient.reply.args[0][0]).to.equal(200);
+      expect(mockClient.restByteCount).to.equal(1);
+      expect(mockClient.reply.args[0][0]).to.equal(350);
+    });
+  });
+
+  it('0 // successful', () => {
+    return cmdFn({command: { arg: '0', directive: CMD } })
+    .then(() => {
+      expect(mockClient.restByteCount).to.equal(0);
+      expect(mockClient.reply.args[0][0]).to.equal(350);
     });
   });
 });

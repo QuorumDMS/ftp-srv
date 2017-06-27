@@ -47,17 +47,13 @@ class FtpServer {
 
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
     this.server.on('error', err => this.log.error(err, '[Event] error'));
-    if (this.isTLS) {
-      this.server.on('tlsClientError', err => this.log.error(err, '[Event] tlsClientError'));
-    }
     this.on = this.server.on.bind(this.server);
     this.once = this.server.once.bind(this.server);
     this.listeners = this.server.listeners.bind(this.server);
 
     process.on('SIGTERM', () => this.close());
     process.on('SIGINT', () => this.close());
-    process.on('SIGBREAK', () => this.close());
-    process.on('SIGHUP', () => this.close());
+    process.on('SIGQUIT', () => this.close());
   }
 
   get isTLS() {

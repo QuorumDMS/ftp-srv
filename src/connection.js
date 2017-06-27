@@ -16,7 +16,10 @@ class FtpConnection {
     this.log = options.log.child({id: this.id, ip: this.ip});
     this.commands = new Commands(this);
     this.transferType = 'binary';
+    this.encoding = 'utf8';
     this.bufferSize = false;
+    this._restByteCount = 0;
+    this._secure = false;
 
     this.connector = new BaseConnector(this);
 
@@ -34,7 +37,7 @@ class FtpConnection {
   }
 
   _handleData(data) {
-    const messages = _.compact(data.toString('utf8').split('\r\n'));
+    const messages = _.compact(data.toString(this.encoding).split('\r\n'));
     this.log.trace(messages);
     return sequence(messages.map(message => this.commands.handle.bind(this.commands, message)));
   }
@@ -45,6 +48,20 @@ class FtpConnection {
     } catch (ex) {
       return null;
     }
+  }
+
+  get restByteCount() {
+    return this._restByteCount > 0 ? this._restByteCount : undefined;
+  }
+  set restByteCount(rbc) {
+    this._restByteCount = rbc;
+  }
+
+  get secure() {
+    return this.server.isTLS || this._secure;
+  }
+  set secure(sec) {
+    this._secure = sec;
   }
 
   close(code = 421, message = 'Closing connection') {
@@ -58,7 +75,7 @@ class FtpConnection {
     return when.try(() => {
       const loginListeners = this.server.listeners('login');
       if (!loginListeners || !loginListeners.length) {
-        if (!this.server.options.anoymous) throw new errors.GeneralError('No "login" listener setup', 500);
+        if (!this.server.options.anonymous) throw new errors.GeneralError('No "login" listener setup', 500);
       } else {
         return this.server.emitPromise('login', {connection: this, username, password});
       }
@@ -84,7 +101,7 @@ class FtpConnection {
 
           if (!letter.socket) letter.socket = options.socket ? options.socket : this.commandSocket;
           if (!letter.message) letter.message = DEFAULT_MESSAGE[options.code] || 'No information';
-          if (!letter.encoding) letter.encoding = 'utf8';
+          if (!letter.encoding) letter.encoding = this.encoding;
           return when(letter.message) // allow passing in a promise as a message
           .then(message => {
             letter.message = message;
