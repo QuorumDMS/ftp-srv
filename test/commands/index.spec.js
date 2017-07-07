@@ -53,6 +53,29 @@ describe('FtpCommands', function () {
       expect(cmd.arg).to.equal('arg1 arg2');
       expect(cmd.raw).to.equal('test arg1 arg2');
     });
+
+    it('two args with quotes: test "hello world"', () => {
+      const cmd = commands.parse('test "hello world"');
+      expect(cmd.directive).to.equal('TEST');
+      expect(cmd.arg).to.equal('hello world');
+      expect(cmd.raw).to.equal('test "hello world"');
+    });
+
+    it('two args, with flags: test -l arg1 -A arg2 --zz88A', () => {
+      const cmd = commands.parse('test -l arg1 -A arg2 --zz88A');
+      expect(cmd.directive).to.equal('TEST');
+      expect(cmd.arg).to.equal('arg1 arg2');
+      expect(cmd.flags).to.deep.equal(['-l', '-A', '--zz88A']);
+      expect(cmd.raw).to.equal('test -l arg1 -A arg2 --zz88A');
+    });
+
+    it('one arg, with flags: list -l', () => {
+      const cmd = commands.parse('list -l');
+      expect(cmd.directive).to.equal('LIST');
+      expect(cmd.arg).to.equal(null);
+      expect(cmd.flags).to.deep.equal(['-l']);
+      expect(cmd.raw).to.equal('list -l');
+    });
   });
 
   describe('handle', function () {
