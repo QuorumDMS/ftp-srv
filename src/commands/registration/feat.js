@@ -10,6 +10,7 @@ module.exports = {
         if (feat) return _.concat(feats, feat);
         return feats;
       }, ['UTF8'])
+      .sort()
       .map(feat => ({
         message: ` ${feat}`,
         raw: true
