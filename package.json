@@ -41,6 +41,7 @@
     "verify:js:watch": "chokidar 'src/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
     "verify:watch": "npm run verify:js:watch --silent"
   },
+  "types": "./ftp-srv.d.ts",
   "config": {
     "commitizen": {
       "path": "node_modules/cz-customizable"
