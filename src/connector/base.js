@@ -14,6 +14,10 @@ class Connector {
     return this.connection.log;
   }
 
+  get socket() {
+    return this.dataSocket;
+  }
+
   get server() {
     return this.connection.server;
   }

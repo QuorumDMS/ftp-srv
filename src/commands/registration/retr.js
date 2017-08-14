@@ -6,22 +6,18 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.read) return this.reply(402, 'Not supported by file system');
 
-    let dataSocket;
     return this.connector.waitForConnection()
-    .then(socket => {
-      this.commandSocket.pause();
-      dataSocket = socket;
-    })
+    .tap(() => this.commandSocket.pause())
     .then(() => when.try(this.fs.read.bind(this.fs), command.arg, {start: this.restByteCount}))
     .then(stream => {
       this.restByteCount = 0;
       return when.promise((resolve, reject) => {
-        dataSocket.on('error', err => stream.emit('error', err));
+        this.connector.socket.on('error', err => stream.emit('error', err));
 
-        stream.on('data', data => dataSocket.write(data, this.transferType));
+        stream.on('data', data => this.connector.socket.write(data, this.transferType));
         stream.on('end', () => resolve(this.reply(226)));
         stream.on('error', err => reject(err));
-        this.reply(150).then(() => dataSocket.resume());
+        this.reply(150).then(() => this.connector.socket.resume());
       });
     })
     .catch(when.TimeoutError, err => {

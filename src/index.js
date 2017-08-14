@@ -51,9 +51,9 @@ class FtpServer {
     this.once = this.server.once.bind(this.server);
     this.listeners = this.server.listeners.bind(this.server);
 
-    process.on('SIGTERM', () => this.close());
-    process.on('SIGINT', () => this.close());
-    process.on('SIGQUIT', () => this.close());
+    process.on('SIGTERM', () => this.quit());
+    process.on('SIGINT', () => this.quit());
+    process.on('SIGQUIT', () => this.quit());
   }
 
   get isTLS() {
@@ -130,10 +130,15 @@ class FtpServer {
     });
   }
 
+  quit() {
+    return this.close()
+    .finally(() => process.exit(0));
+  }
+
   close() {
     this.log.info('Server closing...');
     this.server.maxConnections = 0;
-    return when.map(Object.keys(this.connections), id => this.disconnectClient(id))
+    return when.map(Object.keys(this.connections), id => when.try(this.disconnectClient.bind(this), id))
     .then(() => when.promise(resolve => {
       this.server.close(err => {
         if (err) this.log.error(err, 'Error closing server');
