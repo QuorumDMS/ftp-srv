@@ -47,6 +47,7 @@ parserOptions:
   <<: *confit-parserOptions
 
 rules:
+  no-process-exit: 0
   max-len:
     - warn
     - 200     # Line Length
