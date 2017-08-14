@@ -13,13 +13,9 @@ module.exports = {
 
     const simple = command.directive === 'NLST';
 
-    let dataSocket;
     const path = command.arg || '.';
     return this.connector.waitForConnection()
-    .then(socket => {
-      this.commandSocket.pause();
-      dataSocket = socket;
-    })
+    .tap(() => this.commandSocket.pause())
     .then(() => when.try(this.fs.get.bind(this.fs), path))
     .then(stat => stat.isDirectory() ? when.try(this.fs.list.bind(this.fs), path) : [stat])
     .then(files => {
@@ -33,7 +29,7 @@ module.exports = {
         return {
           raw: true,
           message,
-          socket: dataSocket
+          socket: this.connector.socket
         };
       });
       return this.reply(150)

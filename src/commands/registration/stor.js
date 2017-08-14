@@ -9,28 +9,24 @@ module.exports = {
     const append = command.directive === 'APPE';
     const fileName = command.arg;
 
-    let dataSocket;
     return this.connector.waitForConnection()
-    .then(socket => {
-      this.commandSocket.pause();
-      dataSocket = socket;
-    })
+    .tap(() => this.commandSocket.pause())
     .then(() => when.try(this.fs.write.bind(this.fs), fileName, {append, start: this.restByteCount}))
     .then(stream => {
       this.restByteCount = 0;
       return when.promise((resolve, reject) => {
-        stream.once('error', err => dataSocket.emit('error', err));
+        stream.once('error', err => this.connector.socket.emit('error', err));
         stream.once('finish', () => resolve(this.reply(226, fileName)));
 
         // Emit `close` if stream has a close listener, otherwise emit `finish` with the end() method
         // It is assumed that the `close` handler will call the end() method
-        dataSocket.once('end', () => stream.listenerCount('close') ? stream.emit('close') : stream.end());
-        dataSocket.once('error', err => reject(err));
-        dataSocket.on('data', data => stream.write(data, this.transferType));
+        this.connector.socket.once('end', () => stream.listenerCount('close') ? stream.emit('close') : stream.end());
+        this.connector.socket.once('error', err => reject(err));
+        this.connector.socket.on('data', data => stream.write(data, this.transferType));
 
-        this.reply(150).then(() => dataSocket.resume());
+        this.reply(150).then(() => this.connector.socket.resume());
       })
-      .finally(() => when.try(stream.destroy.bind(stream)));
+      .finally(() => stream.destroy ? when.try(stream.destroy.bind(stream)) : null);
     })
     .catch(when.TimeoutError, err => {
       log.error(err);
