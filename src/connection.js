@@ -122,7 +122,7 @@ class FtpConnection {
           this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, packet}, 'Reply');
           letter.socket.write(packet + '\r\n', letter.encoding, err => {
             if (err) {
-              this.log.error(err);
+              this.log.error(err, 'Socket write Error');
               return reject(err);
             }
             resolve();
@@ -134,7 +134,7 @@ class FtpConnection {
     return satisfyParameters()
     .then(satisfiedLetters => sequence(satisfiedLetters.map((letter, index) => processLetter.bind(this, letter, index))))
     .catch(err => {
-      this.log.error(err);
+      this.log.error(err, 'Process letters error');
     });
   }
 }
