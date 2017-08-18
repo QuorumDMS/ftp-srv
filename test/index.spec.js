@@ -1,5 +1,6 @@
 /* eslint no-unused-expressions: 0 */
 const {expect} = require('chai');
+const sinon = require('sinon');
 const bunyan = require('bunyan');
 const fs = require('fs');
 
@@ -10,9 +11,12 @@ before(() => require('dotenv').load());
 
 describe('FtpServer', function () {
   this.timeout(2000);
+  let sandbox;
   let log = bunyan.createLogger({name: 'test'});
   let server;
   let client;
+
+  let connection;
 
   before(() => {
     server = new FtpServer(process.env.FTP_URL, {
@@ -26,10 +30,17 @@ describe('FtpServer', function () {
       greeting: ['hello', 'world']
     });
     server.on('login', (data, resolve) => {
+      connection = data.connection;
       resolve({root: process.cwd()});
     });
 
     return server.listen();
+  });
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+  });
+  afterEach(() => {
+    sandbox.restore();
   });
   after(() => {
     server.close();
@@ -105,6 +116,22 @@ describe('FtpServer', function () {
         expect(err).to.not.exist;
         expect(data).to.be.an('array');
         expect(data.length).to.be.equal(1);
+        done();
+      });
+    });
+
+    it('STOR fail.txt', done => {
+      sandbox.stub(connection.fs, 'write').callsFake(function () {
+        const fsPath = './test/fail.txt';
+        const stream = require('fs').createWriteStream(fsPath, {flags: 'w+'});
+        stream.once('error', () => fs.unlink(fsPath));
+        setTimeout(() => stream.emit('error', new Error('STOR fail test'), 1));
+        return stream;
+      });
+      const buffer = Buffer.from('test text file');
+      client.put(buffer, 'fail.txt', err => {
+        expect(err).to.exist;
+        expect(fs.existsSync('./test/fail.txt')).to.equal(false);
         done();
       });
     });
