@@ -11,15 +11,20 @@ module.exports = {
     .then(() => when.try(this.fs.read.bind(this.fs), command.arg, {start: this.restByteCount}))
     .then(stream => {
       this.restByteCount = 0;
-      return when.promise((resolve, reject) => {
-        this.connector.socket.on('error', err => stream.emit('error', err));
+
+      const eventsPromise = when.promise((resolve, reject) => {
+        this.connector.socket.once('error', err => reject(err));
 
         stream.on('data', data => this.connector.socket.write(data, this.transferType));
-        stream.on('end', () => resolve(this.reply(226)));
-        stream.on('error', err => reject(err));
-        this.reply(150).then(() => this.connector.socket.resume());
+        stream.once('error', err => reject(err));
+        stream.once('end', () => resolve());
       });
+
+      return this.reply(150).then(() => this.connector.socket.resume())
+      .then(() => eventsPromise)
+      .finally(() => stream.destroy ? stream.destroy() : null);
     })
+    .then(() => this.reply(226))
     .catch(when.TimeoutError, err => {
       log.error(err);
       return this.reply(425, 'No connection established');
