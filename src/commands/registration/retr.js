@@ -15,7 +15,8 @@ module.exports = {
       const eventsPromise = when.promise((resolve, reject) => {
         this.connector.socket.once('error', err => reject(err));
 
-        stream.on('data', data => this.connector.socket.write(data, this.transferType));
+        stream.on('data', data => this.connector.socket
+          && this.connector.socket.write(data, this.transferType));
         stream.once('error', err => reject(err));
         stream.once('end', () => resolve());
       });
