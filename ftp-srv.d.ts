@@ -1,5 +1,5 @@
 import * as tls from 'tls'
-import { Stat } from 'fs'
+import { Stats } from 'fs'
 import { Server } from 'net'
 
 declare class FileSystem {
