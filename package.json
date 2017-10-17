@@ -52,7 +52,6 @@
     }
   },
   "dependencies": {
-    "@types/node": "^8.0.44",
     "bunyan": "^1.8.10",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
