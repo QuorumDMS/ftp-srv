@@ -1,6 +1,5 @@
 import * as tls from 'tls'
 import { Stats } from 'fs'
-import { Server } from 'net'
 
 declare class FileSystem {
     constructor(connection: any, {root, cwd}?: {
@@ -64,7 +63,7 @@ interface FtpServerOptions {
 	log: any
 }
 
-declare class FtpServer extends Server {
+declare class FtpServer {
     constructor(url: string, options?: FtpServerOptions);
 
     readonly isTLS: boolean;
