@@ -1,7 +1,7 @@
 import * as tls from 'tls'
 import { Stats } from 'fs'
 
-declare class FileSystem {
+export interface FileSystem {
     constructor(connection: any, {root, cwd}?: {
         root: any;
         cwd: any;
@@ -35,7 +35,7 @@ declare class FileSystem {
     getUniqueName(): string;
 }
 
-declare class FtpConnection {
+export interface FtpConnection {
 	server: FtpServer;
 	id: string;
 	log: any;
@@ -52,7 +52,7 @@ declare class FtpConnection {
 
 }
 
-interface FtpServerOptions {
+export interface FtpServerOptions {
     pasv_range?: number | string,
     greeting?: string,
     tls?: tls.SecureContext | false,
@@ -63,7 +63,7 @@ interface FtpServerOptions {
 	log: any
 }
 
-declare class FtpServer {
+export interface FtpServer {
     constructor(url: string, options?: FtpServerOptions);
 
     readonly isTLS: boolean;
