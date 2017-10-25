@@ -14,8 +14,10 @@
   "license": "MIT",
   "main": "ftp-srv.js",
   "files": [
-    "src"
+    "src",
+    "ftp-srv.d.ts"
   ],
+  "types": "./ftp-srv.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/trs/ftp-srv"
@@ -41,7 +43,6 @@
     "verify:js:watch": "chokidar 'src/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
     "verify:watch": "npm run verify:js:watch --silent"
   },
-  "types": "./ftp-srv.d.ts",
   "config": {
     "commitizen": {
       "path": "node_modules/cz-customizable"
