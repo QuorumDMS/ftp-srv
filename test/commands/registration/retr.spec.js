@@ -56,7 +56,7 @@ describe(CMD, function () {
       return when.reject(new when.TimeoutError());
     });
 
-    return cmdFn({log, command: {arg: 'test.txt'} })
+    return cmdFn({log, command: {arg: 'test.txt'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
     });
@@ -67,7 +67,7 @@ describe(CMD, function () {
       return when.reject(new Error('test'));
     });
 
-    return cmdFn({log, command: {arg: 'test.txt'} })
+    return cmdFn({log, command: {arg: 'test.txt'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(551);
     });

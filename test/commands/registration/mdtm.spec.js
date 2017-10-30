@@ -8,7 +8,7 @@ describe(CMD, function () {
   let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
-    fs: { get: () => {} }
+    fs: {get: () => {}}
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -24,7 +24,7 @@ describe(CMD, function () {
 
   describe('// check', function () {
     it('fails on no fs', () => {
-      const badMockClient = { reply: () => {} };
+      const badMockClient = {reply: () => {}};
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
 
@@ -35,7 +35,7 @@ describe(CMD, function () {
     });
 
     it('fails on no fs get command', () => {
-      const badMockClient = { reply: () => {}, fs: {} };
+      const badMockClient = {reply: () => {}, fs: {}};
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
 

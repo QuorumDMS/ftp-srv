@@ -52,7 +52,7 @@ describe(CMD, function () {
     mockClient.fs.get.restore();
     sandbox.stub(mockClient.fs, 'get').rejects({});
 
-    return cmdFn({ command: { arg: 'good' } })
+    return cmdFn({command: {arg: 'good'}})
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');
@@ -63,7 +63,7 @@ describe(CMD, function () {
   });
 
   it('// successful | generates unique name', () => {
-    return cmdFn({ command: { arg: 'bad' } })
+    return cmdFn({command: {arg: 'bad'}})
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');

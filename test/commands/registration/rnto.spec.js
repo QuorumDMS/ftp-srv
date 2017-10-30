@@ -5,8 +5,8 @@ const sinon = require('sinon');
 const CMD = 'RNTO';
 describe(CMD, function () {
   let sandbox;
-  const mockLog = { error: () => {} };
-  const mockClient = { reply: () => when.resolve() };
+  const mockLog = {error: () => {}};
+  const mockClient = {reply: () => when.resolve()};
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
@@ -56,14 +56,14 @@ describe(CMD, function () {
     mockClient.fs.rename.restore();
     sandbox.stub(mockClient.fs, 'rename').rejects(new Error('test'));
 
-    return cmdFn({ log: mockLog, command: { arg: 'new' } })
+    return cmdFn({log: mockLog, command: {arg: 'new'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });
   });
 
   it('new // successful', () => {
-    return cmdFn({ command: { arg: 'new' } })
+    return cmdFn({command: {arg: 'new'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(250);
       expect(mockClient.fs.rename.args[0]).to.eql(['test', 'new']);

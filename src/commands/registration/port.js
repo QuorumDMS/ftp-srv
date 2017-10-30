@@ -5,6 +5,7 @@ module.exports = {
   directive: 'PORT',
   handler: function ({command} = {}) {
     this.connector = new ActiveConnector(this);
+
     const rawConnection = _.get(command, 'arg', '').split(',');
     if (rawConnection.length !== 6) return this.reply(425);
 

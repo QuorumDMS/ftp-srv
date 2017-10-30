@@ -5,8 +5,8 @@ const sinon = require('sinon');
 const CMD = 'CHMOD';
 describe(CMD, function () {
   let sandbox;
-  const mockLog = { error: () => {} };
-  const mockClient = { reply: () => when.resolve() };
+  const mockLog = {error: () => {}};
+  const mockClient = {reply: () => when.resolve()};
   const cmdFn = require(`../../../../src/commands/registration/site/${CMD.toLowerCase()}`).bind(mockClient);
 
   beforeEach(() => {
@@ -49,7 +49,7 @@ describe(CMD, function () {
     mockClient.fs.chmod.restore();
     sandbox.stub(mockClient.fs, 'chmod').rejects(new Error('test'));
 
-    cmdFn({ log: mockLog, command: { arg: '777 test' } })
+    cmdFn({log: mockLog, command: {arg: '777 test'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(500);
       done();
@@ -58,7 +58,7 @@ describe(CMD, function () {
   });
 
   it('777 test // successful', done => {
-    cmdFn({ log: mockLog, command: { arg: '777 test' } })
+    cmdFn({log: mockLog, command: {arg: '777 test'}})
     .then(() => {
       expect(mockClient.fs.chmod.args[0]).to.eql(['test', 511]);
       expect(mockClient.reply.args[0][0]).to.equal(200);

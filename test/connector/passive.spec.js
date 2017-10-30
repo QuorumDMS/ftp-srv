@@ -16,7 +16,7 @@ describe('Connector - Passive //', function () {
     encoding: 'utf8',
     log: bunyan.createLogger({name: 'passive-test'}),
     commandSocket: {},
-    server: { options: {} }
+    server: {options: {}}
   };
   let sandbox;
 

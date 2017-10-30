@@ -20,28 +20,28 @@ describe(CMD, function () {
   });
 
   it('// successful', () => {
-    return cmdFn({command: { directive: CMD }})
+    return cmdFn({command: {directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(211);
     });
   });
 
   it('help // successful', () => {
-    return cmdFn({command: { arg: 'help', directive: CMD}})
+    return cmdFn({command: {arg: 'help', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(214);
     });
   });
 
   it('allo // successful', () => {
-    return cmdFn({command: { arg: 'allo', directive: CMD}})
+    return cmdFn({command: {arg: 'allo', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(214);
     });
   });
 
   it('bad // unsuccessful', () => {
-    return cmdFn({command: { arg: 'bad', directive: CMD}})
+    return cmdFn({command: {arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(502);
     });

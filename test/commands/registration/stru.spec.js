@@ -20,14 +20,14 @@ describe(CMD, function () {
   });
 
   it('// successful', () => {
-    return cmdFn({command: { arg: 'F' } })
+    return cmdFn({command: {arg: 'F'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
     });
   });
 
   it('// unsuccessful', () => {
-    return cmdFn({command: { arg: 'X' } })
+    return cmdFn({command: {arg: 'X'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
     });
