@@ -8,7 +8,7 @@ const fs = whenNode.liftAll(syncFs);
 const errors = require('./errors');
 
 class FileSystem {
-  constructor(connection, { root, cwd } = {}) {
+  constructor(connection, {root, cwd} = {}) {
     this.connection = connection;
     this.cwd = cwd || nodePath.sep;
     this.root = root || process.cwd();

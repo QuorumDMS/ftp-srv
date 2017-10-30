@@ -88,7 +88,7 @@ describe(CMD, function () {
 
   describe('// check', function () {
     it('fails on no fs', () => {
-      const badMockClient = { reply: () => {} };
+      const badMockClient = {reply: () => {}};
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
 
@@ -99,7 +99,7 @@ describe(CMD, function () {
     });
 
     it('fails on no fs list command', () => {
-      const badMockClient = { reply: () => {}, fs: {} };
+      const badMockClient = {reply: () => {}, fs: {}};
       const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
       sandbox.stub(badMockClient, 'reply').resolves();
 

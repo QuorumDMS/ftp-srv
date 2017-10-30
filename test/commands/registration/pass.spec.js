@@ -9,7 +9,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => {},
     login: () => {},
-    server: { options: { anonymous: false } },
+    server: {options: {anonymous: false}},
     username: 'anonymous'
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);

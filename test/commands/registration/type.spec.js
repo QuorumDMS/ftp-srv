@@ -21,7 +21,7 @@ describe(CMD, function () {
   });
 
   it('A // successful', () => {
-    return cmdFn({ command: { arg: 'A' } })
+    return cmdFn({command: {arg: 'A'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.transferType).to.equal('ascii');
@@ -29,7 +29,7 @@ describe(CMD, function () {
   });
 
   it('I // successful', () => {
-    return cmdFn({ command: { arg: 'I' } })
+    return cmdFn({command: {arg: 'I'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.transferType).to.equal('binary');
@@ -37,7 +37,7 @@ describe(CMD, function () {
   });
 
   it('L // successful', () => {
-    return cmdFn({ command: { arg: 'L' } })
+    return cmdFn({command: {arg: 'L'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.transferType).to.equal('binary');
@@ -45,7 +45,7 @@ describe(CMD, function () {
   });
 
   it('X // successful', () => {
-    return cmdFn({ command: { arg: 'X' } })
+    return cmdFn({command: {arg: 'X'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
       expect(mockClient.transferType).to.equal(null);

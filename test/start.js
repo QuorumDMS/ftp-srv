@@ -19,7 +19,7 @@ const server = new FtpServer('ftp://127.0.0.1:8880', {
 });
 server.on('login', ({username, password}, resolve, reject) => {
   if (username === 'test' && password === 'test' || username === 'anonymous') {
-    resolve({ root: require('os').homedir() });
+    resolve({root: require('os').homedir()});
   } else reject('Bad username or password');
 });
 server.listen();

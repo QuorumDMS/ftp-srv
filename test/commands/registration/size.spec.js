@@ -5,8 +5,8 @@ const sinon = require('sinon');
 const CMD = 'SIZE';
 describe(CMD, function () {
   let sandbox;
-  const mockLog = { error: () => {} };
-  const mockClient = { reply: () => when.resolve() };
+  const mockLog = {error: () => {}};
+  const mockClient = {reply: () => when.resolve()};
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
@@ -43,14 +43,14 @@ describe(CMD, function () {
   it('// unsuccessful | file get fails', () => {
     sandbox.stub(mockClient.fs, 'get').rejects(new Error('test'));
 
-    return cmdFn({ log: mockLog, command: { arg: 'test' } })
+    return cmdFn({log: mockLog, command: {arg: 'test'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });
   });
 
   it('// successful', () => {
-    return cmdFn({ command: { arg: 'test' } })
+    return cmdFn({command: {arg: 'test'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(213);
     });

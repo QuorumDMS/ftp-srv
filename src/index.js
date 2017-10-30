@@ -43,7 +43,7 @@ class FtpServer {
       return connection.reply(220, ...greeting, features)
       .finally(() => socket.resume());
     };
-    const serverOptions = _.assign(this.isTLS ? this._tls : {}, { pauseOnConnect: true });
+    const serverOptions = _.assign(this.isTLS ? this._tls : {}, {pauseOnConnect: true});
 
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
     this.server.on('error', err => this.log.error(err, '[Event] error'));

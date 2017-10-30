@@ -23,7 +23,7 @@ describe(CMD, function () {
   });
 
   it('TLS // supported', () => {
-    return cmdFn({command: { arg: 'TLS', directive: CMD}})
+    return cmdFn({command: {arg: 'TLS', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(234);
       expect(mockClient.secure).to.equal(true);
@@ -31,14 +31,14 @@ describe(CMD, function () {
   });
 
   it('SSL // not supported', () => {
-    return cmdFn({command: { arg: 'SSL', directive: CMD}})
+    return cmdFn({command: {arg: 'SSL', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
     });
   });
 
   it('bad // bad', () => {
-    return cmdFn({command: { arg: 'bad', directive: CMD}})
+    return cmdFn({command: {arg: 'bad', directive: CMD}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
     });

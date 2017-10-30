@@ -30,14 +30,14 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful | invalid argument', () => {
-    return cmdFn({ command: { arg: '1,2,3,4,5' } })
+    return cmdFn({command: {arg: '1,2,3,4,5'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
     });
   });
 
   it('// successful', () => {
-    return cmdFn({ command: { arg: '192,168,0,100,137,214' } })
+    return cmdFn({command: {arg: '192,168,0,100,137,214'}})
     .then(() => {
       const [ip, port] = ActiveConnector.prototype.setupConnection.args[0];
       expect(mockClient.reply.args[0][0]).to.equal(200);
