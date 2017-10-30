@@ -1,6 +1,6 @@
 generator-confit:
   app:
-    _version: f02196cc5cb7941ca46ec46d23bd6aef0dfcaca0
+    _version: 462ecd915fd9db1aef6a37c2b5ce8b58b80c18ba
     buildProfile: Latest
     copyrightOwner: Tyler Stewart
     license: MIT
@@ -8,7 +8,7 @@ generator-confit:
     publicRepository: true
     repositoryType: GitHub
   paths:
-    _version: 7f33e41600b34cd6867478d8f2b3d6b2bbd42508
+    _version: 780b129e0c7e5cab7e29c4f185bcf78524593a33
     config:
       configDir: config/
     input:
@@ -18,22 +18,23 @@ generator-confit:
       prodDir: dist/
       reportDir: reports/
   buildJS:
-    _version: df428a706d926204228c5d9ebdbd7b49908926d9
+    _version: ead8ce4280b07d696aff499a5fca1a933727582f
     framework: []
     frameworkScripts: []
     outputFormat: ES6
     sourceFormat: ES6
   entryPoint:
-    _version: de20402bf85c703080ef6daf21e35325a3b9d604
+    _version: 39082c3df887fbc08744dfd088c25465e7a2e3a4
     entryPoints:
       main:
         - src/index.js
   testUnit:
-    _version: 4472a6d59b434226f463992d3c1914c77a6a115d
+    _version: 30eee42a88ee42cce4f1ae48fe0cbe81647d189a
     testDependencies: []
+    testFramework: mocha
   verify:
     _version: 30ae86c5022840a01fc08833e238a82c683fa1c7
-    jsCodingStandard: eslint
+    jsCodingStandard: none
   documentation:
     _version: b1658da3278b16d1982212f5e8bc05348af20e0b
     generateDocs: false
