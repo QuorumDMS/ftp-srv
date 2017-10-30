@@ -1,10 +1,13 @@
 const when = require('when');
+const _ = require('lodash');
+
+const registry = require('./registry');
 
 module.exports = {
   directive: 'SITE',
   handler: function ({log, command} = {}) {
-    const registry = require('./registry');
-    const subCommand = this.commands.parse(command.arg);
+    const rawSubCommand = _.get(command, 'arg', '');
+    const subCommand = this.commands.parse(rawSubCommand);
     const subLog = log.child({subverb: subCommand.directive});
 
     if (!registry.hasOwnProperty(subCommand.directive)) return this.reply(502);
