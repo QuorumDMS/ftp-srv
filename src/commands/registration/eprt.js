@@ -9,11 +9,11 @@ const FAMILY = {
 module.exports = {
   directive: 'EPRT',
   handler: function ({command} = {}) {
-    this.connector = new ActiveConnector(this);
-    const [protocol, ip, port] = _.compact(command.arg.split('|'));
+    const [, protocol, ip, port] = _.chain(command).get('arg', '').split('|').value();
     const family = FAMILY[protocol];
-    if (!family) return this.reply(502, 'Unknown network protocol');
+    if (!family) return this.reply(504, 'Unknown network protocol');
 
+    this.connector = new ActiveConnector(this);
     return this.connector.setupConnection(ip, port, family)
     .then(() => this.reply(200));
   },
