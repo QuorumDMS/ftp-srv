@@ -16,7 +16,7 @@
     "src",
     "ftp-srv.d.ts"
   ],
-  "main": "src/index.js",
+  "main": "ftp-srv.js",
   "types": "./ftp-srv.d.ts",
   "repository": {
     "type": "git",
