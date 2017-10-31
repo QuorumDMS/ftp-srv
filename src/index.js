@@ -72,7 +72,7 @@ class FtpServer {
             ip: this.url.hostname,
             port: this.url.port
           }, 'Listening');
-          resolve();
+          resolve('Listening');
         });
       });
     });
@@ -125,7 +125,7 @@ class FtpServer {
       } catch (err) {
         this.log.error(err, 'Error closing connection', {id});
       } finally {
-        resolve();
+        resolve('Disconnected');
       }
     });
   }
@@ -142,7 +142,7 @@ class FtpServer {
     .then(() => when.promise(resolve => {
       this.server.close(err => {
         if (err) this.log.error(err, 'Error closing server');
-        resolve();
+        resolve('Closed');
       });
     }));
   }
