@@ -37,8 +37,8 @@
 ```js
 // Quick start
 
-const FtpSvr = require('ftp-srv');
-const ftpServer = new FtpSvr('ftp://0.0.0.0:9876', { options ... });
+const FtpSrv = require('ftp-srv');
+const ftpServer = new FtpSrv('ftp://0.0.0.0:9876', { options ... });
 
 ftpServer.on('login', (data, resolve, reject) => { ... });
 ...
@@ -105,7 +105,7 @@ A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by de
 
 ## Events
 
-The `FtpSvr` class extends the [node net.Server](https://nodejs.org/api/net.html#net_class_net_server). Some custom events can be resolved or rejected, such as `login`.
+The `FtpSrv` class extends the [node net.Server](https://nodejs.org/api/net.html#net_class_net_server). Some custom events can be resolved or rejected, such as `login`.
 
 ### `login`
 ```js
