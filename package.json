@@ -52,9 +52,9 @@
     }
   },
   "dependencies": {
-    "bunyan": "^1.8.10",
+    "bunyan": "^1.8.12",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1",
+    "moment": "^2.19.1",
     "uuid": "^3.1.0",
     "when": "^3.7.8"
   },
