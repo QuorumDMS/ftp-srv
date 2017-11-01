@@ -2,6 +2,7 @@
 const {expect} = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
+const when = require('when');
 const fs = require('fs');
 
 const FtpServer = require('../src');
@@ -9,12 +10,13 @@ const FtpClient = require('ftp');
 
 before(() => require('dotenv').load());
 
-describe('FtpServer', function () {
-  this.timeout(2000);
-  let sandbox;
-  let log = bunyan.createLogger({name: 'test'});
-  let server;
+describe('Integration', function () {
+  this.timeout(4000);
+
   let client;
+  let sandbox;
+  let log = bunyan.createLogger({name: 'test-runner', level: 60});
+  let server;
 
   let connection;
 
@@ -46,36 +48,46 @@ describe('FtpServer', function () {
     server.close();
   });
 
-  it('accepts client connection', done => {
-    expect(server).to.exist;
-    client = new FtpClient();
-    client.once('ready', () => done());
-    client.once('error', err => done(err));
-    client.connect({
-      host: server.url.hostname,
-      port: server.url.port,
-      user: 'test',
-      password: 'test'
+  function connectClient(options) {
+    return when.promise((resolve, reject) => {
+      client = new FtpClient();
+      client.once('ready', () => resolve(client));
+      client.once('error', err => reject(err));
+      client.connect(options);
+    })
+    .then(instance => {
+      client = instance;
     });
-  });
+  }
 
-  it('STAT', done => {
-    client.status((err, status) => {
-      expect(err).to.not.exist;
-      expect(status).to.be.a('string');
-      done();
+  function closeClient() {
+    return when.promise((resolve, reject) => {
+      client.once('close', () => resolve());
+      client.once('error', err => reject(err));
+      client.logout(err => {
+        expect(err).to.be.undefined;
+      });
     });
-  });
+  }
 
-  it('SYST', done => {
-    client.system((err, os) => {
-      expect(err).to.not.exist;
-      expect(os).to.be.a('string');
-      done();
+  function runFileSystemTests() {
+
+    it('STAT', done => {
+      client.status((err, status) => {
+        expect(err).to.not.exist;
+        expect(status).to.be.a('string');
+        done();
+      });
     });
-  });
 
-  const runFileSystemTests = () => {
+    it('SYST', done => {
+      client.system((err, os) => {
+        expect(err).to.not.exist;
+        expect(os).to.be.a('string');
+        done();
+      });
+    });
+
     it('CWD ..', done => {
       const dir = '..';
       client.cwd(`${dir}`, (err, data) => {
@@ -124,7 +136,7 @@ describe('FtpServer', function () {
       sandbox.stub(connection.fs, 'write').callsFake(function () {
         const fsPath = './test/fail.txt';
         const stream = require('fs').createWriteStream(fsPath, {flags: 'w+'});
-        stream.once('error', () => fs.unlink(fsPath));
+        stream.once('error', () => fs.unlinkSync(fsPath));
         setTimeout(() => stream.emit('error', new Error('STOR fail test'), 1));
         return stream;
       });
@@ -263,31 +275,55 @@ describe('FtpServer', function () {
         done();
       });
     });
-  };
+  }
 
-  it('TYPE A', done => {
-    client.ascii(err => {
-      expect(err).to.not.exist;
-      done();
+  describe('#ASCII', function () {
+    before(() => {
+      return connectClient({
+        host: server.url.hostname,
+        port: server.url.port,
+        user: 'test',
+        password: 'test'
+      });
     });
-  });
-  runFileSystemTests();
 
-  it('TYPE I', done => {
-    client.binary(err => {
-      expect(err).to.not.exist;
-      done();
+    after(() => closeClient(client));
+
+    it('TYPE A', done => {
+      client.ascii(err => {
+        expect(err).to.not.exist;
+        done();
+      });
     });
-  });
-  runFileSystemTests();
 
-  it('AUTH TLS', done => {
-    client.end();
-    client.once('close', () => {
-      client = new FtpClient();
-      client.once('ready', () => done());
-      client.once('error', err => done(err));
-      client.connect({
+    runFileSystemTests();
+  });
+
+  describe('#BINARY', function () {
+    before(() => {
+      return connectClient({
+        host: server.url.hostname,
+        port: server.url.port,
+        user: 'test',
+        password: 'test'
+      });
+    });
+
+    after(() => closeClient(client));
+
+    it('TYPE I', done => {
+      client.binary(err => {
+        expect(err).to.not.exist;
+        done();
+      });
+    });
+
+    runFileSystemTests();
+  });
+
+  describe('#SECURE', function () {
+    before(() => {
+      return connectClient({
         host: server.url.hostname,
         port: server.url.port,
         user: 'test',
@@ -299,13 +335,9 @@ describe('FtpServer', function () {
         }
       });
     });
-  });
-  runFileSystemTests();
 
-  it('QUIT', done => {
-    client.once('close', done);
-    client.logout(err => {
-      expect(err).to.be.undefined;
-    });
+    after(() => closeClient());
+
+    runFileSystemTests();
   });
 });
