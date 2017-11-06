@@ -1,7 +1,7 @@
 import * as tls from 'tls'
 import { Stats } from 'fs'
 
-export interface FileSystem {
+export class FileSystem {
     constructor(connection: any, {root, cwd}?: {
         root: any;
         cwd: any;
@@ -35,7 +35,7 @@ export interface FileSystem {
     getUniqueName(): string;
 }
 
-export interface FtpConnection {
+export class FtpConnection {
 	server: FtpServer;
 	id: string;
 	log: any;
@@ -54,16 +54,16 @@ export interface FtpConnection {
 
 export interface FtpServerOptions {
     pasv_range?: number | string,
-    greeting?: string,
+    greeting?: string | string[],
     tls?: tls.SecureContext | false,
     anonymous?: boolean,
     blacklist?: Array<string>,
     whitelist?: Array<string>,
     file_format?: (stat: Stats) => string | Promise<string> | "ls" | "ep",
-	log: any
+	log?: any
 }
 
-export interface FtpServer {
+export class FtpServer {
     constructor(url: string, options?: FtpServerOptions);
 
     readonly isTLS: boolean;
@@ -94,7 +94,13 @@ export interface FtpServer {
 			username: string,
 			password: string
 		},
-		resolve: (fs?: FileSystem, root?: string, cwd?: string, blacklist?: Array<string>, whitelist?: Array<string>) => void,
+		resolve: (config: {
+            fs?: FileSystem,
+            root?: string,
+            cwd?: string,
+            blacklist?: Array<string>,
+            whitelist?: Array<string>
+        }) => void,
 		reject: (err?: Error) => void
 	) => void)
 
@@ -107,5 +113,5 @@ export interface FtpServer {
 	) => void)
 }
 
-declare const FtpSrv: FtpServer;
+export {FtpServer as FtpSrv};
 export default FtpServer;
