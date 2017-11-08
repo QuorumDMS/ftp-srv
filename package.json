@@ -59,6 +59,7 @@
     "when": "^3.7.8"
   },
   "devDependencies": {
+    "@icetee/ftp": "^0.3.15",
     "chai": "^4.0.2",
     "chokidar-cli": "1.2.0",
     "coveralls": "2.13.1",
@@ -71,7 +72,7 @@
     "eslint-friendly-formatter": "3.0.0",
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-node": "5.1.1",
-    "ftp": "^0.3.10",
+    "fs-extra": "^4.0.2",
     "html-convert": "^2.1.7",
     "husky": "0.13.3",
     "istanbul": "0.4.5",

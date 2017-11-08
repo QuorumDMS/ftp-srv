@@ -1,5 +1,5 @@
 {
   "mute":false,
-  "level":"fatal",
+  "level":"debug",
   "reporter":"spec"
 }
