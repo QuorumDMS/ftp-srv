@@ -8,8 +8,6 @@ const fs = require('fs');
 const FtpServer = require('../src');
 const FtpClient = require('ftp');
 
-before(() => require('dotenv').load());
-
 describe('Integration', function () {
   this.timeout(4000);
 
@@ -21,9 +19,9 @@ describe('Integration', function () {
   let connection;
 
   before(() => {
-    server = new FtpServer(process.env.FTP_URL, {
+    server = new FtpServer('ftp://127.0.0.1:8880', {
       log,
-      pasv_range: process.env.PASV_RANGE,
+      pasv_range: 8881,
       tls: {
         key: `${process.cwd()}/test/cert/server.key`,
         cert: `${process.cwd()}/test/cert/server.crt`,
