@@ -3,7 +3,9 @@ const {expect} = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
 const when = require('when');
-const fs = require('fs-extra');
+const _ = require('lodash');
+const fs = require('fs');
+const mockFs = require('mock-fs');
 
 const FtpServer = require('../src');
 const FtpClient = require('@icetee/ftp');
@@ -32,17 +34,13 @@ describe('Integration', function () {
     server.close();
   });
 
-  function startServer(url) {
-    server = new FtpServer(url, {
+  function startServer(url, options = {}) {
+    server = new FtpServer(url, _.assign({
       log,
       pasv_range: 8881,
-      tls: {
-        key: `${process.cwd()}/test/cert/server.key`,
-        cert: `${process.cwd()}/test/cert/server.crt`,
-        ca: `${process.cwd()}/test/cert/server.csr`
-      },
-      greeting: ['hello', 'world']
-    });
+      greeting: ['hello', 'world'],
+      anonymous: true
+    }, options));
     server.on('login', (data, resolve) => {
       connection = data.connection;
       resolve({root: clientDirectory});
@@ -51,12 +49,17 @@ describe('Integration', function () {
     return server.listen();
   }
 
-  function connectClient(options) {
+  function connectClient(options = {}) {
     return when.promise((resolve, reject) => {
       client = new FtpClient();
       client.once('ready', () => resolve(client));
       client.once('error', err => reject(err));
-      client.connect(options);
+      client.connect(_.assign({
+        host: server.url.hostname,
+        port: server.url.port,
+        user: 'test',
+        password: 'test'
+      }, options));
     })
     .then(instance => {
       client = instance;
@@ -74,26 +77,13 @@ describe('Integration', function () {
   }
 
   function runFileSystemTests() {
-    function buildUp() {
-      fs.removeSync(clientDirectory);
-      fs.ensureDirSync(`${clientDirectory}/dir`);
-      fs.writeFileSync(`${clientDirectory}/dir/fake.txt`, 'This is a fake file');
-    }
+    before(() => mockFs({
+      [clientDirectory]: mockFs.directory(),
+      [`${clientDirectory}/dir`]: mockFs.directory(),
+      [`${clientDirectory}/dir/fake.txt`]: mockFs.file()
+    }));
 
-    function tearDown() {
-      fs.removeSync(clientDirectory);
-    }
-
-    before(done => {
-      tearDown();
-      buildUp();
-      done();
-    });
-
-    after(done => {
-      tearDown();
-      done();
-    });
+    after(() => mockFs.restore());
 
     it('STAT', done => {
       client.status((err, status) => {
@@ -158,7 +148,7 @@ describe('Integration', function () {
     it('STOR fail.txt', done => {
       const fsPath = `${clientDirectory}/dir/fail.txt`;
       sandbox.stub(connection.fs, 'write').callsFake(function () {
-        const stream = require('fs').createWriteStream(fsPath, {flags: 'w+'});
+        const stream = fs.createWriteStream(fsPath, {flags: 'w+'});
         stream.once('error', () => fs.unlinkSync(fsPath));
         setTimeout(() => stream.emit('error', new Error('STOR fail test'), 1));
         return stream;
@@ -363,16 +353,22 @@ describe('Integration', function () {
 
   describe.skip('#EXPLICIT', function () {
     before(() => {
-      return connectClient({
-        host: server.url.hostname,
-        port: server.url.port,
-        user: 'test',
-        password: 'test',
-        secure: true,
-        secureOptions: {
-          rejectUnauthorized: false,
-          checkServerIdentity: () => undefined
+      return server.close()
+      .then(() => startServer('ftp://127.0.0.1:8880', {
+        tls: {
+          key: `${process.cwd()}/test/cert/server.key`,
+          cert: `${process.cwd()}/test/cert/server.crt`,
+          ca: `${process.cwd()}/test/cert/server.csr`
         }
+      }))
+      .then(() => {
+        return connectClient({
+          secure: true,
+          secureOptions: {
+            rejectUnauthorized: false,
+            checkServerIdentity: () => undefined
+          }
+        });
       });
     });
 
@@ -384,13 +380,15 @@ describe('Integration', function () {
   describe.skip('#IMPLICIT', function () {
     before(() => {
       return server.close()
-      .then(() => startServer('ftps://127.0.0.1:8880'))
+      .then(() => startServer('ftps://127.0.0.1:8880', {
+        tls: {
+          key: `${process.cwd()}/test/cert/server.key`,
+          cert: `${process.cwd()}/test/cert/server.crt`,
+          ca: `${process.cwd()}/test/cert/server.csr`
+        }
+      }))
       .then(() => {
         return connectClient({
-          host: server.url.hostname,
-          port: server.url.port,
-          user: 'test',
-          password: 'test',
           secure: 'implicit',
           secureOptions: {
             rejectUnauthorized: false,
