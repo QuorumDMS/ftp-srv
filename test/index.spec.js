@@ -3,23 +3,37 @@ const {expect} = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
 const when = require('when');
-const fs = require('fs');
+const fs = require('fs-extra');
 
 const FtpServer = require('../src');
-const FtpClient = require('ftp');
+const FtpClient = require('@icetee/ftp');
 
 describe('Integration', function () {
   this.timeout(4000);
 
   let client;
   let sandbox;
-  let log = bunyan.createLogger({name: 'test-runner', level: 60});
+  let log = bunyan.createLogger({name: 'test-runner'});
   let server;
 
   let connection;
+  const clientDirectory = `${process.cwd()}/test_tmp`;
 
   before(() => {
-    server = new FtpServer('ftp://127.0.0.1:8880', {
+    return startServer('ftp://127.0.0.1:8880');
+  });
+  beforeEach(() => {
+    sandbox = sinon.sandbox.create();
+  });
+  afterEach(() => {
+    sandbox.restore();
+  });
+  after(() => {
+    server.close();
+  });
+
+  function startServer(url) {
+    server = new FtpServer(url, {
       log,
       pasv_range: 8881,
       tls: {
@@ -31,20 +45,11 @@ describe('Integration', function () {
     });
     server.on('login', (data, resolve) => {
       connection = data.connection;
-      resolve({root: process.cwd()});
+      resolve({root: clientDirectory});
     });
 
     return server.listen();
-  });
-  beforeEach(() => {
-    sandbox = sinon.sandbox.create();
-  });
-  afterEach(() => {
-    sandbox.restore();
-  });
-  after(() => {
-    server.close();
-  });
+  }
 
   function connectClient(options) {
     return when.promise((resolve, reject) => {
@@ -69,11 +74,31 @@ describe('Integration', function () {
   }
 
   function runFileSystemTests() {
+    function buildUp() {
+      fs.removeSync(clientDirectory);
+      fs.ensureDirSync(`${clientDirectory}/dir`);
+      fs.writeFileSync(`${clientDirectory}/dir/fake.txt`, 'This is a fake file');
+    }
+
+    function tearDown() {
+      fs.removeSync(clientDirectory);
+    }
+
+    before(done => {
+      tearDown();
+      buildUp();
+      done();
+    });
+
+    after(done => {
+      tearDown();
+      done();
+    });
 
     it('STAT', done => {
       client.status((err, status) => {
         expect(err).to.not.exist;
-        expect(status).to.be.a('string');
+        expect(status).to.equal('Status OK');
         done();
       });
     });
@@ -81,25 +106,23 @@ describe('Integration', function () {
     it('SYST', done => {
       client.system((err, os) => {
         expect(err).to.not.exist;
-        expect(os).to.be.a('string');
+        expect(os).to.equal('UNIX');
         done();
       });
     });
 
     it('CWD ..', done => {
-      const dir = '..';
-      client.cwd(`${dir}`, (err, data) => {
+      client.cwd('..', (err, data) => {
         expect(err).to.not.exist;
-        expect(data).to.be.a('string');
+        expect(data).to.equal('/');
         done();
       });
     });
 
-    it('CWD test', done => {
-      const dir = 'test';
-      client.cwd(`${dir}`, (err, data) => {
+    it('CWD dir', done => {
+      client.cwd('dir', (err, data) => {
         expect(err).to.not.exist;
-        expect(data).to.be.a('string');
+        expect(data).to.equal('/dir');
         done();
       });
     });
@@ -107,7 +130,7 @@ describe('Integration', function () {
     it('PWD', done => {
       client.pwd((err, data) => {
         expect(err).to.not.exist;
-        expect(data).to.be.a('string');
+        expect(data).to.equal('/dir');
         done();
       });
     });
@@ -116,23 +139,25 @@ describe('Integration', function () {
       client.list('.', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.be.an('array');
-        expect(data.length).to.be.above(1);
+        expect(data.length).to.equal(1);
+        expect(data[0].name).to.equal('fake.txt');
         done();
       });
     });
 
-    it('LIST index.spec.js', done => {
-      client.list('index.spec.js', (err, data) => {
+    it('LIST fake.txt', done => {
+      client.list('fake.txt', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.be.an('array');
-        expect(data.length).to.be.equal(1);
+        expect(data.length).to.equal(1);
+        expect(data[0].name).to.equal('fake.txt');
         done();
       });
     });
 
     it('STOR fail.txt', done => {
+      const fsPath = `${clientDirectory}/dir/fail.txt`;
       sandbox.stub(connection.fs, 'write').callsFake(function () {
-        const fsPath = './test/fail.txt';
         const stream = require('fs').createWriteStream(fsPath, {flags: 'w+'});
         stream.once('error', () => fs.unlinkSync(fsPath));
         setTimeout(() => stream.emit('error', new Error('STOR fail test'), 1));
@@ -141,32 +166,39 @@ describe('Integration', function () {
       const buffer = Buffer.from('test text file');
       client.put(buffer, 'fail.txt', err => {
         expect(err).to.exist;
-        expect(fs.existsSync('./test/fail.txt')).to.equal(false);
+        expect(fs.existsSync(fsPath)).to.equal(false);
         done();
       });
     });
 
     it('STOR tést.txt', done => {
       const buffer = Buffer.from('test text file');
+      const fsPath = `${clientDirectory}/dir/tést.txt`;
       client.put(buffer, 'tést.txt', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/tést.txt')).to.equal(true);
-        fs.readFile('./test/tést.txt', (fserr, data) => {
-          expect(fserr).to.not.exist;
-          expect(data.toString()).to.equal('test text file');
-          done();
+        setTimeout(() => {
+          expect(fs.existsSync(fsPath)).to.equal(true);
+          fs.readFile(fsPath, (fserr, data) => {
+            expect(fserr).to.not.exist;
+            expect(data.toString()).to.equal('test text file');
+            done();
+          });
         });
       });
     });
 
     it('APPE tést.txt', done => {
       const buffer = Buffer.from(', awesome!');
+      const fsPath = `${clientDirectory}/dir/tést.txt`;
       client.append(buffer, 'tést.txt', err => {
         expect(err).to.not.exist;
-        fs.readFile('./test/tést.txt', (fserr, data) => {
-          expect(fserr).to.not.exist;
-          expect(data.toString()).to.equal('test text file, awesome!');
-          done();
+        setTimeout(() => {
+          expect(fs.existsSync(fsPath)).to.equal(true);
+          fs.readFile(fsPath, (fserr, data) => {
+            expect(fserr).to.not.exist;
+            expect(data.toString()).to.equal('test text file, awesome!');
+            done();
+          });
         });
       });
     });
@@ -182,15 +214,16 @@ describe('Integration', function () {
           expect(text).to.equal('test text file, awesome!');
           done();
         });
+        stream.resume();
       });
     });
 
     it('RNFR tést.txt, RNTO awesome.txt', done => {
       client.rename('tést.txt', 'awesome.txt', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/tést.txt')).to.equal(false);
-        expect(fs.existsSync('./test/awesome.txt')).to.equal(true);
-        fs.readFile('./test/awesome.txt', (fserr, data) => {
+        expect(fs.existsSync(`${clientDirectory}/dir/tést.txt`)).to.equal(false);
+        expect(fs.existsSync(`${clientDirectory}/dir/awesome.txt`)).to.equal(true);
+        fs.readFile(`${clientDirectory}/dir/awesome.txt`, (fserr, data) => {
           expect(fserr).to.not.exist;
           expect(data.toString()).to.equal('test text file, awesome!');
           done();
@@ -207,8 +240,16 @@ describe('Integration', function () {
     });
 
     it('MDTM awesome.txt', done => {
-      client.lastMod('awesome.txt', err => {
+      client.lastMod('awesome.txt', (err, modTime) => {
         expect(err).to.not.exist;
+        expect(modTime).to.be.instanceOf(Date);
+        expect(modTime.toISOString()).to.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/);
+        done();
+      });
+    });
+
+    it.skip('MLSD .', done => {
+      client.mlsd('.', () => {
         done();
       });
     });
@@ -216,7 +257,7 @@ describe('Integration', function () {
     it('SITE CHMOD 700 awesome.txt', done => {
       client.site('CHMOD 600 awesome.txt', err => {
         expect(err).to.not.exist;
-        fs.stat('./test/awesome.txt', (fserr, stats) => {
+        fs.stat(`${clientDirectory}/dir/awesome.txt`, (fserr, stats) => {
           expect(fserr).to.not.exist;
           const mode = stats.mode.toString(8);
           expect(/600$/.test(mode)).to.equal(true);
@@ -228,18 +269,19 @@ describe('Integration', function () {
     it('DELE awesome.txt', done => {
       client.delete('awesome.txt', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/awesome.txt')).to.equal(false);
+        expect(fs.existsSync(`${clientDirectory}/dir/awesome.txt`)).to.equal(false);
         done();
       });
     });
 
     it('MKD témp', done => {
-      if (fs.existsSync('./test/témp')) {
-        fs.rmdirSync('./test/témp');
+      const path = `${clientDirectory}/dir/témp`;
+      if (fs.existsSync(path)) {
+        fs.rmdirSync(path);
       }
       client.mkdir('témp', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/témp')).to.equal(true);
+        expect(fs.existsSync(path)).to.equal(true);
         done();
       });
     });
@@ -247,7 +289,7 @@ describe('Integration', function () {
     it('CWD témp', done => {
       client.cwd('témp', (err, data) => {
         expect(err).to.not.exist;
-        expect(data).to.be.a('string');
+        expect(data).to.to.be.a('string');
         done();
       });
     });
@@ -262,7 +304,7 @@ describe('Integration', function () {
     it('RMD témp', done => {
       client.rmdir('témp', err => {
         expect(err).to.not.exist;
-        expect(fs.existsSync('./test/témp')).to.equal(false);
+        expect(fs.existsSync(`${clientDirectory}/dir/témp`)).to.equal(false);
         done();
       });
     });
@@ -319,7 +361,7 @@ describe('Integration', function () {
     runFileSystemTests();
   });
 
-  describe('#SECURE', function () {
+  describe.skip('#EXPLICIT', function () {
     before(() => {
       return connectClient({
         host: server.url.hostname,
@@ -331,6 +373,30 @@ describe('Integration', function () {
           rejectUnauthorized: false,
           checkServerIdentity: () => undefined
         }
+      });
+    });
+
+    after(() => closeClient());
+
+    runFileSystemTests();
+  });
+
+  describe.skip('#IMPLICIT', function () {
+    before(() => {
+      return server.close()
+      .then(() => startServer('ftps://127.0.0.1:8880'))
+      .then(() => {
+        return connectClient({
+          host: server.url.hostname,
+          port: server.url.port,
+          user: 'test',
+          password: 'test',
+          secure: 'implicit',
+          secureOptions: {
+            rejectUnauthorized: false,
+            checkServerIdentity: () => undefined
+          }
+        });
       });
     });
 
