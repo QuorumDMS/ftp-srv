@@ -1,0 +1,140 @@
+version: 2
+jobs:
+  build_node_8:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-install-node-8-{{ checksum "package.json" }}
+      - run:
+          name: Install
+          command: npm install
+      - save_cache:
+          key: npm-install-node-8-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+  build_node_6:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-install-node-6-{{ checksum "package.json" }}
+      - run:
+          name: Install
+          command: npm install
+      - save_cache:
+          key: npm-install-node-6-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+  lint:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-install-node-8-{{ checksum "package.json" }}
+      - run:
+          name: Lint
+          command: npm run verify:js
+
+  test_node_8:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-install-node-8-{{ checksum "package.json" }}
+      - run:
+          name: Test Node 8
+          command: npm run test:coverage
+          when: always
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports/coverage
+          prefix: coverage
+
+  test_node_6:
+    docker:
+      - image: circleci/node:6
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-install-node-6-{{ checksum "package.json" }}
+      - run:
+          name: Test Node 6
+          command: npm run test:coverage
+          when: always
+      - store_test_results:
+          path: reports
+      - store_artifacts:
+          path: reports/coverage
+          prefix: coverage
+
+  release:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - restore_cache:
+          key: npm-install-node-6-{{ checksum "package.json" }}
+      - run:
+          name: Update NPM
+          command: |
+            npm install npm@latest
+            npm install semantic-release@latest
+      - deploy:
+          name: Semantic Release
+          command: |
+            npm run semantic-release || true
+
+workflows:
+  version: 2
+  test_and_tag:
+    jobs:
+      - build_node_8:
+          filters:
+            branches:
+              only: master
+      - build_node_6:
+          filters:
+            branches:
+              only: master
+      - lint:
+          requires:
+            - build_node_8
+      - test_node_6:
+          requires:
+            - build_node_6
+      - test_node_8:
+          requires:
+            - build_node_8
+      - release:
+          requires:
+            - lint
+            - test_node_8
+
+  build_and_test:
+    jobs:
+      - build_node_8:
+          filters:
+            branches:
+              ignore: master
+      - build_node_6:
+          filters:
+            branches:
+              ignore: master
+      - lint:
+          requires:
+            - build_node_8
+      - test_node_6:
+          requires:
+            - build_node_6
+      - test_node_8:
+          requires:
+            - lint
+            - build_node_8
