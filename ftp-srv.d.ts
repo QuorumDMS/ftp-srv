@@ -2,7 +2,12 @@ import * as tls from 'tls'
 import { Stats } from 'fs'
 
 export class FileSystem {
-    constructor(connection: any, {root, cwd}?: {
+
+	readonly connection: FtpConnection;
+	readonly root: string;
+	readonly cwd: string;
+
+    constructor(connection: FtpConnection, {root, cwd}?: {
         root: any;
         cwd: any;
     });
