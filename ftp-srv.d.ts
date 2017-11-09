@@ -3,9 +3,9 @@ import { Stats } from 'fs'
 
 export class FileSystem {
 
-	public connection: FtpConnection;
-	public root: string;
-	public cwd: string;
+	readonly connection: FtpConnection;
+	readonly root: string;
+	readonly cwd: string;
 
     constructor(connection: FtpConnection, {root, cwd}?: {
         root: any;
