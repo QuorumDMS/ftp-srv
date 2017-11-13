@@ -116,6 +116,7 @@ workflows:
       - release:
           requires:
             - lint
+            - test_node_6
             - test_node_8
 
   build_and_test:
@@ -136,5 +137,4 @@ workflows:
             - build_node_6
       - test_node_8:
           requires:
-            - lint
             - build_node_8
