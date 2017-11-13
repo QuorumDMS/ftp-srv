@@ -79,7 +79,6 @@
     "mocha-junit-reporter": "1.13.0",
     "mocha-multi-reporters": "1.1.5",
     "mocha-pretty-bunyan-nyan": "^1.0.4",
-    "mock-fs": "^4.4.2",
     "npm-run-all": "4.0.2",
     "nyc": "11.1.0",
     "rimraf": "2.6.1",
