@@ -43,6 +43,9 @@
     "verify:js:watch": "chokidar 'src/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
     "verify:watch": "npm run verify:js:watch --silent"
   },
+  "release": {
+    "verifyConditions": "condition-circle"
+  },
   "config": {
     "commitizen": {
       "path": "node_modules/cz-customizable"
@@ -62,6 +65,7 @@
     "@icetee/ftp": "^0.3.15",
     "chai": "^4.0.2",
     "chokidar-cli": "1.2.0",
+    "condition-circle": "^1.6.0",
     "coveralls": "2.13.1",
     "cross-env": "3.1.4",
     "cz-customizable": "5.2.0",
