@@ -72,7 +72,6 @@
     "eslint-friendly-formatter": "3.0.0",
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-node": "5.1.1",
-    "html-convert": "^2.1.7",
     "husky": "0.13.3",
     "istanbul": "0.4.5",
     "mocha": "3.5.0",
