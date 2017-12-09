@@ -28,8 +28,8 @@ module.exports = {
             return this.reply(213, 'Status begin', ...fileList, 'Status end');
           });
         } else {
-          const fileStat = getFileStat(stat, _.get(this, 'server.options.file_format', 'ls'));
-          return this.reply(212, 'Status begin', fileStat, 'Status end');
+          const message = getFileStat(stat, _.get(this, 'server.options.file_format', 'ls'));
+          return this.reply(212, 'Status begin', {raw: true, message}, 'Status end');
         }
       })
       .catch(err => {
