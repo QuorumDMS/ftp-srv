@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const moment = require('moment');
 
 module.exports = {
@@ -7,7 +7,7 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
-    return when.try(this.fs.get.bind(this.fs), command.arg)
+    return Promise.try(() => this.fs.get(command.arg))
     .then(fileStat => {
       const modificationTime = moment.utc(fileStat.mtime).format('YYYYMMDDHHmmss.SSS');
       return this.reply(213, modificationTime);

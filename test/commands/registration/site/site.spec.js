@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const {expect} = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
@@ -11,7 +11,7 @@ describe(CMD, function () {
   let sandbox;
   const log = bunyan.createLogger({name: 'site-test'});
   const mockClient = {
-    reply: () => when.resolve(),
+    reply: () => Promise.resolve(),
     commands: new FtpCommands()
   };
   const cmdFn = require(`../../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);

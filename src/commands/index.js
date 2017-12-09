@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const when = require('when');
+const Promise = require('bluebird');
 
 const REGISTRY = require('./registry');
 
@@ -62,7 +62,7 @@ class FtpCommands {
     }
 
     const handler = commandRegister.handler.bind(this.connection);
-    return when.try(handler, {log, command, previous_command: this.previousCommand})
+    return Promise.try(() => handler({log, command, previous_command: this.previousCommand}))
     .finally(() => {
       this.previousCommand = _.clone(command);
     });

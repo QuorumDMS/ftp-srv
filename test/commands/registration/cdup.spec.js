@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
@@ -8,9 +8,9 @@ describe(CMD, function () {
   let sandbox;
   let log = bunyan.createLogger({name: CMD});
   const mockClient = {
-    reply: () => when.resolve(),
+    reply: () => Promise.resolve(),
     fs: {
-      chdir: () => when.resolve()
+      chdir: () => Promise.resolve()
     }
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);

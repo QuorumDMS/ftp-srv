@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
@@ -14,7 +14,7 @@ describe(CMD, function () {
       list: () => {}
     },
     connector: {
-      waitForConnection: () => when({}),
+      waitForConnection: () => Promise.resolve({}),
       end: () => {}
     },
     commandSocket: {

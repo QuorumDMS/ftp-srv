@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 
 module.exports = function ({log, command} = {}) {
   if (!this.fs) return this.reply(550, 'File system not instantiated');
@@ -6,7 +6,7 @@ module.exports = function ({log, command} = {}) {
 
   const [mode, ...fileNameParts] = command.arg.split(' ');
   const fileName = fileNameParts.join(' ');
-  return when.try(this.fs.chmod.bind(this.fs), fileName, parseInt(mode, 8))
+  return Promise.try(() => this.fs.chmod(fileName, parseInt(mode, 8)))
   .then(() => {
     return this.reply(200);
   })

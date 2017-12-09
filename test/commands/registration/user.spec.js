@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
@@ -9,9 +9,9 @@ describe(CMD, function () {
     error: () => {}
   };
   const mockClient = {
-    reply: () => when.resolve(),
+    reply: () => Promise.resolve(),
     server: {options: {}},
-    login: () => when.resolve()
+    login: () => Promise.resolve()
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 

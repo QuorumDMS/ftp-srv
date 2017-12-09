@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const when = require('when');
+const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const sinon = require('sinon');
 
@@ -11,7 +11,7 @@ describe('FtpCommands', function () {
   let mockConnection = {
     authenticated: false,
     log: bunyan.createLogger({name: 'FtpCommands'}),
-    reply: () => when.resolve({}),
+    reply: () => Promise.resolve({}),
     server: {
       options: {
         blacklist: ['allo']

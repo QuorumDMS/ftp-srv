@@ -1,6 +1,6 @@
 const {Socket} = require('net');
 const tls = require('tls');
-const when = require('when');
+const Promise = require('bluebird');
 const Connector = require('./base');
 
 class Active extends Connector {
@@ -10,24 +10,27 @@ class Active extends Connector {
   }
 
   waitForConnection({timeout = 5000, delay = 250} = {}) {
-    return when.iterate(
-      () => {},
-      () => this.dataSocket && this.dataSocket.connected,
-      () => when().delay(delay)
-    ).timeout(timeout)
-    .then(() => this.dataSocket);
+    const checkSocket = () => {
+      if (this.dataSocket && this.dataSocket.connected) {
+        return Promise.resolve(this.dataSocket);
+      }
+      return Promise.resolve().delay(delay)
+      .then(() => checkSocket());
+    };
+
+    return checkSocket().timeout(timeout);
   }
 
   setupConnection(host, port, family = 4) {
     const closeExistingServer = () => this.dataSocket ?
-      when(this.dataSocket.destroy()) :
-      when.resolve();
+      Promise.try(() => this.dataSocket.destroy()) :
+      Promise.resolve();
 
     return closeExistingServer()
     .then(() => {
       this.dataSocket = new Socket();
       this.dataSocket.setEncoding(this.connection.transferType);
-      this.dataSocket.on('error', err => this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
+      this.dataSocket.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
       this.dataSocket.connect({host, port, family}, () => {
         this.dataSocket.pause();
 

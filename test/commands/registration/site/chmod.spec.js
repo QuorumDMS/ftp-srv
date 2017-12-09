@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
@@ -6,14 +6,14 @@ const CMD = 'CHMOD';
 describe(CMD, function () {
   let sandbox;
   const mockLog = {error: () => {}};
-  const mockClient = {reply: () => when.resolve()};
+  const mockClient = {reply: () => Promise.resolve()};
   const cmdFn = require(`../../../../src/commands/registration/site/${CMD.toLowerCase()}`).bind(mockClient);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
     mockClient.fs = {
-      chmod: () => when.resolve()
+      chmod: () => Promise.resolve()
     };
 
     sandbox.spy(mockClient, 'reply');

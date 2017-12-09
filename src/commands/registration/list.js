@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const when = require('when');
+const Promise = require('bluebird');
 const getFileStat = require('../../helpers/file-stat');
 
 // http://cr.yp.to/ftp/list.html
@@ -16,8 +16,8 @@ module.exports = {
     const path = command.arg || '.';
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())
-    .then(() => when.try(this.fs.get.bind(this.fs), path))
-    .then(stat => stat.isDirectory() ? when.try(this.fs.list.bind(this.fs), path) : [stat])
+    .then(() => Promise.try(() => this.fs.get(path)))
+    .then(stat => stat.isDirectory() ? Promise.try(() => this.fs.list(path)) : [stat])
     .then(files => {
       const getFileMessage = file => {
         if (simple) return file.name;
@@ -40,7 +40,7 @@ module.exports = {
     .then(() => {
       return this.reply(226, 'Transfer OK');
     })
-    .catch(when.TimeoutError, err => {
+    .catch(Promise.TimeoutError, err => {
       log.error(err);
       return this.reply(425, 'No connection established');
     })

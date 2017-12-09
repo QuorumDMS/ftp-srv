@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 
 module.exports = {
   directive: 'RNTO',
@@ -11,7 +11,7 @@ module.exports = {
     const from = this.renameFrom;
     const to = command.arg;
 
-    return when.try(this.fs.rename.bind(this.fs), from, to)
+    return Promise.try(() => this.fs.rename(from, to))
     .then(() => {
       return this.reply(250);
     })

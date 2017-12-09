@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
@@ -8,7 +8,7 @@ const CMD = 'STOU';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
-    reply: () => when.resolve()
+    reply: () => Promise.resolve()
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -16,8 +16,8 @@ describe(CMD, function () {
     sandbox = sinon.sandbox.create();
 
     mockClient.fs = {
-      get: () => when.resolve(),
-      getUniqueName: () => when.resolve('4')
+      get: () => Promise.resolve(),
+      getUniqueName: () => Promise.resolve('4')
     };
 
     sandbox.spy(mockClient, 'reply');
