@@ -1,10 +1,8 @@
 const _ = require('lodash');
 const nodePath = require('path');
 const uuid = require('uuid');
-const when = require('when');
-const whenNode = require('when/node');
-const syncFs = require('fs');
-const fs = whenNode.liftAll(syncFs);
+const Promise = require('bluebird');
+const fs = Promise.promisifyAll(require('fs'));
 const errors = require('./errors');
 
 class FileSystem {
@@ -32,19 +30,19 @@ class FileSystem {
 
   get(fileName) {
     const {fsPath} = this._resolvePath(fileName);
-    return fs.stat(fsPath)
+    return fs.statAsync(fsPath)
     .then(stat => _.set(stat, 'name', fileName));
   }
 
   list(path = '.') {
     const {fsPath} = this._resolvePath(path);
-    return fs.readdir(fsPath)
+    return fs.readdirAsync(fsPath)
     .then(fileNames => {
-      return when.map(fileNames, fileName => {
+      return Promise.map(fileNames, fileName => {
         const filePath = nodePath.join(fsPath, fileName);
-        return fs.access(filePath, syncFs.constants.F_OK)
+        return fs.accessAsync(filePath, fs.constants.F_OK)
         .then(() => {
-          return fs.stat(filePath)
+          return fs.statAsync(filePath)
           .then(stat => _.set(stat, 'name', fileName));
         })
         .catch(() => null);
@@ -55,7 +53,7 @@ class FileSystem {
 
   chdir(path = '.') {
     const {fsPath, serverPath} = this._resolvePath(path);
-    return fs.stat(fsPath)
+    return fs.statAsync(fsPath)
     .tap(stat => {
       if (!stat.isDirectory()) throw new errors.FileSystemError('Not a valid directory');
     })
@@ -67,48 +65,48 @@ class FileSystem {
 
   write(fileName, {append = false, start = undefined} = {}) {
     const {fsPath} = this._resolvePath(fileName);
-    const stream = syncFs.createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+', start});
-    stream.once('error', () => fs.unlink(fsPath));
+    const stream = fs.createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+', start});
+    stream.once('error', () => fs.unlinkAsync(fsPath));
     stream.once('close', () => stream.end());
     return stream;
   }
 
   read(fileName, {start = undefined} = {}) {
     const {fsPath} = this._resolvePath(fileName);
-    return fs.stat(fsPath)
+    return fs.statAsync(fsPath)
     .tap(stat => {
       if (stat.isDirectory()) throw new errors.FileSystemError('Cannot read a directory');
     })
     .then(() => {
-      const stream = syncFs.createReadStream(fsPath, {flags: 'r', start});
+      const stream = fs.createReadStream(fsPath, {flags: 'r', start});
       return stream;
     });
   }
 
   delete(path) {
     const {fsPath} = this._resolvePath(path);
-    return fs.stat(fsPath)
+    return fs.statAsync(fsPath)
     .then(stat => {
-      if (stat.isDirectory()) return fs.rmdir(fsPath);
-      else return fs.unlink(fsPath);
+      if (stat.isDirectory()) return fs.rmdirAsync(fsPath);
+      else return fs.unlinkAsync(fsPath);
     });
   }
 
   mkdir(path) {
     const {fsPath} = this._resolvePath(path);
-    return fs.mkdir(fsPath)
+    return fs.mkdirAsync(fsPath)
     .then(() => fsPath);
   }
 
   rename(from, to) {
     const {fsPath: fromPath} = this._resolvePath(from);
     const {fsPath: toPath} = this._resolvePath(to);
-    return fs.rename(fromPath, toPath);
+    return fs.renameAsync(fromPath, toPath);
   }
 
   chmod(path, mode) {
     const {fsPath} = this._resolvePath(path);
-    return fs.chmod(fsPath, mode);
+    return fs.chmodAsync(fsPath, mode);
   }
 
   getUniqueName() {

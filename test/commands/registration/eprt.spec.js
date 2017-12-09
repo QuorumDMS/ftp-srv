@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
@@ -8,7 +8,7 @@ const CMD = 'EPRT';
 describe(CMD, function () {
   let sandbox;
   const mockClient = {
-    reply: () => when.resolve()
+    reply: () => Promise.resolve()
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 

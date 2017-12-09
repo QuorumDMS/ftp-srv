@@ -1,11 +1,11 @@
 const http = require('http');
-const when = require('when');
+const Promise = require('bluebird');
 const errors = require('../errors');
 
 const IP_WEBSITE = 'http://api.ipify.org/';
 
 module.exports = function (hostname) {
-  return when.promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     if (!hostname || hostname === '0.0.0.0') {
       let ip = '';
       http.get(IP_WEBSITE, response => {

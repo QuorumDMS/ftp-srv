@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const errors = require('../errors');
 
 class Connector {
@@ -23,7 +23,7 @@ class Connector {
   }
 
   waitForConnection() {
-    return when.reject(new errors.ConnectorError('No connector setup, send PASV or PORT'));
+    return Promise.reject(new errors.ConnectorError('No connector setup, send PASV or PORT'));
   }
 
   end() {

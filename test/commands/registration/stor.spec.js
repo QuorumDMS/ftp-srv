@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
@@ -12,9 +12,9 @@ describe(CMD, function () {
       pause: () => {},
       resume: () => {}
     },
-    reply: () => when.resolve(),
+    reply: () => Promise.resolve(),
     connector: {
-      waitForConnection: () => when.resolve({
+      waitForConnection: () => Promise.resolve({
         resume: () => {}
       }),
       end: () => {}
@@ -53,7 +53,7 @@ describe(CMD, function () {
 
   it('// unsuccessful | connector times out', () => {
     sandbox.stub(mockClient.connector, 'waitForConnection').callsFake(function () {
-      return when.reject(new when.TimeoutError());
+      return Promise.reject(new Promise.TimeoutError());
     });
 
     return cmdFn({log, command: {arg: 'test.txt'}})
@@ -64,7 +64,7 @@ describe(CMD, function () {
 
   it('// unsuccessful | connector errors out', () => {
     sandbox.stub(mockClient.connector, 'waitForConnection').callsFake(function () {
-      return when.reject(new Error('test'));
+      return Promise.reject(new Error('test'));
     });
 
     return cmdFn({log, command: {arg: 'test.txt'}})

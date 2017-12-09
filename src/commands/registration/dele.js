@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 
 module.exports = {
   directive: 'DELE',
@@ -6,7 +6,7 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.delete) return this.reply(402, 'Not supported by file system');
 
-    return when.try(this.fs.delete.bind(this.fs), command.arg)
+    return Promise.try(() => this.fs.delete(command.arg))
     .then(() => {
       return this.reply(250);
     })

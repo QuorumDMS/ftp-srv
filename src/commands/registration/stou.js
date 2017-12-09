@@ -1,6 +1,5 @@
-const when = require('when');
-
-const stor = require('./stor').handler;
+const Promise = require('bluebird');
+const {handler: stor} = require('./stor');
 
 module.exports = {
   directive: 'STOU',
@@ -9,10 +8,10 @@ module.exports = {
     if (!this.fs.get || !this.fs.getUniqueName) return this.reply(402, 'Not supported by file system');
 
     const fileName = args.command.arg;
-    return when.try(() => {
-      return when.try(this.fs.get.bind(this.fs), fileName)
-      .then(() => when.try(this.fs.getUniqueName.bind(this.fs)))
-      .catch(() => when.resolve(fileName));
+    return Promise.try(() => {
+      return Promise.try(() => this.fs.get(fileName))
+      .then(() => Promise.try(() => this.fs.getUniqueName()))
+      .catch(() => Promise.resolve(fileName));
     })
     .then(name => {
       args.command.arg = name;

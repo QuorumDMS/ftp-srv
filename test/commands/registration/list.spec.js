@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
@@ -14,7 +14,7 @@ describe(CMD, function () {
       get: () => {}
     },
     connector: {
-      waitForConnection: () => when({}),
+      waitForConnection: () => Promise.resolve({}),
       end: () => {}
     },
     commandSocket: {
@@ -165,7 +165,7 @@ describe(CMD, function () {
   });
 
   it('. // unsuccessful (timeout)', () => {
-    sandbox.stub(mockClient.connector, 'waitForConnection').returns(when.reject(new when.TimeoutError()));
+    sandbox.stub(mockClient.connector, 'waitForConnection').returns(Promise.reject(new Promise.TimeoutError()));
 
     return cmdFn({log, command: {directive: CMD}})
     .then(() => {

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const when = require('when');
+const Promise = require('bluebird');
 const nodeUrl = require('url');
 const buyan = require('bunyan');
 const net = require('net');
@@ -64,7 +64,7 @@ class FtpServer {
     return resolveHost(this.url.hostname)
     .then(hostname => {
       this.url.hostname = hostname;
-      return when.promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         this.server.listen(this.url.port, err => {
           if (err) return reject(err);
           this.log.info({
@@ -79,10 +79,10 @@ class FtpServer {
   }
 
   emitPromise(action, ...data) {
-    const defer = when.defer();
-    const params = _.concat(data, [defer.resolve, defer.reject]);
-    this.server.emit(action, ...params);
-    return defer.promise;
+    return new Promise((resolve, reject) => {
+      const params = _.concat(data, [resolve, reject]);
+      this.server.emit(action, ...params);
+    });
   }
 
   emit(action, ...data) {
@@ -116,7 +116,7 @@ class FtpServer {
   }
 
   disconnectClient(id) {
-    return when.promise(resolve => {
+    return new Promise(resolve => {
       const client = this.connections[id];
       if (!client) return resolve();
       delete this.connections[id];
@@ -138,8 +138,8 @@ class FtpServer {
   close() {
     this.log.info('Server closing...');
     this.server.maxConnections = 0;
-    return when.map(Object.keys(this.connections), id => when.try(this.disconnectClient.bind(this), id))
-    .then(() => when.promise(resolve => {
+    return Promise.map(Object.keys(this.connections), id => Promise.try(this.disconnectClient.bind(this, id)))
+    .then(() => new Promise(resolve => {
       this.server.close(err => {
         if (err) this.log.error(err, 'Error closing server');
         resolve('Closed');

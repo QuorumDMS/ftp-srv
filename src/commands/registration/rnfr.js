@@ -1,4 +1,4 @@
-const when = require('when');
+const Promise = require('bluebird');
 
 module.exports = {
   directive: 'RNFR',
@@ -7,7 +7,7 @@ module.exports = {
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
     const fileName = command.arg;
-    return when.try(this.fs.get.bind(this.fs), fileName)
+    return Promise.try(() => this.fs.get(fileName))
     .then(() => {
       this.renameFrom = fileName;
       return this.reply(350);

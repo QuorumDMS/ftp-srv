@@ -1,4 +1,3 @@
-
 module.exports = {
   directive: 'TYPE',
   handler: function ({command} = {}) {

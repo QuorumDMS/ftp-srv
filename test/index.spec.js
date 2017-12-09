@@ -2,7 +2,7 @@
 const {expect} = require('chai');
 const sinon = require('sinon');
 const bunyan = require('bunyan');
-const when = require('when');
+const Promise = require('bluebird');
 const _ = require('lodash');
 const fs = require('fs');
 const nodePath = require('path');
@@ -52,7 +52,7 @@ describe('Integration', function () {
   }
 
   function connectClient(options = {}) {
-    return when.promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       client = new FtpClient();
       client.once('ready', () => resolve(client));
       client.once('error', err => reject(err));
@@ -69,7 +69,7 @@ describe('Integration', function () {
   }
 
   function closeClient() {
-    return when.promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       client.once('close', () => resolve());
       client.once('error', err => reject(err));
       client.logout(err => {
@@ -154,7 +154,7 @@ describe('Integration', function () {
       });
     });
 
-    it.skip('LIST fake.txt', done => {
+    it('LIST fake.txt', done => {
       client.list('fake.txt', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.be.an('array');

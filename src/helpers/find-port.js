@@ -1,9 +1,9 @@
 const net = require('net');
-const when = require('when');
+const Promise = require('bluebird');
 const errors = require('../errors');
 
 module.exports = function (min = 1, max = undefined) {
-  return when.promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     let checkPort = min;
     let portCheckServer = net.createServer();
     portCheckServer.maxConnections = 0;

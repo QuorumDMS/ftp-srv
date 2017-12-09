@@ -2,7 +2,7 @@
 const {expect} = require('chai');
 const sinon = require('sinon');
 
-const when = require('when');
+const Promise = require('bluebird');
 const net = require('net');
 const bunyan = require('bunyan');
 
@@ -11,8 +11,8 @@ const PassiveConnector = require('../../src/connector/passive');
 describe('Connector - Passive //', function () {
   let passive;
   let mockConnection = {
-    reply: () => when.resolve({}),
-    close: () => when.resolve({}),
+    reply: () => Promise.resolve({}),
+    close: () => Promise.resolve({}),
     encoding: 'utf8',
     log: bunyan.createLogger({name: 'passive-test'}),
     commandSocket: {},

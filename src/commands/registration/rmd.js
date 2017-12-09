@@ -1,4 +1,4 @@
-const dele = require('./dele').handler;
+const {handler: dele} = require('./dele');
 
 module.exports = {
   directive: ['RMD', 'XRMD'],

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const when = require('when');
+const Promise = require('bluebird');
 const getFileStat = require('../../helpers/file-stat');
 
 module.exports = {
@@ -11,12 +11,12 @@ module.exports = {
       if (!this.fs) return this.reply(550, 'File system not instantiated');
       if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
-      return when.try(this.fs.get.bind(this.fs), path)
+      return Promise.try(() => this.fs.get(path))
       .then(stat => {
         if (stat.isDirectory()) {
           if (!this.fs.list) return this.reply(402, 'Not supported by file system');
 
-          return when.try(this.fs.list.bind(this.fs), path)
+          return Promise.try(() => this.fs.list(path))
           .then(files => {
             const fileList = files.map(file => {
               const message = getFileStat(file, _.get(this, 'server.options.file_format', 'ls'));
