@@ -37,9 +37,7 @@ module.exports = {
         if (fileList.length) return this.reply({}, ...fileList);
       });
     })
-    .then(() => {
-      return this.reply(226, 'Transfer OK');
-    })
+    .then(() => this.reply(226))
     .catch(Promise.TimeoutError, err => {
       log.error(err);
       return this.reply(425, 'No connection established');
