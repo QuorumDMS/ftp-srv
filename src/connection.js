@@ -91,7 +91,7 @@ class FtpConnection {
       if (typeof options === 'number') options = {code: options}; // allow passing in code as first param
       if (!Array.isArray(letters)) letters = [letters];
       if (!letters.length) letters = [{}];
-      return Promise.map(letters, promise => {
+      return Promise.map(letters, (promise, index) => {
         return Promise.try(() => promise)
         .then(letter => {
           if (!letter) letter = {};
@@ -102,6 +102,10 @@ class FtpConnection {
           if (!letter.encoding) letter.encoding = this.encoding;
           return Promise.try(() => letter.message) // allow passing in a promise as a message
           .then(message => {
+            const seperator = !options.hasOwnProperty('eol') ?
+              letters.length - 1 === index ? ' ' : '-' :
+              options.eol ? ' ' : '-';
+            message = !letter.raw ? _.compact([letter.code || options.code, message]).join(seperator) : message;
             letter.message = message;
             return letter;
           });
@@ -109,16 +113,11 @@ class FtpConnection {
       });
     };
 
-    const processLetter = (letter, index) => {
+    const processLetter = letter => {
       return new Promise((resolve, reject) => {
-        const seperator = !options.hasOwnProperty('eol') ?
-          letters.length - 1 === index ? ' ' : '-' :
-          options.eol ? ' ' : '-';
-        const packet = !letter.raw ? _.compact([letter.code || options.code, letter.message]).join(seperator) : letter.message;
-
         if (letter.socket && letter.socket.writable) {
-          this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, packet}, 'Reply');
-          letter.socket.write(packet + '\r\n', letter.encoding, err => {
+          this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, message: letter.message}, 'Reply');
+          letter.socket.write(letter.message + '\r\n', letter.encoding, err => {
             if (err) {
               this.log.error(err);
               return reject(err);
