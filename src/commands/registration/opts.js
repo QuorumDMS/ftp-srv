@@ -21,14 +21,19 @@ module.exports = {
 };
 
 function utf8([setting] = []) {
-  switch (_.toUpper(setting)) {
-    case 'ON':
-      this.encoding = 'utf8';
-      return this.reply(200, 'UTF8 encoding on');
-    case 'OFF':
-      this.encoding = 'ascii';
-      return this.reply(200, 'UTF8 encoding off');
-    default:
-      return this.reply(501, 'Unknown setting for option');
-  }
+  const getEncoding = () => {
+    switch (_.toUpper(setting)) {
+      case 'ON': return 'utf8';
+      case 'OFF': return 'ascii';
+      default: return null;
+    }
+  };
+
+  const encoding = getEncoding();
+  if (!encoding) return this.reply(501, 'Unknown setting for option');
+
+  this.encoding = encoding;
+  if (this.transferType !== 'binary') this.transferType = this.encoding;
+
+  return this.reply(200, `UTF8 encoding ${_.toLower(setting)}`);
 }
