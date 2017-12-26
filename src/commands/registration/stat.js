@@ -17,21 +17,21 @@ module.exports = {
           if (!this.fs.list) return this.reply(402, 'Not supported by file system');
 
           return Promise.try(() => this.fs.list(path))
-          .then(files => {
-            const fileList = files.map(file => {
-              const message = getFileStat(file, _.get(this, 'server.options.file_format', 'ls'));
-              return {
-                raw: true,
-                message
-              };
-            });
-            return this.reply(213, 'Status begin', ...fileList, 'Status end');
-          });
-        } else {
-          const message = getFileStat(stat, _.get(this, 'server.options.file_format', 'ls'));
-          return this.reply(212, 'Status begin', {raw: true, message}, 'Status end');
+          .then(stats => [213, stats]);
         }
+        return [212, [stat]];
       })
+      .then(([code, fileStats]) => {
+        return Promise.map(fileStats, file => {
+          const message = getFileStat(file, _.get(this, 'server.options.file_format', 'ls'));
+          return {
+            raw: true,
+            message
+          };
+        })
+        .then(messages => [code, messages]);
+      })
+      .then(([code, messages]) => this.reply(code, 'Status begin', ...messages, 'Status end'))
       .catch(err => {
         log.error(err);
         return this.reply(450, err.message);
