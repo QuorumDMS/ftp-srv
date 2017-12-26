@@ -235,3 +235,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 This software is licensed under the MIT Licence. See [LICENSE](LICENSE).
 
 <!--[]-->
+
+## References
+
+- [https://cr.yp.to/ftp.html](https://cr.yp.to/ftp.html)
