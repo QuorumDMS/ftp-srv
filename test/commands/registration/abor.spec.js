@@ -33,7 +33,7 @@ describe(CMD, function () {
     .then(() => {
       expect(mockClient.connector.waitForConnection.callCount).to.equal(1);
       expect(mockClient.connector.end.callCount).to.equal(0);
-      expect(mockClient.reply.args[0][0]).to.equal(226);
+      expect(mockClient.reply.args[0][0]).to.equal(225);
     });
   });
 
