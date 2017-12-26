@@ -27,11 +27,21 @@ class Connector {
   }
 
   end() {
-    if (this.dataSocket) this.dataSocket.end();
-    if (this.dataServer) this.dataServer.close();
-    this.dataSocket = null;
-    this.dataServer = null;
-    this.type = false;
+    const closeDataSocket = new Promise(resolve => {
+      if (this.dataSocket) this.dataSocket.end();
+      else resolve();
+    });
+    const closeDataServer = new Promise(resolve => {
+      if (this.dataServer) this.dataServer.close(() => resolve());
+      else resolve();
+    });
+
+    return Promise.all([closeDataSocket, closeDataServer])
+    .then(() => {
+      this.dataSocket = null;
+      this.dataServer = null;
+      this.type = false;
+    });
   }
 }
 module.exports = Connector;
