@@ -15,9 +15,20 @@ module.exports = {
       const eventsPromise = when.promise((resolve, reject) => {
         this.connector.socket.once('error', err => reject(err));
 
-        stream.on('data', data => this.connector.socket
-          && this.connector.socket.write(data, this.transferType));
-        stream.once('error', err => reject(err));
+        stream.on('data', data => {
+          stream.pause()
+          this.connector.socket
+            && this.connector.socket.write(data, this.transferType, function(){
+              stream.resume()
+            })
+        });
+        
+        stream.once('error', err => {
+          // DESTROY STREAM WHEN ERROR HAPPENED
+          if(stream.destroy)
+            stream.destroy()
+          return reject(err)
+        });
         stream.once('end', () => resolve());
       });
 
