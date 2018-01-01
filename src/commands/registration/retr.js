@@ -13,7 +13,13 @@ module.exports = {
       this.restByteCount = 0;
 
       const eventsPromise = when.promise((resolve, reject) => {
-        this.connector.socket.once('error', err => reject(err));
+        this.connector.socket.once('error', err => {
+          // https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#stream_readable_destroy_err_callback
+          if(stream.destroy) stream.destroy()
+          // this for get fallback in nodejs v6
+          else if(stream._destroy) stream._destroy()
+          reject(err)
+        });
 
         stream.on('data', data => {
           stream.pause()
@@ -24,9 +30,10 @@ module.exports = {
         });
         
         stream.once('error', err => {
-          // DESTROY STREAM WHEN ERROR HAPPENED
-          if(stream.destroy)
-            stream.destroy()
+          // https://nodejs.org/dist/latest-v8.x/docs/api/stream.html#stream_readable_destroy_err_callback
+          if(stream.destroy) stream.destroy()
+          // this for get fallback in nodejs v6
+          else if(stream._destroy) stream._destroy()
           return reject(err)
         });
         stream.once('end', () => resolve());
