@@ -22,7 +22,7 @@ module.exports = {
 
       const socketPromise = when.promise((resolve, reject) => {
         this.connector.socket.on('data', data => {
-          this.connector.socket.pause();
+          this.connector.socket && this.connector.socket.pause();
           if (stream) {
             stream.write(data, this.transferType, () => this.connector.socket && this.connector.socket.resume());
           }
