@@ -13,7 +13,10 @@ module.exports = {
     .tap(() => this.commandSocket.pause())
     .then(() => when.try(this.fs.write.bind(this.fs), fileName, {append, start: this.restByteCount}))
     .then(stream => {
-      const destroyConnection = (connection, reject) => err => connection && connection.destroy(err) && reject(err);
+      const destroyConnection = (connection, reject) => err => {
+        if (connection) connection.destroy(err);
+        reject(err);
+      };
 
       const streamPromise = when.promise((resolve, reject) => {
         stream.once('error', destroyConnection(this.connector.socket, reject));
