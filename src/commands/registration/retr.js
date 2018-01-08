@@ -10,7 +10,10 @@ module.exports = {
     .tap(() => this.commandSocket.pause())
     .then(() => when.try(this.fs.read.bind(this.fs), command.arg, {start: this.restByteCount}))
     .then(stream => {
-      const destroyConnection = (connection, reject) => err => connection && connection.destroy(err) && reject(err);
+      const destroyConnection = (connection, reject) => err => {
+        if (connection) connection.destroy(err);
+        reject(err);
+      };
 
       const eventsPromise = when.promise((resolve, reject) => {
         stream.on('data', data => {
