@@ -165,19 +165,24 @@ describe('Integration', function () {
     });
 
     it('STOR fail.txt', done => {
+      const buffer = Buffer.from('test text file');
       const fsPath = `${clientDirectory}/${name}/fail.txt`;
+
       sandbox.stub(connection.fs, 'write').callsFake(function () {
         const stream = fs.createWriteStream(fsPath, {flags: 'w+'});
         stream.on('error', () => fs.existsSync(fsPath) && fs.unlinkSync(fsPath));
-        stream.on('close', () => setTimeout(() => stream.end()));
+        stream.on('close', () => stream.end());
         setTimeout(() => stream.emit('error', new Error('STOR fail test')));
         return stream;
       });
-      const buffer = Buffer.from('test text file');
+
       client.put(buffer, 'fail.txt', err => {
-        expect(err).to.exist;
-        expect(fs.existsSync(fsPath)).to.equal(false);
-        done();
+        setTimeout(() => {
+          const fileExists = fs.existsSync(fsPath);
+          expect(err).to.exist;
+          expect(fileExists).to.equal(false);
+          done();
+        });
       });
     });
 
