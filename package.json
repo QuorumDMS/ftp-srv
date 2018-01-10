@@ -1,6 +1,6 @@
 {
   "name": "ftp-srv",
-  "version": "0.0.0",
+  "version": "0.0.0-development",
   "description": "Modern, extensible FTP Server",
   "keywords": [
     "ftp",
@@ -29,7 +29,7 @@
     "commitmsg": "cz-customizable-ghooks",
     "dev": "cross-env NODE_ENV=development npm run verify:watch",
     "prepush": "npm-run-all verify test:coverage --silent",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "semantic-release": "semantic-release",
     "start": "npm run dev",
     "test": "npm run test:unit",
     "test:check-coverage": "nyc check-coverage",
@@ -85,7 +85,7 @@
     "npm-run-all": "4.0.2",
     "nyc": "11.1.0",
     "rimraf": "2.6.1",
-    "semantic-release": "^6.3.6",
+    "semantic-release": "^11.0.2",
     "sinon": "^2.3.5"
   },
   "engines": {

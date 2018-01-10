@@ -85,8 +85,8 @@ jobs:
       - run:
           name: Update NPM
           command: |
-            npm install npm@latest
-            npm install semantic-release@latest
+            npm install npm@5
+            npm install semantic-release@11
       - deploy:
           name: Semantic Release
           command: |
