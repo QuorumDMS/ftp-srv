@@ -92,7 +92,7 @@ class FtpConnection {
       if (!Array.isArray(letters)) letters = [letters];
       if (!letters.length) letters = [{}];
       return Promise.map(letters, (promise, index) => {
-        return Promise.try(() => promise)
+        return Promise.resolve(promise)
         .then(letter => {
           if (!letter) letter = {};
           else if (typeof letter === 'string') letter = {message: letter}; // allow passing in message as first param
@@ -100,7 +100,7 @@ class FtpConnection {
           if (!letter.socket) letter.socket = options.socket ? options.socket : this.commandSocket;
           if (!letter.message) letter.message = DEFAULT_MESSAGE[options.code] || 'No information';
           if (!letter.encoding) letter.encoding = this.encoding;
-          return Promise.try(() => letter.message) // allow passing in a promise as a message
+          return Promise.resolve(letter.message) // allow passing in a promise as a message
           .then(message => {
             const seperator = !options.hasOwnProperty('eol') ?
               letters.length - 1 === index ? ' ' : '-' :

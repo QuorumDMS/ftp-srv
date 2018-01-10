@@ -6,7 +6,7 @@ module.exports = function ({log, command} = {}) {
 
   const [mode, ...fileNameParts] = command.arg.split(' ');
   const fileName = fileNameParts.join(' ');
-  return Promise.try(() => this.fs.chmod(fileName, parseInt(mode, 8)))
+  return Promise.resolve(this.fs.chmod(fileName, parseInt(mode, 8)))
   .then(() => {
     return this.reply(200);
   })

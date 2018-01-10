@@ -22,9 +22,8 @@ class Active extends Connector {
   }
 
   setupConnection(host, port, family = 4) {
-    const closeExistingServer = () => this.dataSocket ?
-      Promise.try(() => this.dataSocket.destroy()) :
-      Promise.resolve();
+    const closeExistingServer = () => Promise.resolve(
+      this.dataSocket ? this.dataSocket.destroy() : undefined);
 
     return closeExistingServer()
     .then(() => {

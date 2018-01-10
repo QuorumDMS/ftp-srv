@@ -11,7 +11,7 @@ module.exports = {
     const from = this.renameFrom;
     const to = command.arg;
 
-    return Promise.try(() => this.fs.rename(from, to))
+    return Promise.resolve(this.fs.rename(from, to))
     .then(() => {
       return this.reply(250);
     })
