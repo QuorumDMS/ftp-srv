@@ -11,7 +11,7 @@ module.exports = {
 
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())
-    .then(() => Promise.try(() => this.fs.write(fileName, {append, start: this.restByteCount})))
+    .then(() => Promise.resolve(this.fs.write(fileName, {append, start: this.restByteCount})))
     .then(stream => {
       const destroyConnection = (connection, reject) => err => {
         if (connection) connection.destroy(err);
