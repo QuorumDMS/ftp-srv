@@ -42,6 +42,7 @@ module.exports = {
 
       return this.reply(150).then(() => this.connector.socket.resume())
       .then(() => Promise.join(streamPromise, socketPromise))
+      .tap(() => this.emit('STOR', null, fileName))
       .finally(() => stream.destroy && stream.destroy());
     })
     .then(() => this.reply(226, fileName))
@@ -51,6 +52,7 @@ module.exports = {
     })
     .catch(err => {
       log.error(err);
+      this.emit('STOR', err);
       return this.reply(550, err.message);
     })
     .finally(() => {
