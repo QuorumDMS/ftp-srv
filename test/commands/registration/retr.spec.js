@@ -2,11 +2,13 @@ const Promise = require('bluebird');
 const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
+const EventEmitter = require('events');
 
 const CMD = 'RETR';
 describe(CMD, function () {
   let sandbox;
   let log = bunyan.createLogger({name: CMD});
+  let emitter;
   const mockClient = {
     commandSocket: {
       pause: () => {},
@@ -28,6 +30,11 @@ describe(CMD, function () {
     mockClient.fs = {
       read: () => {}
     };
+
+    emitter = new EventEmitter();
+    mockClient.emit = emitter.emit.bind(emitter);
+    mockClient.on = emitter.on.bind(emitter);
+    mockClient.once = emitter.once.bind(emitter);
 
     sandbox.spy(mockClient, 'reply');
   });
@@ -56,6 +63,7 @@ describe(CMD, function () {
       return Promise.reject(new Promise.TimeoutError());
     });
 
+
     return cmdFn({log, command: {arg: 'test.txt'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
@@ -70,6 +78,22 @@ describe(CMD, function () {
     return cmdFn({log, command: {arg: 'test.txt'}})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(551);
+    });
+  });
+
+  it('// unsuccessful | emits error event', () => {
+    sandbox.stub(mockClient.connector, 'waitForConnection').callsFake(function () {
+      return Promise.reject(new Error('test'));
+    });
+
+    let errorEmitted = false;
+    emitter.once('RETR', err => {
+      errorEmitted = !!err;
+    });
+
+    return cmdFn({log, command: {arg: 'test.txt'}})
+    .then(() => {
+      expect(errorEmitted).to.equal(true);
     });
   });
 });

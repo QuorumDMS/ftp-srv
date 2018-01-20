@@ -189,6 +189,11 @@ describe('Integration', function () {
     it('STOR tést.txt', done => {
       const buffer = Buffer.from('test text file');
       const fsPath = `${clientDirectory}/${name}/tést.txt`;
+
+      connection.once('STOR', err => {
+        expect(err).to.not.exist;
+      });
+
       client.put(buffer, 'tést.txt', err => {
         expect(err).to.not.exist;
         setTimeout(() => {
@@ -219,6 +224,10 @@ describe('Integration', function () {
     });
 
     it('RETR tést.txt', done => {
+      connection.once('RETR', err => {
+        expect(err).to.not.exist;
+      });
+
       client.get('tést.txt', (err, stream) => {
         expect(err).to.not.exist;
         let text = '';
