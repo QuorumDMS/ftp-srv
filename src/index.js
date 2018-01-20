@@ -5,12 +5,14 @@ const buyan = require('bunyan');
 const net = require('net');
 const tls = require('tls');
 const fs = require('fs');
+const EventEmitter = require('events');
 
 const Connection = require('./connection');
 const resolveHost = require('./helpers/resolve-host');
 
-class FtpServer {
+class FtpServer extends EventEmitter {
   constructor(url, options = {}) {
+    super();
     this.options = _.merge({
       log: buyan.createLogger({name: 'ftp-srv'}),
       anonymous: false,
@@ -47,9 +49,6 @@ class FtpServer {
 
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
     this.server.on('error', err => this.log.error(err, '[Event] error'));
-    this.on = this.server.on.bind(this.server);
-    this.once = this.server.once.bind(this.server);
-    this.listeners = this.server.listeners.bind(this.server);
 
     process.on('SIGTERM', () => this.quit());
     process.on('SIGINT', () => this.quit());
@@ -81,12 +80,8 @@ class FtpServer {
   emitPromise(action, ...data) {
     return new Promise((resolve, reject) => {
       const params = _.concat(data, [resolve, reject]);
-      this.server.emit(action, ...params);
+      this.emit.call(this, action, ...params);
     });
-  }
-
-  emit(action, ...data) {
-    this.server.emit(action, ...data);
   }
 
   setupTLS(_tls) {
