@@ -6,9 +6,11 @@ module.exports = {
     if (!this.fs) return this.reply(550, 'File system not instantiated');
     if (!this.fs.read) return this.reply(402, 'Not supported by file system');
 
+    const filePath = command.arg;
+
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())
-    .then(() => Promise.resolve(this.fs.read(command.arg, {start: this.restByteCount})))
+    .then(() => Promise.resolve(this.fs.read(filePath, {start: this.restByteCount})))
     .then(stream => {
       const destroyConnection = (connection, reject) => err => {
         if (connection) connection.destroy(err);
@@ -32,6 +34,7 @@ module.exports = {
 
       return this.reply(150).then(() => stream.resume() && this.connector.socket.resume())
       .then(() => eventsPromise)
+      .tap(() => this.emit('RETR', null, filePath))
       .finally(() => stream.destroy && stream.destroy());
     })
     .then(() => this.reply(226))
@@ -41,6 +44,7 @@ module.exports = {
     })
     .catch(err => {
       log.error(err);
+      this.emit('RETR', err);
       return this.reply(551, err.message);
     })
     .finally(() => {
