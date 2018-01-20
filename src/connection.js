@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 const Promise = require('bluebird');
+const EventEmitter = require('events');
 
 const BaseConnector = require('./connector/base');
 const FileSystem = require('./fs');
@@ -8,8 +9,9 @@ const Commands = require('./commands');
 const errors = require('./errors');
 const DEFAULT_MESSAGE = require('./messages');
 
-class FtpConnection {
+class FtpConnection extends EventEmitter {
   constructor(server, options) {
+    super();
     this.server = server;
     this.id = uuid.v4();
     this.log = options.log.child({id: this.id, ip: this.ip});
