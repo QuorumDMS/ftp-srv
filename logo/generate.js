@@ -1,17 +1,23 @@
-/*
-Send Button by Bruno Bosse from the Noun Project
-https://thenounproject.com/brunobosse/collection/basics/?i=1054386
-*/
+const puppeteer = require('puppeteer');
+const logoPath = `file://${process.cwd()}/logo/logo.html`;
 
-const fs = require('fs');
-const htmlConvert = require('html-convert');
-
-const convert = htmlConvert();
-let ws = fs.createWriteStream('logo.png');
-let rs = convert('logo/logo.html', {
-  width: 350,
-  height: 76
+puppeteer.launch()
+.then(browser => {
+  return browser.newPage()
+  .then(page => {
+    return page.goto(logoPath)
+    .then(() => page);
+  })
+  .then(page => {
+    return page.setViewport({
+      width: 600,
+      height: 250,
+      deviceScaleFactor: 2
+    })
+    .then(() => page.screenshot({
+      path: 'logo.png',
+      omitBackground: true
+    }));
+  })
+  .then(() => browser.close());
 });
-
-rs.pipe(ws);
-ws.on('finish', () => process.exit());
