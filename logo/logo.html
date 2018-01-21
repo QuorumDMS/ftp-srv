@@ -1,29 +1,44 @@
 <!doctype html>
 <html>
   <head>
-    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Overpass+Mono:700" rel="stylesheet">
     <style>
       body {
         padding: 0;
         margin: 0;
+        display: flex;
+        height: 100vh;
+        flex-direction: row;
+        justify-content: center;
+      }
+      div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100vw;
       }
       h1 {
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        text-align: center;
         margin: 0;
-        margin-left: -4px;
         padding: 0px;
+        width: 75vw;
         font-size: 68px;
-        font-family: 'Source Code Pro', monospace;
+        font-family: 'Overpass Mono', monospace;
         font-weight: bold;
         line-height: 0.8em;
         letter-spacing: -3px;
-        color: #333;
+        color: #fff;
         -webkit-font-smoothing: antialiased;
+        -webkit-text-stroke: 1px #0063B1;
         text-shadow:
-          1px 0px 0px #ccc, 0px 1px 0px #eee,
-          2px 1px 0px #ccc, 1px 2px 0px #eee,
-          3px 2px 0px #ccc, 2px 3px 0px #eee,
-          4px 3px 0px #ccc;
+          3px 3px 0 #0063B1,
+          -1px -1px 0 #0063B1,  
+          1px -1px 0 #0063B1,
+          -1px 1px 0 #0063B1,
+          1px 1px 0 #0063B1;
       }
       h1 > span {
         display: block;
@@ -31,17 +46,23 @@
         margin: 0;
         padding-top: 6px;
       }
-      img {
-        display: inline-block;
-        vertical-align: top;
+      h1 > hr {
+        padding: 0;
+        margin: 0;
+        margin-top: 22px;
+        border: 1px solid #0063B1;
+        border-radius: 50%;
       }
     </style>
   </head>
 
   <body>
-    <h1>
-      <span>ftp-srv</span>
-    </h1>
-    <img src="icon.svg" width="76px" height="76px" />
+    <div>
+      <h1>
+        <span>ftp</span>
+        <hr />
+        <span>srv</span>
+      </h1>
+    </div>
   </body>
 </html>
