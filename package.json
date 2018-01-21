@@ -43,9 +43,6 @@
     "verify:js:watch": "chokidar 'src/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
     "verify:watch": "npm run verify:js:watch --silent"
   },
-  "release": {
-    "verifyConditions": "condition-circle"
-  },
   "config": {
     "commitizen": {
       "path": "node_modules/cz-customizable"
@@ -91,5 +88,8 @@
   "engines": {
     "node": ">=6.x",
     "npm": ">=3.9.5"
+  },
+  "release": {
+    "verifyConditions": "condition-circle"
   }
 }

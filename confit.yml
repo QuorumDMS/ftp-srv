@@ -27,7 +27,7 @@ generator-confit:
     _version: 39082c3df887fbc08744dfd088c25465e7a2e3a4
     entryPoints:
       main:
-        - src/index.js
+        - ftp-srv.js
   testUnit:
     _version: 30eee42a88ee42cce4f1ae48fe0cbe81647d189a
     testDependencies: []
