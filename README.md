@@ -11,15 +11,15 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/ftp-srv">
-    <img alt="npm" src="https://badge.fury.io/js/ftp-srv.svg" />
+    <img alt="npm" src="https://img.shields.io/npm/dm/ftp-srv.svg?style=for-the-badge" />
   </a>
 
-  <a href="https://travis-ci.org/trs/ftp-srv">
-    <img alt="npm" src="https://travis-ci.org/trs/ftp-srv.svg?branch=master" />
+  <a href="https://circleci.com/gh/trs/ftp-srv">
+    <img alt="npm" src="https://img.shields.io/circleci/project/github/trs/ftp-srv.svg?style=for-the-badge" />
   </a>
 
   <a href="https://coveralls.io/github/trs/ftp-srv?branch=master">
-    <img alt="npm" src="https://coveralls.io/repos/github/trs/ftp-srv/badge.svg?branch=master" />
+    <img alt="npm" src="https://img.shields.io/coveralls/github/trs/ftp-srv.svg?style=for-the-badge" />
   </a>
 </p>
 
