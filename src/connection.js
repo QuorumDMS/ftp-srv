@@ -46,7 +46,7 @@ class FtpConnection extends EventEmitter {
 
   get ip() {
     try {
-      return this.dataSocket ? this.dataSocket.remoteAddress : this.commandSocket.remoteAddress;
+      return this.commandSocket ? this.commandSocket.remoteAddress : undefined;
     } catch (ex) {
       return null;
     }
