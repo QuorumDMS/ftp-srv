@@ -139,7 +139,8 @@ class FtpServer extends EventEmitter {
         if (err) this.log.error(err, 'Error closing server');
         resolve('Closed');
       });
-    }));
+    }))
+    .then(() => this.removeAllListeners());
   }
 
 }
