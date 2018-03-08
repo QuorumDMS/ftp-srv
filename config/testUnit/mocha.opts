@@ -1,5 +1,0 @@
-test/**/*.spec.js
---reporter mocha-multi-reporters
---reporter-options configFile=config/testUnit/reporters.json
---ui bdd
---bail
