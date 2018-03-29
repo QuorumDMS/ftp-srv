@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 const FtpSrv = require('../src');
 
 const server = new FtpSrv();
