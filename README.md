@@ -15,11 +15,11 @@
   </a>
 
   <a href="https://circleci.com/gh/trs/ftp-srv">
-    <img alt="npm" src="https://img.shields.io/circleci/project/github/trs/ftp-srv.svg?style=for-the-badge" />
+    <img alt="circleci" src="https://img.shields.io/circleci/project/github/trs/ftp-srv.svg?style=for-the-badge" />
   </a>
 
   <a href="https://coveralls.io/github/trs/ftp-srv?branch=master">
-    <img alt="npm" src="https://img.shields.io/coveralls/github/trs/ftp-srv.svg?style=for-the-badge" />
+    <img alt="coveralls" src="https://img.shields.io/coveralls/github/trs/ftp-srv.svg?style=for-the-badge" />
   </a>
 </p>
 
@@ -29,6 +29,7 @@
 
 # Installation
 
-```bash
+```
 $ yarn install
 ```
+
