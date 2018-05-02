@@ -1,5 +1,6 @@
 import * as tls from 'tls'
 import { Stats } from 'fs'
+import { EventEmitter } from 'events';
 
 export class FileSystem {
 
@@ -107,7 +108,7 @@ export class FtpServer {
             whitelist?: Array<string>
         }) => void,
 		reject: (err?: Error) => void
-	) => void)
+	) => void): EventEmitter;
 
 	on(event: "client-error", listener: (
 		data: {
@@ -115,7 +116,7 @@ export class FtpServer {
 			context: string,
 			error: Error,
 		}
-	) => void)
+	) => void): EventEmitter;
 }
 
 export {FtpServer as FtpSrv};
