@@ -262,6 +262,16 @@ __Used in:__ `STOU`
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## CLI
+
+Command-line interface
+
+```bash
+$ ftp-srv [opts] [path]
+$ ftp-srv --help
+```
+
+path => defaults to pwd
 
 <!--[]-->
 
