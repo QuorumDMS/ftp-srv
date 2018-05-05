@@ -14,6 +14,7 @@
   "license": "MIT",
   "files": [
     "src",
+    "bin",
     "ftp-srv.d.ts"
   ],
   "main": "ftp-srv.js",
@@ -38,6 +39,9 @@
     "verify:js:watch": "chokidar 'src/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
     "verify:watch": "npm run verify:js:watch --silent"
   },
+  "bin": {
+    "ftp-srv": "./bin/ftp-srv"
+  },
   "release": {
     "verifyConditions": "condition-circle"
   },
@@ -55,7 +59,8 @@
     "ip": "^1.1.5",
     "lodash": "^4.17.10",
     "moment": "^2.22.1",
-    "uuid": "^3.2.1"
+    "uuid": "^3.2.1",
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "@icetee/ftp": "^1.0.2",
