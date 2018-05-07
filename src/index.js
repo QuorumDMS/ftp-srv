@@ -50,9 +50,11 @@ class FtpServer extends EventEmitter {
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
     this.server.on('error', err => this.log.error(err, '[Event] error'));
 
-    process.on('SIGTERM', () => this.quit());
-    process.on('SIGINT', () => this.quit());
-    process.on('SIGQUIT', () => this.quit());
+    const quit = _.debounce(this.quit.bind(this), 100);
+
+    process.on('SIGTERM', quit);
+    process.on('SIGINT', quit);
+    process.on('SIGQUIT', quit);
   }
 
   get isTLS() {
