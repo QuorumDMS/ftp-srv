@@ -64,7 +64,7 @@ describe('Connector - Passive //', function () {
     return passive.setupServer()
     .then(shouldNotResolve)
     .catch(err => {
-      expect(err.name).to.equal('RangeError');
+      expect(err).to.be.instanceOf(RangeError);
     });
   });
 

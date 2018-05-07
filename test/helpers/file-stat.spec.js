@@ -1,9 +1,20 @@
 const {expect} = require('chai');
+const sinon = require('sinon');
+const moment = require('moment');
 
 const fileStat = require('../../src/helpers/file-stat');
 const errors = require('../../src/errors');
 
 describe('helpers // file-stat', function () {
+  let sandbox;
+
+  before(function () {
+    sandbox = sinon.sandbox.create();
+  });
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   const STAT = {
     name: 'test1',
     dev: 2114,
@@ -44,6 +55,11 @@ describe('helpers // file-stat', function () {
 
   describe('format - ls //', function () {
     it('formats correctly', () => {
+      const momentStub = sandbox.stub(moment, 'utc').callThrough();
+      momentStub.onFirstCall().callsFake(function () {
+        return moment.utc(new Date('Sept 10 2016'));
+      });
+
       const format = fileStat(STAT, 'ls');
       expect(format).to.equal('-rwxrwxrwx 1 85 100          527 Oct 10 23:24 test1');
     });

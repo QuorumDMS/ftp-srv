@@ -18,7 +18,8 @@ module.exports = function (fileStat, format = 'ls') {
 function ls(fileStat) {
   const now = moment.utc();
   const mtime = moment.utc(new Date(fileStat.mtime));
-  const dateFormat = now.diff(mtime, 'months') < 6 ? 'MMM DD HH:mm' : 'MMM DD  YYYY';
+  const timeDiff = now.diff(mtime, 'months');
+  const dateFormat = timeDiff < 6 ? 'MMM DD HH:mm' : 'MMM DD  YYYY';
 
   return [
     fileStat.mode ? [
