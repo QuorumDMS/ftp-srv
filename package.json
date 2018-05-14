@@ -18,6 +18,7 @@
     "ftp-srv.d.ts"
   ],
   "main": "ftp-srv.js",
+  "bin": "./bin/index.js",
   "types": "./ftp-srv.d.ts",
   "repository": {
     "type": "git",
@@ -38,9 +39,6 @@
     "verify:js:fix": "eslint --fix -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js:fix success",
     "verify:js:watch": "chokidar 'src/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
     "verify:watch": "npm run verify:js:watch --silent"
-  },
-  "bin": {
-    "ftp-srv": "./bin/ftp-srv"
   },
   "release": {
     "verifyConditions": "condition-circle"

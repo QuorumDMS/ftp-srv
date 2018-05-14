@@ -12,12 +12,6 @@ startFtpServer(state);
 
 function setupYargs() {
   return yargs
-    .option('url', {
-      alias: 'u',
-      default: 'ftp://0.0.0.0:9876',
-      describe: '{ftp|ftps}://{url}:[port]',
-      type: 'string'
-    })
     .option('credentials', {
       alias: 'c',
       describe: 'Load user & pass from json file',
@@ -31,8 +25,14 @@ function setupYargs() {
       describe: 'Password for given username',
       type: 'string'
     })
+    .option('root', {
+      alias: 'r',
+      describe: 'Default root directory for users',
+      type: 'string',
+      normalize: true
+    })
     .option('read-only', {
-      describe: 'Disable upload',
+      describe: 'Disable write actions such as upload, delete, etc',
       boolean: true,
       default: false
     })
@@ -43,16 +43,18 @@ function setupState(_args) {
   const _state = {};
 
   function setupOptions() {
-    _state.url = _args.url;
+    if (_args._ && _args._.length > 0) {
+      _state.url = _args._[0];
+    }
     _state.anonymous = _args.username === '';
   }
 
   function setupRoot() {
-    const dirPath = _args._;
-    if (dirPath.length === 0) {
+    const dirPath = _args.root;
+    if (dirPath) {
       _state.root = process.cwd();
     } else {
-      _state.root = dirPath[0];
+      _state.root = dirPath;
     }
   }
 
