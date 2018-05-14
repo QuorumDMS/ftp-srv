@@ -26,6 +26,7 @@
 - [Install](#install)
 - [Usage](#usage)
   - [API](#api)
+  - [CLI](#cli)
   - [Events](#events)
   - [Supported Commands](#supported-commands)
   - [File System](#file-system)
@@ -115,6 +116,55 @@ __Allowable values:__
 ##### `log`
 A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
 
+## CLI
+
+`ftp-srv` also comes with a builtin CLI.
+
+```bash
+$ ftp-srv [url] [options]
+```
+
+```bash
+$ ftp-srv ftp://0.0.0.0:9876 --root ~/Documents
+```
+
+#### `url`
+
+Set the listening URL.
+
+Defaults to `ftp://127.0.0.1:21`
+
+#### `--root` / `-r`
+
+Set the default root directory for users.
+
+Defaults to the current directory.
+
+#### `--credentials` / `-c`
+
+Set the path to a json credentials file.
+
+Format:
+
+```js
+[
+  {
+    "username": "...",
+    "password": "...",
+    "root": "..." // Root directory
+  },
+  ...
+]
+```
+
+#### `--username`
+
+Set the username for the only user. Do not provide an argument to allow anonymous login.
+
+#### `--password`
+
+Set the password for the given `username`.
+
 ## Events
 
 The `FtpSrv` class extends the [node net.Server](https://nodejs.org/api/net.html#net_class_net_server). Some custom events can be resolved or rejected, such as `login`.
@@ -154,7 +204,7 @@ on('client-error', ({connection, context, error}) => { ... });
 Occurs when an error arises in the client connection.
 
 `connection` [client class object](src/connection.js)
-`context` string of where the error occured
+`context` string of where the error occurred
 `error` error object
 
 ### `RETR`
@@ -258,18 +308,17 @@ __Used in:__ `STOU`
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## CLI
-
-Command-line interface
-
-```bash
-$ ftp-srv [opts] [path]
-$ ftp-srv --help
-```
-
-path => defaults to pwd
-
 <!--[]-->
+
+## Contributors
+
+- [OzairP](https://github.com/OzairP)
+- [qchar](https://github.com/qchar)
+- [jorinvo](https://github.com/jorinvo)
+- [voxsoftware](https://github.com/voxsoftware)
+- [pkeuter](https://github.com/pkeuter)
+- [TimLuq](https://github.com/TimLuq)
+- [edin-mg](https://github.com/edin-m)
 
 <!--[RM_LICENSE]-->
 ## License
