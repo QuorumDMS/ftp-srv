@@ -65,7 +65,7 @@ class FtpServer extends EventEmitter {
       this.url.hostname = hostname;
       return new Promise((resolve, reject) => {
         this.server.once('error', reject);
-        this.server.listen(this.url.port, err => {
+        this.server.listen(this.url.port, this.url.hostname, err => {
           this.server.removeListener('error', reject);
           if (err) return reject(err);
           this.log.info({
