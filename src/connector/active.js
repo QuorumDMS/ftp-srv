@@ -7,6 +7,7 @@ class Active extends Connector {
   constructor(connection) {
     super(connection);
     this.type = 'active';
+    this.log = connection.log.scope('active');
   }
 
   waitForConnection({timeout = 5000, delay = 250} = {}) {
@@ -29,9 +30,15 @@ class Active extends Connector {
     .then(() => {
       this.dataSocket = new Socket();
       this.dataSocket.setEncoding(this.connection.transferType);
-      this.dataSocket.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
+      this.dataSocket.on('error', err => this.connection.emit('error', err));
+      this.dataSocket.on('close', () => {
+        this.log.debug('socket closed');
+        this.end();
+      });
       this.dataSocket.connect({host, port, family}, () => {
         this.dataSocket.pause();
+
+        this.log.debug('connection', {port, remoteAddress: this.dataSocket.remoteAddress});
 
         if (this.connection.secure) {
           const secureContext = tls.createSecureContext(this.server._tls);

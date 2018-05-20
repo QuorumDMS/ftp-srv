@@ -2,17 +2,17 @@ const Promise = require('bluebird');
 
 module.exports = {
   directive: 'DELE',
-  handler: function ({log, command} = {}) {
-    if (!this.fs) return this.reply(550, 'File system not instantiated');
-    if (!this.fs.delete) return this.reply(402, 'Not supported by file system');
+  handler: function (connection, command) {
+    if (!connection.fs) return connection.reply(550, 'File system not instantiated');
+    if (!connection.fs.delete) return connection.reply(402, 'Not supported by file system');
 
-    return Promise.resolve(this.fs.delete(command.arg))
+    return Promise.resolve(connection.fs.delete(command.arg))
     .then(() => {
-      return this.reply(250);
+      return connection.reply(250);
     })
     .catch(err => {
-      log.error(err);
-      return this.reply(550, err.message);
+      connection.emit('error', err);
+      return connection.reply(550, err.message);
     });
   },
   syntax: '{{cmd}} <path>',

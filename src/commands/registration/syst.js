@@ -1,7 +1,7 @@
 module.exports = {
   directive: 'SYST',
-  handler: function () {
-    return this.reply(215);
+  handler: function (connection) {
+    return connection.reply(215);
   },
   syntax: '{{cmd}}',
   description: 'Return system type',

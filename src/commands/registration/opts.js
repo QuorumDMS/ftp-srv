@@ -7,14 +7,14 @@ const OPTIONS = {
 
 module.exports = {
   directive: 'OPTS',
-  handler: function ({command} = {}) {
-    if (!_.has(command, 'arg')) return this.reply(501);
+  handler: function (connection, command) {
+    if (!_.has(command, 'arg')) return connection.reply(501);
 
     const [_option, ...args] = command.arg.split(' ');
     const option = _.toUpper(_option);
 
-    if (!OPTIONS.hasOwnProperty(option)) return this.reply(500);
-    return OPTIONS[option].call(this, args);
+    if (!OPTIONS.hasOwnProperty(option)) return connection.reply(500);
+    return OPTIONS[option].call(this, ...args);
   },
   syntax: '{{cmd}}',
   description: 'Select options for a feature'

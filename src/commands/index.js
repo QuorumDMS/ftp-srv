@@ -36,19 +36,16 @@ class FtpCommands {
     const logCommand = _.clone(command);
     if (logCommand.directive === 'PASS') logCommand.arg = '********';
 
-    const log = this.connection.log.child({directive: command.directive});
-    log.trace({command: logCommand}, 'Handle command');
-
     if (!REGISTRY.hasOwnProperty(command.directive)) {
       return this.connection.reply(402, 'Command not allowed');
     }
 
     if (_.includes(this.blacklist, command.directive)) {
-      return this.connection.reply(502, 'Command blacklisted');
+      return this.connection.reply(502, 'Command on blacklist');
     }
 
     if (this.whitelist.length > 0 && !_.includes(this.whitelist, command.directive)) {
-      return this.connection.reply(502, 'Command not whitelisted');
+      return this.connection.reply(502, 'Command not on whitelist');
     }
 
     const commandRegister = REGISTRY[command.directive];
@@ -61,8 +58,7 @@ class FtpCommands {
       return this.connection.reply(502, 'Handler not set on command');
     }
 
-    const handler = commandRegister.handler.bind(this.connection);
-    return Promise.resolve(handler({log, command, previous_command: this.previousCommand}))
+    return Promise.try(() => commandRegister.handler.call(this, this.connection, command, this.previousCommand))
     .finally(() => {
       this.previousCommand = _.clone(command);
     });

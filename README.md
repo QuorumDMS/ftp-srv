@@ -114,7 +114,7 @@ __Allowable values:__
     - Only one argument is passed in: a node [file stat](https://nodejs.org/api/fs.html#fs_class_fs_stats) object with additional file `name` parameter
 
 ##### `log`
-A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
+A [signale logger](https://github.com/klauscfhq/signale) instance. Created by default.
 
 ## CLI
 

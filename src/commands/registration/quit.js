@@ -1,7 +1,7 @@
 module.exports = {
   directive: 'QUIT',
-  handler: function () {
-    return this.close(221, 'Client called QUIT');
+  handler: function (connection) {
+    return connection.close(221, 'Client called QUIT');
   },
   syntax: '{{cmd}}',
   description: 'Disconnect',

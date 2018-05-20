@@ -2,54 +2,54 @@ const Promise = require('bluebird');
 
 module.exports = {
   directive: 'RETR',
-  handler: function ({log, command} = {}) {
-    if (!this.fs) return this.reply(550, 'File system not instantiated');
-    if (!this.fs.read) return this.reply(402, 'Not supported by file system');
+  handler: function (connection, command) {
+    if (!connection.fs) return connection.reply(550, 'File system not instantiated');
+    if (!connection.fs.read) return connection.reply(402, 'Not supported by file system');
 
     const filePath = command.arg;
 
-    return this.connector.waitForConnection()
-    .tap(() => this.commandSocket.pause())
-    .then(() => Promise.resolve(this.fs.read(filePath, {start: this.restByteCount})))
+    return connection.connector.waitForConnection()
+    .tap(() => connection.commandSocket.pause())
+    .then(() => Promise.resolve(connection.fs.read(filePath, {start: connection.restByteCount})))
     .then(stream => {
-      const destroyConnection = (connection, reject) => err => {
-        if (connection) connection.destroy(err);
+      const destroyConnection = (conn, reject) => err => {
+        if (conn) conn.destroy(err);
         reject(err);
       };
 
       const eventsPromise = new Promise((resolve, reject) => {
         stream.on('data', data => {
           if (stream) stream.pause();
-          if (this.connector.socket) {
-            this.connector.socket.write(data, this.transferType, () => stream && stream.resume());
+          if (connection.connector.socket) {
+            connection.connector.socket.write(data, connection.transferType, () => stream && stream.resume());
           }
         });
         stream.once('end', () => resolve());
-        stream.once('error', destroyConnection(this.connector.socket, reject));
+        stream.once('error', destroyConnection(connection.connector.socket, reject));
 
-        this.connector.socket.once('error', destroyConnection(stream, reject));
+        connection.connector.socket.once('error', destroyConnection(stream, reject));
       });
 
-      this.restByteCount = 0;
+      connection.restByteCount = 0;
 
-      return this.reply(150).then(() => stream.resume() && this.connector.socket.resume())
+      return connection.reply(150).then(() => stream.resume() && connection.connector.socket.resume())
       .then(() => eventsPromise)
-      .tap(() => this.emit('RETR', null, filePath))
+      .tap(() => connection.emit('RETR', null, filePath))
       .finally(() => stream.destroy && stream.destroy());
     })
-    .then(() => this.reply(226))
+    .then(() => connection.reply(226))
     .catch(Promise.TimeoutError, err => {
-      log.error(err);
-      return this.reply(425, 'No connection established');
+      connection.emit('error', err);
+      return connection.reply(425, 'No connection established');
     })
     .catch(err => {
-      log.error(err);
-      this.emit('RETR', err);
-      return this.reply(551, err.message);
+      connection.emit('error', err);
+      connection.emit('RETR', err);
+      return connection.reply(551, err.message);
     })
     .finally(() => {
-      this.connector.end();
-      this.commandSocket.resume();
+      connection.connector.end();
+      connection.commandSocket.resume();
     });
   },
   syntax: '{{cmd}} <path>',

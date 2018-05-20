@@ -1,7 +1,7 @@
 module.exports = {
   directive: 'NOOP',
-  handler: function () {
-    return this.reply(200);
+  handler: function (connection) {
+    return connection.reply(200);
   },
   syntax: '{{cmd}}',
   description: 'No operation',

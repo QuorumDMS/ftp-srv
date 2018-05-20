@@ -53,10 +53,10 @@
   },
   "dependencies": {
     "bluebird": "^3.5.1",
-    "bunyan": "^1.8.12",
     "ip": "^1.1.5",
     "lodash": "^4.17.10",
     "moment": "^2.22.1",
+    "signale": "^1.0.1",
     "uuid": "^3.2.1",
     "yargs": "^11.0.0"
   },

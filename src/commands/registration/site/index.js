@@ -8,7 +8,7 @@ module.exports = {
   handler: function ({log, command} = {}) {
     const rawSubCommand = _.get(command, 'arg', '');
     const subCommand = this.commands.parse(rawSubCommand);
-    const subLog = log.child({subverb: subCommand.directive});
+    const subLog = log.scope(subCommand.directive);
 
     if (!registry.hasOwnProperty(subCommand.directive)) return this.reply(502);
 

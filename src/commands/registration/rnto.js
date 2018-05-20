@@ -2,25 +2,25 @@ const Promise = require('bluebird');
 
 module.exports = {
   directive: 'RNTO',
-  handler: function ({log, command} = {}) {
-    if (!this.renameFrom) return this.reply(503);
+  handler: function (connection, command) {
+    if (!connection.renameFrom) return connection.reply(503);
 
-    if (!this.fs) return this.reply(550, 'File system not instantiated');
-    if (!this.fs.rename) return this.reply(402, 'Not supported by file system');
+    if (!connection.fs) return connection.reply(550, 'File system not instantiated');
+    if (!connection.fs.rename) return connection.reply(402, 'Not supported by file system');
 
-    const from = this.renameFrom;
+    const from = connection.renameFrom;
     const to = command.arg;
 
-    return Promise.resolve(this.fs.rename(from, to))
+    return Promise.resolve(connection.fs.rename(from, to))
     .then(() => {
-      return this.reply(250);
+      return connection.reply(250);
     })
     .catch(err => {
-      log.error(err);
-      return this.reply(550, err.message);
+      connection.emit('error', err);
+      return connection.reply(550, err.message);
     })
     .finally(() => {
-      delete this.renameFrom;
+      delete connection.renameFrom;
     });
   },
   syntax: '{{cmd}} <name>',

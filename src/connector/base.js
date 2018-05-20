@@ -8,10 +8,7 @@ class Connector {
     this.dataSocket = null;
     this.dataServer = null;
     this.type = false;
-  }
-
-  get log() {
-    return this.connection.log;
+    this.log = connection.log.scope('connector');
   }
 
   get socket() {

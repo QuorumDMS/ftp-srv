@@ -2,18 +2,18 @@ const _ = require('lodash');
 
 module.exports = {
   directive: 'HELP',
-  handler: function ({command} = {}) {
+  handler: function (connection, command) {
     const registry = require('../registry');
     const directive = _.upperCase(command.arg);
     if (directive) {
-      if (!registry.hasOwnProperty(directive)) return this.reply(502, `Unknown command ${directive}.`);
+      if (!registry.hasOwnProperty(directive)) return connection.reply(502, `Unknown command ${directive}.`);
 
       const {syntax, description} = registry[directive];
       const reply = _.concat([syntax.replace('{{cmd}}', directive), description]);
-      return this.reply(214, ...reply);
+      return connection.reply(214, ...reply);
     } else {
       const supportedCommands = _.chunk(Object.keys(registry), 5).map(chunk => chunk.join('\t'));
-      return this.reply(211, 'Supported commands:', ...supportedCommands, 'Use "HELP [command]" for syntax help.');
+      return connection.reply(211, 'Supported commands:', ...supportedCommands, 'Use "HELP [command]" for syntax help.');
     }
   },
   syntax: '{{cmd}} [<command>]',

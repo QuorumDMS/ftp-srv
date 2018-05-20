@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 module.exports = {
   directive: 'FEAT',
-  handler: function () {
+  handler: function (connection) {
     const registry = require('../registry');
     const features = Object.keys(registry)
       .reduce((feats, cmd) => {
@@ -16,8 +16,8 @@ module.exports = {
         raw: true
       }));
     return features.length
-      ? this.reply(211, 'Extensions supported', ...features, 'End')
-      : this.reply(211, 'No features');
+      ? connection.reply(211, 'Extensions supported', ...features, 'End')
+      : connection.reply(211, 'No features');
   },
   syntax: '{{cmd}}',
   description: 'Get the feature list implemented by the server',

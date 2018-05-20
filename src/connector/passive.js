@@ -11,6 +11,7 @@ class Passive extends Connector {
   constructor(connection) {
     super(connection);
     this.type = 'passive';
+    this.log = connection.log.scope('passive');
   }
 
   waitForConnection({timeout = 5000, delay = 250} = {}) {
@@ -37,16 +38,16 @@ class Passive extends Connector {
     .then(port => {
       const connectionHandler = socket => {
         if (!ip.isEqual(this.connection.commandSocket.remoteAddress, socket.remoteAddress)) {
-          this.log.error({
+          this.log.error('ip address mismatch', {
             pasv_connection: socket.remoteAddress,
             cmd_connection: this.connection.commandSocket.remoteAddress
-          }, 'Connecting addresses do not match');
+          });
 
           socket.destroy();
-          return this.connection.reply(550, 'Remote addresses do not match')
+          return this.connection.reply(550, 'IP address mismatch')
           .finally(() => this.connection.close());
         }
-        this.log.trace({port, remoteAddress: socket.remoteAddress}, 'Passive connection fulfilled.');
+        this.log.debug('connection', {port, remoteAddress: socket.remoteAddress});
 
         if (this.connection.secure) {
           const secureContext = tls.createSecureContext(this.server._tls);
@@ -60,9 +61,9 @@ class Passive extends Connector {
         }
         this.dataSocket.connected = true;
         this.dataSocket.setEncoding(this.connection.transferType);
-        this.dataSocket.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
+        this.dataSocket.on('error', err => this.connection.emit('error', err));
         this.dataSocket.on('close', () => {
-          this.log.trace('Passive connection closed');
+          this.log.debug('socket closed');
           this.end();
         });
       };
@@ -70,9 +71,9 @@ class Passive extends Connector {
       this.dataSocket = null;
       this.dataServer = net.createServer({pauseOnConnect: true}, connectionHandler);
       this.dataServer.maxConnections = 1;
-      this.dataServer.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataServer', error: err}));
+      this.dataServer.on('error', err => this.connection.emit('error', err));
       this.dataServer.on('close', () => {
-        this.log.trace('Passive server closed');
+        this.log.debug('server closed');
         this.dataServer = null;
       });
 
@@ -80,7 +81,7 @@ class Passive extends Connector {
         this.dataServer.listen(port, err => {
           if (err) reject(err);
           else {
-            this.log.debug({port}, 'Passive connection listening');
+            this.log.debug('listening', {port});
             resolve(this.dataServer);
           }
         });

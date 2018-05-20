@@ -10,11 +10,13 @@ const errors = require('./errors');
 const DEFAULT_MESSAGE = require('./messages');
 
 class FtpConnection extends EventEmitter {
-  constructor(server, options) {
+  constructor(server, socket) {
     super();
     this.server = server;
     this.id = uuid.v4();
-    this.log = options.log.child({id: this.id, ip: this.ip});
+    this.commandSocket = socket;
+    this.log = server.log.scope(`client: ${this.ip}`);
+    // this.log = options.log.child({id: this.id, ip: this.ip});
     this.commands = new Commands(this);
     this.transferType = 'binary';
     this.encoding = 'utf8';
@@ -24,10 +26,8 @@ class FtpConnection extends EventEmitter {
 
     this.connector = new BaseConnector(this);
 
-    this.commandSocket = options.socket;
     this.commandSocket.on('error', err => {
-      this.log.error(err, 'Client error');
-      this.server.emit('client-error', {connection: this, context: 'commandSocket', error: err});
+      this.log.scope('error event').error(err);
     });
     this.commandSocket.on('data', this._handleData.bind(this));
     this.commandSocket.on('timeout', () => {});
@@ -40,7 +40,6 @@ class FtpConnection extends EventEmitter {
 
   _handleData(data) {
     const messages = _.compact(data.toString(this.encoding).split('\r\n'));
-    this.log.trace(messages);
     return Promise.mapSeries(messages, message => this.commands.handle(message));
   }
 
@@ -117,12 +116,13 @@ class FtpConnection extends EventEmitter {
     };
 
     const processLetter = letter => {
+      const log = this.log.scope('reply');
       return new Promise((resolve, reject) => {
         if (letter.socket && letter.socket.writable) {
-          this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, message: letter.message}, 'Reply');
+          log.debug(letter.message, {port: letter.socket.address().port});
           letter.socket.write(letter.message + '\r\n', letter.encoding, err => {
             if (err) {
-              this.log.error(err);
+              log.error(err);
               return reject(err);
             }
             resolve();
