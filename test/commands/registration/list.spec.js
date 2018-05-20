@@ -1,12 +1,10 @@
 const Promise = require('bluebird');
-const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
 const CMD = 'LIST';
 describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     fs: {
@@ -22,7 +20,7 @@ describe(CMD, function () {
       pause: () => {}
     }
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -89,10 +87,10 @@ describe(CMD, function () {
   describe('// check', function () {
     it('fails on no fs', () => {
       const badMockClient = {reply: () => {}};
-      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
       sandbox.stub(badMockClient, 'reply').resolves();
 
-      return badCmdFn()
+      return badCmdFn(badMockClient)
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(550);
       });
@@ -100,10 +98,10 @@ describe(CMD, function () {
 
     it('fails on no fs list command', () => {
       const badMockClient = {reply: () => {}, fs: {}};
-      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
       sandbox.stub(badMockClient, 'reply').resolves();
 
-      return badCmdFn()
+      return badCmdFn(badMockClient)
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(402);
       });
@@ -111,7 +109,7 @@ describe(CMD, function () {
   });
 
   it('. // successful', () => {
-    return cmdFn({log, command: {directive: CMD}})
+    return cmdFn(mockClient, {directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1].length).to.equal(3);
@@ -143,7 +141,7 @@ describe(CMD, function () {
       isDirectory: () => false
     });
 
-    return cmdFn({log, command: {directive: CMD, arg: 'testfile.txt'}})
+    return cmdFn(mockClient, {directive: CMD, arg: 'testfile.txt'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1].length).to.equal(2);
@@ -158,7 +156,7 @@ describe(CMD, function () {
     mockClient.fs.list.restore();
     sandbox.stub(mockClient.fs, 'list').rejects(new Error());
 
-    return cmdFn({log, command: {directive: CMD}})
+    return cmdFn(mockClient, {directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(451);
     });
@@ -167,7 +165,7 @@ describe(CMD, function () {
   it('. // unsuccessful (timeout)', () => {
     sandbox.stub(mockClient.connector, 'waitForConnection').returns(Promise.reject(new Promise.TimeoutError()));
 
-    return cmdFn({log, command: {directive: CMD}})
+    return cmdFn(mockClient, {directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
     });

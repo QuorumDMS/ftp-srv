@@ -10,9 +10,10 @@ describe(CMD, function () {
     connector: {
       waitForConnection: () => Promise.resolve(),
       end: () => Promise.resolve()
-    }
+    },
+    emit: () => Promise.resolve()
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -29,7 +30,7 @@ describe(CMD, function () {
     mockClient.connector.waitForConnection.restore();
     sandbox.stub(mockClient.connector, 'waitForConnection').rejects();
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.connector.waitForConnection.callCount).to.equal(1);
       expect(mockClient.connector.end.callCount).to.equal(0);
@@ -38,7 +39,7 @@ describe(CMD, function () {
   });
 
   it('// successful | active connection', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.connector.waitForConnection.callCount).to.equal(1);
       expect(mockClient.connector.end.callCount).to.equal(1);

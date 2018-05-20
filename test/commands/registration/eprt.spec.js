@@ -10,7 +10,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => Promise.resolve()
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -23,21 +23,21 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful | no argument', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
     });
   });
 
   it('// unsuccessful | invalid argument', () => {
-    return cmdFn({command: {arg: 'blah'}})
+    return cmdFn(mockClient, {arg: 'blah'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
     });
   });
 
   it('// successful IPv4', () => {
-    return cmdFn({command: {arg: '|1|192.168.0.100|35286|'}})
+    return cmdFn(mockClient, {arg: '|1|192.168.0.100|35286|'})
     .then(() => {
       const [ip, port, family] = ActiveConnector.prototype.setupConnection.args[0];
       expect(mockClient.reply.args[0][0]).to.equal(200);
@@ -48,7 +48,7 @@ describe(CMD, function () {
   });
 
   it('// successful IPv6', () => {
-    return cmdFn({command: {arg: '|2|8536:933f:e7f3:3e91:6dc1:e8c6:8482:7b23|35286|'}})
+    return cmdFn(mockClient, {arg: '|2|8536:933f:e7f3:3e91:6dc1:e8c6:8482:7b23|35286|'})
     .then(() => {
       const [ip, port, family] = ActiveConnector.prototype.setupConnection.args[0];
       expect(mockClient.reply.args[0][0]).to.equal(200);

@@ -10,7 +10,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => Promise.resolve()
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -25,7 +25,7 @@ describe(CMD, function () {
   });
 
   it('// successful IPv4', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       const [code, message] = mockClient.reply.args[0];
       expect(code).to.equal(229);

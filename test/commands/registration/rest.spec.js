@@ -8,7 +8,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => Promise.resolve()
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -20,28 +20,28 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
     });
   });
 
   it('-1 // unsuccessful', () => {
-    return cmdFn({command: {arg: '-1', directive: CMD}})
+    return cmdFn(mockClient, {arg: '-1', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
     });
   });
 
   it('bad // unsuccessful', () => {
-    return cmdFn({command: {arg: 'bad', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'bad', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
     });
   });
 
   it('1 // successful', () => {
-    return cmdFn({command: {arg: '1', directive: CMD}})
+    return cmdFn(mockClient, {arg: '1', directive: CMD})
     .then(() => {
       expect(mockClient.restByteCount).to.equal(1);
       expect(mockClient.reply.args[0][0]).to.equal(350);
@@ -49,7 +49,7 @@ describe(CMD, function () {
   });
 
   it('0 // successful', () => {
-    return cmdFn({command: {arg: '0', directive: CMD}})
+    return cmdFn(mockClient, {arg: '0', directive: CMD})
     .then(() => {
       expect(mockClient.restByteCount).to.equal(0);
       expect(mockClient.reply.args[0][0]).to.equal(350);

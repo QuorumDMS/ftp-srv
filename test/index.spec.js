@@ -1,7 +1,6 @@
 /* eslint no-unused-expressions: 0 */
 const {expect} = require('chai');
 const sinon = require('sinon');
-const bunyan = require('bunyan');
 const Promise = require('bluebird');
 const _ = require('lodash');
 const fs = require('fs');
@@ -15,7 +14,6 @@ describe('Integration', function () {
 
   let client;
   let sandbox;
-  let log = bunyan.createLogger({name: 'test-runner'});
   let server;
 
   let connection;
@@ -38,7 +36,6 @@ describe('Integration', function () {
 
   function startServer(url, options = {}) {
     server = new FtpServer(url, _.assign({
-      log,
       pasv_range: 8881,
       greeting: ['hello', 'world'],
       anonymous: true

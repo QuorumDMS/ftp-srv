@@ -10,7 +10,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => Promise.resolve()
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -23,21 +23,21 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful | no argument', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
     });
   });
 
   it('// unsuccessful | invalid argument', () => {
-    return cmdFn({command: {arg: '1,2,3,4,5'}})
+    return cmdFn(mockClient, {arg: '1,2,3,4,5'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
     });
   });
 
   it('// successful', () => {
-    return cmdFn({command: {arg: '192,168,0,100,137,214'}})
+    return cmdFn(mockClient, {arg: '192,168,0,100,137,214'})
     .then(() => {
       const [ip, port] = ActiveConnector.prototype.setupConnection.args[0];
       expect(mockClient.reply.args[0][0]).to.equal(200);

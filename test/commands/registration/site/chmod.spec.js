@@ -5,9 +5,8 @@ const sinon = require('sinon');
 const CMD = 'CHMOD';
 describe(CMD, function () {
   let sandbox;
-  const mockLog = {error: () => {}};
   const mockClient = {reply: () => Promise.resolve()};
-  const cmdFn = require(`../../../../src/commands/registration/site/${CMD.toLowerCase()}`).bind(mockClient);
+  const cmdFn = require(`../../../../src/commands/registration/site/${CMD.toLowerCase()}`);
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -26,7 +25,7 @@ describe(CMD, function () {
   it('// unsuccessful | no file system', done => {
     delete mockClient.fs;
 
-    cmdFn()
+    cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
       done();
@@ -37,7 +36,7 @@ describe(CMD, function () {
   it('// unsuccessful | file system does not have functions', done => {
     mockClient.fs = {};
 
-    cmdFn()
+    cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
       done();
@@ -49,7 +48,7 @@ describe(CMD, function () {
     mockClient.fs.chmod.restore();
     sandbox.stub(mockClient.fs, 'chmod').rejects(new Error('test'));
 
-    cmdFn({log: mockLog, command: {arg: '777 test'}})
+    cmdFn(mockClient, {arg: '777 test'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(500);
       done();
@@ -58,7 +57,7 @@ describe(CMD, function () {
   });
 
   it('777 test // successful', done => {
-    cmdFn({log: mockLog, command: {arg: '777 test'}})
+    cmdFn(mockClient, {arg: '777 test'})
     .then(() => {
       expect(mockClient.fs.chmod.args[0]).to.eql(['test', 511]);
       expect(mockClient.reply.args[0][0]).to.equal(200);

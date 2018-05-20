@@ -1,12 +1,10 @@
 const Promise = require('bluebird');
-const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
 const CMD = 'NLST';
 describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     fs: {
@@ -22,7 +20,7 @@ describe(CMD, function () {
       pause: () => {}
     }
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -87,7 +85,7 @@ describe(CMD, function () {
   });
 
   it('. // successful', () => {
-    return cmdFn({log, command: {directive: CMD}})
+    return cmdFn(mockClient, {directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1].length).to.equal(3);
@@ -119,7 +117,7 @@ describe(CMD, function () {
       isDirectory: () => false
     });
 
-    return cmdFn({log, command: {directive: CMD, arg: 'testfile.txt'}})
+    return cmdFn(mockClient, {directive: CMD, arg: 'testfile.txt'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(150);
       expect(mockClient.reply.args[1].length).to.equal(2);

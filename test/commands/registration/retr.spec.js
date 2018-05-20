@@ -1,5 +1,4 @@
 const Promise = require('bluebird');
-const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
 const EventEmitter = require('events');
@@ -7,7 +6,6 @@ const EventEmitter = require('events');
 const CMD = 'RETR';
 describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
   let emitter;
   const mockClient = {
     commandSocket: {
@@ -22,7 +20,7 @@ describe(CMD, function () {
       end: () => {}
     }
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -43,7 +41,7 @@ describe(CMD, function () {
   it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });
@@ -52,7 +50,7 @@ describe(CMD, function () {
   it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
     });
@@ -64,7 +62,7 @@ describe(CMD, function () {
     });
 
 
-    return cmdFn({log, command: {arg: 'test.txt'}})
+    return cmdFn(mockClient, {arg: 'test.txt'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(425);
     });
@@ -75,7 +73,7 @@ describe(CMD, function () {
       return Promise.reject(new Error('test'));
     });
 
-    return cmdFn({log, command: {arg: 'test.txt'}})
+    return cmdFn(mockClient, {arg: 'test.txt'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(551);
     });
@@ -91,7 +89,7 @@ describe(CMD, function () {
       errorEmitted = !!err;
     });
 
-    return cmdFn({log, command: {arg: 'test.txt'}})
+    return cmdFn(mockClient, {arg: 'test.txt'})
     .then(() => {
       expect(errorEmitted).to.equal(true);
     });

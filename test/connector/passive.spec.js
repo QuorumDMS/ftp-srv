@@ -4,7 +4,6 @@ const sinon = require('sinon');
 
 const Promise = require('bluebird');
 const net = require('net');
-const bunyan = require('bunyan');
 
 const PassiveConnector = require('../../src/connector/passive');
 
@@ -14,7 +13,6 @@ describe('Connector - Passive //', function () {
     reply: () => Promise.resolve({}),
     close: () => Promise.resolve({}),
     encoding: 'utf8',
-    log: bunyan.createLogger({name: 'passive-test'}),
     commandSocket: {},
     server: {options: {}}
   };

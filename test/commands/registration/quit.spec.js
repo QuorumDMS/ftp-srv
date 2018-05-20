@@ -7,7 +7,7 @@ describe(CMD, function () {
   const mockClient = {
     close: () => {}
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -19,7 +19,7 @@ describe(CMD, function () {
   });
 
   it('// successful', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.close.callCount).to.equal(1);
     });

@@ -1,6 +1,6 @@
 const {expect} = require('chai');
 const Promise = require('bluebird');
-const bunyan = require('bunyan');
+const {Signale} = require('signale');
 const sinon = require('sinon');
 
 const FtpCommands = require('../../src/commands');
@@ -10,7 +10,7 @@ describe('FtpCommands', function () {
   let commands;
   let mockConnection = {
     authenticated: false,
-    log: bunyan.createLogger({name: 'FtpCommands'}),
+    log: new Signale('commands'),
     reply: () => Promise.resolve({}),
     server: {
       options: {
@@ -92,7 +92,7 @@ describe('FtpCommands', function () {
       .then(() => {
         expect(mockConnection.reply.callCount).to.equal(1);
         expect(mockConnection.reply.args[0][0]).to.equal(502);
-        expect(mockConnection.reply.args[0][1]).to.match(/blacklisted/);
+        expect(mockConnection.reply.args[0][1]).to.match(/blacklist/);
       });
     });
 
@@ -102,7 +102,7 @@ describe('FtpCommands', function () {
       .then(() => {
         expect(mockConnection.reply.callCount).to.equal(1);
         expect(mockConnection.reply.args[0][0]).to.equal(502);
-        expect(mockConnection.reply.args[0][1]).to.match(/whitelisted/);
+        expect(mockConnection.reply.args[0][1]).to.match(/whitelist/);
       });
     });
 

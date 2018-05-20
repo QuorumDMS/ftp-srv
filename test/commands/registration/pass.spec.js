@@ -1,18 +1,16 @@
-const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
 const CMD = 'PASS';
 describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     login: () => {},
     server: {options: {anonymous: false}},
     username: 'anonymous'
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -25,7 +23,7 @@ describe(CMD, function () {
   });
 
   it('pass // successful', () => {
-    return cmdFn({log, command: {arg: 'pass', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'pass', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(230);
       expect(mockClient.login.args[0]).to.eql(['anonymous', 'pass']);
@@ -35,7 +33,7 @@ describe(CMD, function () {
   it('// successful (already authenticated)', () => {
     mockClient.server.options.anonymous = true;
     mockClient.authenticated = true;
-    return cmdFn({log, command: {directive: CMD}})
+    return cmdFn(mockClient, {directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(202);
       expect(mockClient.login.callCount).to.equal(0);
@@ -48,7 +46,7 @@ describe(CMD, function () {
     mockClient.login.restore();
     sandbox.stub(mockClient, 'login').rejects('bad');
 
-    return cmdFn({log, command: {arg: 'bad', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'bad', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(530);
     });
@@ -58,7 +56,7 @@ describe(CMD, function () {
     mockClient.login.restore();
     sandbox.stub(mockClient, 'login').rejects({});
 
-    return cmdFn({log, command: {arg: 'bad', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'bad', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(530);
     });
@@ -66,7 +64,7 @@ describe(CMD, function () {
 
   it('bad // unsuccessful', () => {
     delete mockClient.username;
-    return cmdFn({log, command: {arg: 'bad', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'bad', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(503);
     });

@@ -1,16 +1,14 @@
-const bunyan = require('bunyan');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
 const CMD = 'MDTM';
 describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     fs: {get: () => {}}
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -25,10 +23,10 @@ describe(CMD, function () {
   describe('// check', function () {
     it('fails on no fs', () => {
       const badMockClient = {reply: () => {}};
-      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
       sandbox.stub(badMockClient, 'reply').resolves();
 
-      return badCmdFn()
+      return badCmdFn(badMockClient)
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(550);
       });
@@ -36,10 +34,10 @@ describe(CMD, function () {
 
     it('fails on no fs get command', () => {
       const badMockClient = {reply: () => {}, fs: {}};
-      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(badMockClient);
+      const badCmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
       sandbox.stub(badMockClient, 'reply').resolves();
 
-      return badCmdFn()
+      return badCmdFn(badMockClient)
       .then(() => {
         expect(badMockClient.reply.args[0][0]).to.equal(402);
       });
@@ -47,7 +45,7 @@ describe(CMD, function () {
   });
 
   it('. // successful', () => {
-    return cmdFn({log, command: {directive: CMD}})
+    return cmdFn(mockClient, {directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(213);
       //expect(mockClient.reply.args[0][1]).to.equal('20111010172411.000');
@@ -58,7 +56,7 @@ describe(CMD, function () {
     mockClient.fs.get.restore();
     sandbox.stub(mockClient.fs, 'get').rejects(new Error());
 
-    return cmdFn({log, command: {directive: CMD}})
+    return cmdFn(mockClient, {directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });

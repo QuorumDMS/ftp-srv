@@ -10,7 +10,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => Promise.resolve()
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -33,7 +33,7 @@ describe(CMD, function () {
   it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });
@@ -42,7 +42,7 @@ describe(CMD, function () {
   it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
     });
@@ -52,7 +52,7 @@ describe(CMD, function () {
     mockClient.fs.get.restore();
     sandbox.stub(mockClient.fs, 'get').rejects({});
 
-    return cmdFn({command: {arg: 'good'}})
+    return cmdFn(mockClient, {arg: 'good'})
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');
@@ -63,7 +63,7 @@ describe(CMD, function () {
   });
 
   it('// successful | generates unique name', () => {
-    return cmdFn({command: {arg: 'bad'}})
+    return cmdFn(mockClient, {arg: 'bad'})
     .then(() => {
       const call = stor.handler.call.args[0][1];
       expect(call).to.have.property('command');

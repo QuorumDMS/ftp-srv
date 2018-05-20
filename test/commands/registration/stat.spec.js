@@ -5,9 +5,8 @@ const sinon = require('sinon');
 const CMD = 'STAT';
 describe(CMD, function () {
   let sandbox;
-  const mockLog = {error: () => {}};
   const mockClient = {reply: () => Promise.resolve()};
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -24,7 +23,7 @@ describe(CMD, function () {
   });
 
   it('// successful', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(211);
     });
@@ -33,7 +32,7 @@ describe(CMD, function () {
   it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    return cmdFn({command: {arg: 'test'}})
+    return cmdFn(mockClient, {arg: 'test'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });
@@ -42,7 +41,7 @@ describe(CMD, function () {
   it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    return cmdFn({command: {arg: 'test'}})
+    return cmdFn(mockClient, {arg: 'test'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
     });
@@ -51,7 +50,7 @@ describe(CMD, function () {
   it('// unsuccessful | file get fails', () => {
     sandbox.stub(mockClient.fs, 'get').rejects(new Error('test'));
 
-    return cmdFn({log: mockLog, command: {arg: 'test'}})
+    return cmdFn(mockClient, {arg: 'test'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(450);
     });
@@ -77,7 +76,7 @@ describe(CMD, function () {
       isDirectory: () => false
     });
 
-    return cmdFn({command: {arg: 'test'}})
+    return cmdFn(mockClient, {arg: 'test'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(212);
     });
@@ -122,7 +121,7 @@ describe(CMD, function () {
       isDirectory: () => true
     });
 
-    return cmdFn({command: {arg: 'test'}})
+    return cmdFn(mockClient, {arg: 'test'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(213);
     });

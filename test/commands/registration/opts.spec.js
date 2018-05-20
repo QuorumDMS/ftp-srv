@@ -8,7 +8,7 @@ describe(CMD, function () {
   const mockClient = {
     reply: () => Promise.resolve()
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -20,28 +20,28 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
     });
   });
 
   it('BAD // unsuccessful', () => {
-    return cmdFn({command: {arg: 'BAD', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'BAD', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(500);
     });
   });
 
   it('UTF8 BAD // unsuccessful', () => {
-    return cmdFn({command: {arg: 'UTF8 BAD', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'UTF8 BAD', directive: CMD})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(501);
     });
   });
 
   it('UTF8 OFF // successful', () => {
-    return cmdFn({command: {arg: 'UTF8 OFF', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'UTF8 OFF', directive: CMD})
     .then(() => {
       expect(mockClient.encoding).to.equal('ascii');
       expect(mockClient.reply.args[0][0]).to.equal(200);
@@ -49,7 +49,7 @@ describe(CMD, function () {
   });
 
   it('UTF8 ON // successful', () => {
-    return cmdFn({command: {arg: 'UTF8 ON', directive: CMD}})
+    return cmdFn(mockClient, {arg: 'UTF8 ON', directive: CMD})
     .then(() => {
       expect(mockClient.encoding).to.equal('utf8');
       expect(mockClient.reply.args[0][0]).to.equal(200);

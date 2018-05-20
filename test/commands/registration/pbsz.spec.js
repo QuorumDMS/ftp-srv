@@ -9,7 +9,7 @@ describe(CMD, function () {
     reply: () => Promise.resolve(),
     server: {}
   };
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -21,7 +21,7 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful', () => {
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(202);
     });
@@ -31,7 +31,7 @@ describe(CMD, function () {
     mockClient.secure = true;
     mockClient.server._tls = {};
 
-    return cmdFn({command: {arg: '0'}})
+    return cmdFn(mockClient, {arg: '0'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.bufferSize).to.equal(0);
@@ -42,7 +42,7 @@ describe(CMD, function () {
     mockClient.secure = true;
     mockClient.server._tls = {};
 
-    return cmdFn({command: {arg: '10'}})
+    return cmdFn(mockClient, {arg: '10'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(200);
       expect(mockClient.bufferSize).to.equal(10);

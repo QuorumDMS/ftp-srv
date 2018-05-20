@@ -5,9 +5,8 @@ const sinon = require('sinon');
 const CMD = 'RNTO';
 describe(CMD, function () {
   let sandbox;
-  const mockLog = {error: () => {}};
   const mockClient = {reply: () => Promise.resolve()};
-  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
+  const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
@@ -28,7 +27,7 @@ describe(CMD, function () {
   it('// unsuccessful | no renameFrom set', () => {
     delete mockClient.renameFrom;
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(503);
     });
@@ -37,7 +36,7 @@ describe(CMD, function () {
   it('// unsuccessful | no file system', () => {
     delete mockClient.fs;
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });
@@ -46,7 +45,7 @@ describe(CMD, function () {
   it('// unsuccessful | file system does not have functions', () => {
     mockClient.fs = {};
 
-    return cmdFn()
+    return cmdFn(mockClient)
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(402);
     });
@@ -56,14 +55,14 @@ describe(CMD, function () {
     mockClient.fs.rename.restore();
     sandbox.stub(mockClient.fs, 'rename').rejects(new Error('test'));
 
-    return cmdFn({log: mockLog, command: {arg: 'new'}})
+    return cmdFn(mockClient, {arg: 'new'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(550);
     });
   });
 
   it('new // successful', () => {
-    return cmdFn({command: {arg: 'new'}})
+    return cmdFn(mockClient, {arg: 'new'})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(250);
       expect(mockClient.fs.rename.args[0]).to.eql(['test', 'new']);
