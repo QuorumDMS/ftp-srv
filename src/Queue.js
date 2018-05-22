@@ -1,28 +1,40 @@
 
+const QUEUE_TYPES = {
+  IN: Symbol('in'),
+  OUT: Symbol('out')
+}
+
 class Queue {
-  constructor(handleMethod) {
-    this.items = [];
-    this.running = false;
-    this.handleMethod = handleMethod;
-  }
-
-  enqueue(...items) {
-    this.items.push(...items);
-    if (!this.running) {
-      this.tryDequeue();
+  constructor(handlers = {}) {
+    this.items = {};
+    this.handlers = {};
+    for (const type of Object.values(QUEUE_TYPES)) {
+      this.items[type] = [];
+      this.handlers[type] = handlers[type];
     }
   }
 
-  async tryDequeue() {
-    if (this.items.length === 0) {
-      this.running = false;
-      return;
-    }
-    
-    this.running = true;
-    const item = this.items.shift();
-    await this.handleMethod(item);
-    this.tryDequeue();
+  enqueue(type, ...items) {
+    if (!this.items[type]) return;
+
+    items = items.map(item => {
+      if (!Array.isArray(item)) return [item];
+      return item;
+    });
+
+    this.items[type].push(...items);
+  }
+
+  tryDequeue(type) {
+    if (!this.items[type]) return;
+    if (!this.items[type].length) return;
+    if (!this.handlers[type]) return;
+
+    const item = this.items[type].shift();
+    const method = this.handlers[type];
+    return method(...item);
   }
 }
+
+Queue.QUEUE_TYPES = QUEUE_TYPES;
 module.exports = Queue;

@@ -3,8 +3,8 @@ class ConnectionManager {
     this._connections = {};
   }
 
-  add(client) {
-    this._connections[client.id] = client;
+  add(id, client) {
+    this._connections[id] = client;
     return true;
   }
 
@@ -20,6 +20,13 @@ class ConnectionManager {
       return connection[method](...args);
     });
     return Promise.all(invokeResults);
+  }
+
+  iterate() {
+    console.log('iterate', iterate)
+    const connections = Object.entires(this._connections);
+    console.log('connections', connections)
+    return connections
   }
 }
 

@@ -1,4 +1,6 @@
 const net = require('net');
+const path = require('path');
+const {fork} = require('child_process');
 
 const Client = require('./Client');
 const ConnectionManager = require('./ConnectionManager');
@@ -22,6 +24,24 @@ class Server extends net.Server {
   }
 
   async listen(port) {
+    const processor = path.resolve(__dirname, './commands/processor.js');
+    this.commandProcess = fork(processor, {
+      stdio: 'pipe'
+    });
+    this.commandProcess.on('message', (message) => {
+      console.log('got', message)
+    });
+    this.commandProcess.on('error', (err) => {
+      console.log('error', err)
+    });
+    this.commandProcess.once('exit', (code) => {
+      console.log('exit', code)
+    });
+    this.commandProcess.once('close', (code) => {
+      console.log('close', code)
+    });
+    this.commandProcess.send('server', this);
+
     await new Promise(resolve => super.listen(port, () => resolve()));
     return this;
   }
@@ -31,12 +51,12 @@ class Server extends net.Server {
     const client = new Client(id, socket);
     client.once('close', () => this.connectionManager.remove(client.id));
 
-    this.connectionManager.add(client);
+    this.connectionManager.add(id, client);
     this.emit('client', client);
 
-    client.send(message.GREETING)
-    .then(() => client.resume())
-    .catch(() => client.close());
+    // client.send(message.GREETING)
+    // .then(() => client.resume())
+    // .catch(() => client.close());
   }
 }
 

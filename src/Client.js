@@ -8,8 +8,11 @@ class Client extends net.Socket {
     super();
     socket && Object.assign(this, socket);
     this.id = id;
-    this.dataQueue = new Queue(this._processCommand.bind(this));
-    this.sendQueue = new Queue(this._processSend.bind(this));
+    this.commandQueue = new Queue({
+      [Queue.QUEUE_TYPES.IN]: () => {},
+      [Queue.QUEUE_TYPES.OUT]: () => {}
+    });
+    this.dataQueue = new Queue();
     this.resetSession();
 
     super.on('data', data => this._onData(data));
@@ -31,7 +34,7 @@ class Client extends net.Socket {
   }
 
   send(message) {
-    this.sendQueue.enqueue(message);
+    // this.sendQueue.enqueue(message);
   }
 
   get closed() {
@@ -53,29 +56,29 @@ class Client extends net.Socket {
       .map(command => command.trim())
       .filter(command => !!command);
 
-    this.dataQueue.enqueue(...commands);
+    this.commandQueue.enqueue(Queue.QUEUE_TYPES.IN, ...commands);
   }
 
-  async _processCommand(command) {
+  // async _processCommand(command) {
 
-    this.emit('command', {command});
+  //   this.emit('command', {command});
 
-    const commandHandler = getCommandHandler(this, command);
-    if (typeof commandHandler === 'string') {
-      return this.send(commandHandler);
-    }
+  //   const commandHandler = getCommandHandler(this, command);
+  //   if (typeof commandHandler === 'string') {
+  //     return this.send(commandHandler);
+  //   }
 
-    await commandHandler(this, command);
-  }
+  //   await commandHandler(this, command);
+  // }
 
-  async _processSend(message) {
-    await new Promise((resolve, reject) => {
-      super.write(`${message}\r\n`, err => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
-  }
-} 
+  // async _processSend(message) {
+  //   await new Promise((resolve, reject) => {
+  //     super.write(`${message}\r\n`, err => {
+  //       if (err) reject(err);
+  //       else resolve();
+  //     });
+  //   });
+  // }
+}
 
 module.exports = Client;
