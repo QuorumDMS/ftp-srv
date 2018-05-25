@@ -77,7 +77,7 @@ class Passive extends Connector {
       });
 
       return new Promise((resolve, reject) => {
-        this.dataServer.listen(port, err => {
+        this.dataServer.listen(port, this.server.url.hostname, err => {
           if (err) reject(err);
           else {
             this.log.debug({port}, 'Passive connection listening');
