@@ -69,10 +69,15 @@ Supported protocols:
 - `ftp` Plain FTP
 - `ftps` Implicit FTP over TLS
 
-_Note:_ The hostname must be the external IP address to accept external connections. Setting the hostname to `0.0.0.0` will automatically set the external IP.
+_Note:_ The hostname must be the external IP address to accept external connections. `0.0.0.0` will listen on any available hosts for server and passive connections.
 __Default:__ `"ftp://127.0.0.1:21"`
 
 #### options
+
+##### `pasv_url`
+The hostname to provide a client when attempting a passive connection (`PASV`). This defaults to the provided `url`.
+_Note:_ If set to `0.0.0.0`, this will automatically resolve to the external IP of the box.
+__Default:__ `"127.0.0.1"`
 
 ##### `pasv_range`
 A starting port (eg `8000`) or a range (eg `"8000-9000"`) to accept passive connections.

@@ -17,6 +17,7 @@ class FtpServer extends EventEmitter {
       log: buyan.createLogger({name: 'ftp-srv'}),
       anonymous: false,
       pasv_range: 22,
+      pasv_url: null,
       file_format: 'ls',
       blacklist: [],
       whitelist: [],
@@ -62,9 +63,10 @@ class FtpServer extends EventEmitter {
   }
 
   listen() {
-    return resolveHost(this.url.hostname)
-    .then(hostname => {
-      this.url.hostname = hostname;
+    return resolveHost(this.options.pasv_url || this.url.hostname)
+    .then(pasvUrl => {
+      this.options.pasv_url = pasvUrl;
+
       return new Promise((resolve, reject) => {
         this.server.once('error', reject);
         this.server.listen(this.url.port, this.url.hostname, err => {
