@@ -14,8 +14,8 @@
     <img alt="npm" src="https://img.shields.io/npm/dm/ftp-srv.svg?style=for-the-badge" />
   </a>
 
-  <a href="https://circleci.com/gh/trs/ftp-srv">
-    <img alt="circleci" src="https://img.shields.io/circleci/project/github/trs/ftp-srv.svg?style=for-the-badge" />
+  <a href="https://circleci.com/gh/trs/workflows/ftp-srv/tree/master">
+    <img alt="circleci" src="https://img.shields.io/circleci/project/github/trs/ftp-srv/master.svg?style=for-the-badge" />
   </a>
 </p>
 
