@@ -17,10 +17,14 @@
     "url": "https://github.com/trs/ftp-srv"
   },
   "scripts": {
-    "test": "jest --verbose",
+    "test": "jest ./src/**/*.test.js --verbose",
     "lint": "eslint -c .config/.eslintrc.json \"src/**/*.js\" \"logo/**/*.js\"  \"examples/**/*.js\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "bee-queue": "^1.2.2",
+    "signale": "^1.1.0",
+    "z": "^1.0.8"
+  },
   "devDependencies": {
     "eslint": "^4.18.2",
     "jest": "^22.4.2",

@@ -2,11 +2,11 @@ const net = require('net');
 
 const PORT_MAX = 65535;
 
-function getUsablePort(portStart = 21, portStop = Infinity) {
+function getUsablePort(portStart = 21, portStop = PORT_MAX) {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
     server.maxConnections = 0;
-  
+
     const cleanUpServer = () => {
       server.removeAllListeners();
       server.unref();
@@ -27,7 +27,7 @@ function getUsablePort(portStart = 21, portStop = Infinity) {
       const {port} = server.address();
       server.close(() => {
         cleanUpServer();
-        resolve(port); 
+        resolve(port);
       })
     });
     server.listen(currentPort);
