@@ -172,12 +172,12 @@ describe('Integration', function () {
         const stream = fs.createWriteStream(fsPath, {flags: 'w+'});
         stream.on('error', () => fs.existsSync(fsPath) && fs.unlinkSync(fsPath));
         stream.on('close', () => stream.end());
-        setTimeout(() => stream.emit('error', new Error('STOR fail test')));
+        setImmediate(() => stream.emit('error', new Error('STOR fail test')));
         return stream;
       });
 
       client.put(buffer, 'fail.txt', err => {
-        setTimeout(() => {
+        setImmediate(() => {
           const fileExists = fs.existsSync(fsPath);
           expect(err).to.exist;
           expect(fileExists).to.equal(false);
@@ -196,7 +196,7 @@ describe('Integration', function () {
 
       client.put(buffer, 'tést.txt', err => {
         expect(err).to.not.exist;
-        setTimeout(() => {
+        setImmediate(() => {
           expect(fs.existsSync(fsPath)).to.equal(true);
           fs.readFile(fsPath, (fserr, data) => {
             expect(fserr).to.not.exist;
@@ -212,7 +212,7 @@ describe('Integration', function () {
       const fsPath = `${clientDirectory}/${name}/tést.txt`;
       client.append(buffer, 'tést.txt', err => {
         expect(err).to.not.exist;
-        setTimeout(() => {
+        setImmediate(() => {
           expect(fs.existsSync(fsPath)).to.equal(true);
           fs.readFile(fsPath, (fserr, data) => {
             expect(fserr).to.not.exist;
