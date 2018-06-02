@@ -325,6 +325,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 - [pkeuter](https://github.com/pkeuter)
 - [TimLuq](https://github.com/TimLuq)
 - [edin-mg](https://github.com/edin-m)
+- [DiegoRBaquero](https://github.com/DiegoRBaquero)
 
 <!--[RM_LICENSE]-->
 ## License
