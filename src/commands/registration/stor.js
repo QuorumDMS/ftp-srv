@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const path = require('path')
 
 module.exports = {
   directive: 'STOR',
@@ -39,10 +40,11 @@ module.exports = {
       });
 
       this.restByteCount = 0;
+      const filePath = path.join(this.fs.root, this.fs.cwd, fileName)
 
       return this.reply(150).then(() => this.connector.socket.resume())
       .then(() => Promise.join(streamPromise, socketPromise))
-      .tap(() => this.emit('STOR', null, fileName))
+      .tap(() => this.emit('STOR', null, filePath))
       .finally(() => stream.destroy && stream.destroy());
     })
     .then(() => this.reply(226, fileName))
