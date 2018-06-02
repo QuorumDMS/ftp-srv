@@ -177,7 +177,7 @@ The `FtpSrv` class extends the [node net.Server](https://nodejs.org/api/net.html
 
 ### `login`
 ```js
-on('login', ({connection, username, password}, resolve, reject) => { ... });
+ftpServer.on('login', ({connection, username, password}, resolve, reject) => { ... });
 ```
 
 Occurs when a client is attempting to login. Here you can resolve the login request by username and password.
@@ -204,7 +204,7 @@ Occurs when a client is attempting to login. Here you can resolve the login requ
 
 ### `client-error`
 ```js
-on('client-error', ({connection, context, error}) => { ... });
+ftpServer.on('client-error', ({connection, context, error}) => { ... });
 ```
 
 Occurs when an error arises in the client connection.
@@ -215,7 +215,7 @@ Occurs when an error arises in the client connection.
 
 ### `RETR`
 ```js
-on('RETR', (error, filePath) => { ... });
+connection.on('RETR', (error, filePath) => { ... });
 ```
 
 Occurs when a file is downloaded.
@@ -225,13 +225,13 @@ Occurs when a file is downloaded.
 
 ### `STOR`
 ```js
-on('STOR', (error, fileName) => { ... });
+connection.on('STOR', (error, fileName) => { ... });
 ```
 
 Occurs when a file is uploaded.
 
 `error` if successful, will be `null`  
-`fileName` name of the file that was downloaded
+`fileName` name of the file that was uploaded
 
 ## Supported Commands
 
