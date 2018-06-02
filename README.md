@@ -231,7 +231,7 @@ on('STOR', (error, fileName) => { ... });
 Occurs when a file is uploaded.
 
 `error` if successful, will be `null`  
-`fileName` name of the file that was downloaded
+`fileName` name of the file that was uploaded
 
 ## Supported Commands
 
