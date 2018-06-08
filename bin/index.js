@@ -62,7 +62,7 @@ function setupState(_args) {
     _state.credentials = {};
 
     const setCredentials = (username, password, root = null) => {
-      _state.credentials[_state.credentials] = {
+      _state.credentials[username] = {
         password,
         root
       };
@@ -72,7 +72,7 @@ function setupState(_args) {
       const credentialsFile = path.resolve(_args.credentials);
       const credentials = require(credentialsFile);
 
-      for (const cred of Object.entries(credentials)) {
+      for (const cred of credentials) {
         setCredentials(cred.username, cred.password, cred.root);
       }
     } else if (_args.username) {
@@ -97,9 +97,9 @@ function setupState(_args) {
 function startFtpServer(_state) {
 
   function checkLogin(data, resolve, reject) {
-    const {password, root} = _state.credentials[data.username];
-    if (_state.anonymous || password === data.password) {
-      return resolve({root: root || _state.root});
+    const user = _state.credentials[data.username]
+    if (_state.anonymous || (user && user.password === data.password)) {
+      return resolve({root: (user && user.root) || _state.root});
     }
 
     return reject(new errors.GeneralError('Invalid username or password', 401));
