@@ -37,9 +37,10 @@ describe('Integration', function () {
   after(() => directoryPurge(clientDirectory));
 
   function startServer(url, options = {}) {
-    server = new FtpServer(url, _.assign({
+    server = new FtpServer(_.assign({
+      url,
       log,
-      pasv_range: 8881,
+      pasv_min: 8881,
       greeting: ['hello', 'world'],
       anonymous: true
     }, options));
