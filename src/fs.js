@@ -17,7 +17,7 @@ class FileSystem {
   }
 
   _resolvePath(path = '.') {
-    const serverPath = (() => {
+    const clientPath = (() => {
       path = nodePath.normalize(path);
       if (nodePath.isAbsolute(path)) {
         return nodePath.join(path);
@@ -27,12 +27,12 @@ class FileSystem {
     })();
 
     const fsPath = (() => {
-      const resolvedPath = nodePath.resolve(this.root, `.${nodePath.sep}${serverPath}`);
+      const resolvedPath = nodePath.resolve(this.root, `.${nodePath.sep}${clientPath}`);
       return nodePath.join(resolvedPath);
     })();
 
     return {
-      serverPath,
+      clientPath,
       fsPath
     };
   }
@@ -65,34 +65,40 @@ class FileSystem {
   }
 
   chdir(path = '.') {
-    const {fsPath, serverPath} = this._resolvePath(path);
+    const {fsPath, clientPath} = this._resolvePath(path);
     return fs.statAsync(fsPath)
     .tap(stat => {
       if (!stat.isDirectory()) throw new errors.FileSystemError('Not a valid directory');
     })
     .then(() => {
-      this.cwd = serverPath;
+      this.cwd = clientPath;
       return this.currentDirectory();
     });
   }
 
   write(fileName, {append = false, start = undefined} = {}) {
-    const {fsPath} = this._resolvePath(fileName);
+    const {fsPath, clientPath} = this._resolvePath(fileName);
     const stream = fs.createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+', start});
     stream.once('error', () => fs.unlinkAsync(fsPath));
     stream.once('close', () => stream.end());
-    return stream;
+    return {
+      stream,
+      clientPath
+    };
   }
 
   read(fileName, {start = undefined} = {}) {
-    const {fsPath} = this._resolvePath(fileName);
+    const {fsPath, clientPath} = this._resolvePath(fileName);
     return fs.statAsync(fsPath)
     .tap(stat => {
       if (stat.isDirectory()) throw new errors.FileSystemError('Cannot read a directory');
     })
     .then(() => {
       const stream = fs.createReadStream(fsPath, {flags: 'r', start});
-      return stream;
+      return {
+        stream,
+        clientPath
+      };
     });
   }
 
