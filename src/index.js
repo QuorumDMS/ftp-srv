@@ -11,19 +11,22 @@ const Connection = require('./connection');
 const resolveHost = require('./helpers/resolve-host');
 
 class FtpServer extends EventEmitter {
-  constructor(url, options = {}) {
+  constructor(options = {}) {
     super();
     this.options = _.merge({
       log: buyan.createLogger({name: 'ftp-srv'}),
-      anonymous: false,
-      pasv_range: 22,
+      url: 'ftp://127.0.0.1:21',
+      pasv_min: 1024,
+      pasv_max: 65535,
       pasv_url: null,
+      anonymous: false,
       file_format: 'ls',
       blacklist: [],
       whitelist: [],
       greeting: null,
       tls: false
     }, options);
+
     this._greeting = this.setupGreeting(this.options.greeting);
     this._features = this.setupFeaturesMessage();
     this._tls = this.setupTLS(this.options.tls);
@@ -33,7 +36,8 @@ class FtpServer extends EventEmitter {
 
     this.connections = {};
     this.log = this.options.log;
-    this.url = nodeUrl.parse(url || 'ftp://127.0.0.1:21');
+    this.url = nodeUrl.parse(this.options.url || 'ftp://127.0.0.1:21');
+
 
     const serverConnectionHandler = socket => {
       let connection = new Connection(this, {log: this.log, socket});
