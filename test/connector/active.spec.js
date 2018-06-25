@@ -6,9 +6,10 @@ const net = require('net');
 const tls = require('tls');
 
 const ActiveConnector = require('../../src/connector/active');
-const findPort = require('../../src/helpers/find-port');
+const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('Connector - Active //', function () {
+  let getNextPort = getNextPortFactory(1024);
   let PORT;
   let active;
   let mockConnection = {};
@@ -21,7 +22,7 @@ describe('Connector - Active //', function () {
   beforeEach(done => {
     sandbox = sinon.sandbox.create();
 
-    findPort()
+    getNextPort()
     .then(port => {
       PORT = port;
       server = net.createServer()
