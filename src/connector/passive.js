@@ -2,15 +2,20 @@ const net = require('net');
 const tls = require('tls');
 const ip = require('ip');
 const Promise = require('bluebird');
+const _ = require('lodash');
 
 const Connector = require('./base');
-const findPort = require('../helpers/find-port');
 const errors = require('../errors');
+const {getNextPortFactory} = require('../helpers/find-port');
 
 class Passive extends Connector {
   constructor(connection) {
     super(connection);
     this.type = 'passive';
+
+    this.getNextPort = getNextPortFactory(
+      _.get(this.server, 'options.pasv_min'),
+      _.get(this.server, 'options.pasv_max'));
   }
 
   waitForConnection({timeout = 5000, delay = 250} = {}) {
@@ -33,7 +38,7 @@ class Passive extends Connector {
       Promise.resolve();
 
     return closeExistingServer()
-    .then(() => this.getPort())
+    .then(() => this.getNextPort())
     .then(port => {
       const connectionHandler = socket => {
         if (!ip.isEqual(this.connection.commandSocket.remoteAddress, socket.remoteAddress)) {
@@ -80,16 +85,6 @@ class Passive extends Connector {
         });
       });
     });
-  }
-
-  getPort() {
-    if (this.server.options.pasv_range) {
-      const [min, max] = typeof this.server.options.pasv_range === 'string' ?
-        this.server.options.pasv_range.split('-').map(v => v ? parseInt(v) : v) :
-        [this.server.options.pasv_range];
-      return findPort(min, max);
-    }
-    throw new errors.ConnectorError('Invalid pasv_range');
   }
 
 }

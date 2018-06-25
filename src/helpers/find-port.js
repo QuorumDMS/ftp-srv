@@ -2,26 +2,35 @@ const net = require('net');
 const Promise = require('bluebird');
 const errors = require('../errors');
 
-module.exports = function (min = 1, max = undefined) {
-  return new Promise((resolve, reject) => {
-    let checkPort = min;
-    let portCheckServer = net.createServer();
-    portCheckServer.maxConnections = 0;
-    portCheckServer.on('error', () => {
-      if (checkPort < 65535 && (!max || checkPort < max)) {
-        checkPort = checkPort + 1;
-        portCheckServer.listen(checkPort);
-      } else {
-        reject(new errors.GeneralError('Unable to find open port', 500));
-      }
-    });
-    portCheckServer.on('listening', () => {
-      const {port} = portCheckServer.address();
-      portCheckServer.close(() => {
-        portCheckServer = null;
-        resolve(port);
-      });
-    });
-    portCheckServer.listen(checkPort);
+function* portNumberGenerator(min, max) {
+  let current = min;
+  while (true) {
+    if (current > 65535 || current > max) {
+      current = min;
+    }
+    yield current++;
+  }
+}
+
+function getNextPortFactory(min, max = Infinity) {
+  let nextPortNumber = portNumberGenerator(min, max);
+  let portCheckServer = net.createServer();
+  portCheckServer.maxConnections = 0;
+  portCheckServer.on('error', () => {
+    portCheckServer.listen(nextPortNumber.next().value);
   });
+
+  return () => new Promise(resolve => {
+    portCheckServer.once('listening', () => {
+      const {port} = portCheckServer.address();
+      portCheckServer.close(() => resolve(port));
+    });
+    portCheckServer.listen(nextPortNumber.next().value);
+  })
+  .catch(RangeError, err => Promise.reject(new errors.ConnectorError(err.message)));
+}
+
+module.exports = {
+  getNextPortFactory,
+  portNumberGenerator
 };
