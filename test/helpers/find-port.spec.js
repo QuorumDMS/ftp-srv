@@ -1,35 +1,52 @@
 /* eslint no-unused-expressions: 0 */
 const {expect} = require('chai');
-const {Server} = require('net');
+const net = require('net');
 const sinon = require('sinon');
 
-const findPort = require('../../src/helpers/find-port');
+const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('helpers // find-port', function () {
   let sandbox;
+  let getNextPort;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
 
-    sandbox.spy(Server.prototype, 'listen');
+    getNextPort = getNextPortFactory(1, 2);
   });
   afterEach(() => {
     sandbox.restore();
   });
 
   it('finds a port', () => {
-    return findPort(1)
+    sandbox.stub(net.Server.prototype, 'listen').callsFake(function (port) {
+      this.address = () => ({port});
+      setImmediate(() => this.emit('listening'));
+    });
+
+    return getNextPort()
     .then(port => {
-      expect(Server.prototype.listen.callCount).to.be.above(1);
-      expect(port).to.be.above(1);
+      expect(port).to.equal(1);
     });
   });
 
-  it('does not find a port', () => {
-    return findPort(1, 2)
-    .then(() => expect(1).to.equal(2)) // should not happen
-    .catch(err => {
-      expect(err).to.exist;
+  it('restarts count', () => {
+    sandbox.stub(net.Server.prototype, 'listen').callsFake(function (port) {
+      this.address = () => ({port});
+      setImmediate(() => this.emit('listening'));
+    });
+
+    return getNextPort()
+    .then(port => {
+      expect(port).to.equal(1);
+    })
+    .then(() => getNextPort())
+    .then(port => {
+      expect(port).to.equal(2);
+    })
+    .then(() => getNextPort())
+    .then(port => {
+      expect(port).to.equal(1);
     });
   });
 });
