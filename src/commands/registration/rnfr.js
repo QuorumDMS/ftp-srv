@@ -7,7 +7,7 @@ module.exports = {
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
     const fileName = command.arg;
-    return Promise.resolve(this.fs.get(fileName))
+    return Promise.try(() => this.fs.get(fileName))
     .then(() => {
       this.renameFrom = fileName;
       return this.reply(350);

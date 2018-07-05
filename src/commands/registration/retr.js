@@ -10,7 +10,7 @@ module.exports = {
 
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())
-    .then(() => Promise.resolve(this.fs.read(filePath, {start: this.restByteCount})))
+    .then(() => Promise.try(() => this.fs.read(filePath, {start: this.restByteCount})))
     .then(fsResponse => {
       let {stream, clientPath} = fsResponse;
       if (!stream && !clientPath) {
