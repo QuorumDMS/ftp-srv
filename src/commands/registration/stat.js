@@ -11,12 +11,12 @@ module.exports = {
       if (!this.fs) return this.reply(550, 'File system not instantiated');
       if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
-      return Promise.resolve(this.fs.get(path))
+      return Promise.try(() => this.fs.get(path))
       .then(stat => {
         if (stat.isDirectory()) {
           if (!this.fs.list) return this.reply(402, 'Not supported by file system');
 
-          return Promise.resolve(this.fs.list(path))
+          return Promise.try(() => this.fs.list(path))
           .then(stats => [213, stats]);
         }
         return [212, [stat]];

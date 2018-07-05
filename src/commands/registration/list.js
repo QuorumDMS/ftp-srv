@@ -16,8 +16,8 @@ module.exports = {
     const path = command.arg || '.';
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())
-    .then(() => Promise.resolve(this.fs.get(path)))
-    .then(stat => stat.isDirectory() ? Promise.resolve(this.fs.list(path)) : [stat])
+    .then(() => Promise.try(() => this.fs.get(path)))
+    .then(stat => stat.isDirectory() ? Promise.try(() => this.fs.list(path)) : [stat])
     .then(files => {
       const getFileMessage = file => {
         if (simple) return file.name;
