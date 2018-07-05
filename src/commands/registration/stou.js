@@ -8,11 +8,9 @@ module.exports = {
     if (!this.fs.get || !this.fs.getUniqueName) return this.reply(402, 'Not supported by file system');
 
     const fileName = args.command.arg;
-    return Promise.try(() => {
-      return Promise.resolve(this.fs.get(fileName))
-      .then(() => Promise.resolve(this.fs.getUniqueName()))
-      .catch(() => Promise.resolve(fileName));
-    })
+    return Promise.try(() => this.fs.get(fileName))
+    .then(() => Promise.try(() => this.fs.getUniqueName()))
+    .catch(() => fileName)
     .then(name => {
       args.command.arg = name;
       return stor.call(this, args);
