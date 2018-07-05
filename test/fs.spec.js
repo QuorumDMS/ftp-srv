@@ -1,7 +1,9 @@
 const {expect} = require('chai');
 const nodePath = require('path');
+const Promise = require('bluebird');
 
 const FileSystem = require('../src/fs');
+const errors = require('../src/errors');
 
 describe('FileSystem', function () {
   let fs;
@@ -10,6 +12,25 @@ describe('FileSystem', function () {
     fs = new FileSystem({}, {
       root: '/tmp/ftp-srv',
       cwd: 'file/1/2/3'
+    });
+  });
+
+  describe('extend', function () {
+    class FileSystemOV extends FileSystem {
+      chdir() {
+        throw new errors.FileSystemError('Not a valid directory');
+      }
+    }
+    let ovFs;
+    before(function () {
+      ovFs = new FileSystemOV({});
+    });
+
+    it('handles error', function () {
+      return Promise.try(() => ovFs.chdir())
+      .catch(err => {
+        expect(err).to.be.instanceof(errors.FileSystemError);
+      });
     });
   });
 
