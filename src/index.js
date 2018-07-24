@@ -17,6 +17,7 @@ class FtpServer extends EventEmitter {
       log: buyan.createLogger({name: 'ftp-srv'}),
       anonymous: false,
       pasv_range: 22,
+      pasv_url: null,
       file_format: 'ls',
       blacklist: [],
       whitelist: [],
@@ -50,9 +51,11 @@ class FtpServer extends EventEmitter {
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
     this.server.on('error', err => this.log.error(err, '[Event] error'));
 
-    process.on('SIGTERM', () => this.quit());
-    process.on('SIGINT', () => this.quit());
-    process.on('SIGQUIT', () => this.quit());
+    const quit = _.debounce(this.quit.bind(this), 100);
+
+    process.on('SIGTERM', quit);
+    process.on('SIGINT', quit);
+    process.on('SIGQUIT', quit);
   }
 
   get isTLS() {
@@ -60,11 +63,14 @@ class FtpServer extends EventEmitter {
   }
 
   listen() {
-    return resolveHost(this.url.hostname)
-    .then(hostname => {
-      this.url.hostname = hostname;
+    return resolveHost(this.options.pasv_url || this.url.hostname)
+    .then(pasvUrl => {
+      this.options.pasv_url = pasvUrl;
+
       return new Promise((resolve, reject) => {
-        this.server.listen(this.url.port, err => {
+        this.server.once('error', reject);
+        this.server.listen(this.url.port, this.url.hostname, err => {
+          this.server.removeListener('error', reject);
           if (err) return reject(err);
           this.log.info({
             protocol: this.url.protocol.replace(/\W/g, ''),

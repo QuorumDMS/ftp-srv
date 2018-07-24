@@ -41,7 +41,7 @@ export class FileSystem {
     getUniqueName(): string;
 }
 
-export class FtpConnection {
+export class FtpConnection extends EventEmitter {
 	server: FtpServer;
 	id: string;
 	log: any;
@@ -69,7 +69,7 @@ export interface FtpServerOptions {
 	log?: any
 }
 
-export class FtpServer {
+export class FtpServer extends EventEmitter {
     constructor(url: string, options?: FtpServerOptions);
 
     readonly isTLS: boolean;

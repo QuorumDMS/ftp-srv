@@ -1,5 +1,6 @@
 const net = require('net');
 const tls = require('tls');
+const ip = require('ip');
 const Promise = require('bluebird');
 
 const Connector = require('./base');
@@ -35,7 +36,7 @@ class Passive extends Connector {
     .then(() => this.getPort())
     .then(port => {
       const connectionHandler = socket => {
-        if (this.connection.commandSocket.remoteAddress !== socket.remoteAddress) {
+        if (!ip.isEqual(this.connection.commandSocket.remoteAddress, socket.remoteAddress)) {
           this.log.error({
             pasv_connection: socket.remoteAddress,
             cmd_connection: this.connection.commandSocket.remoteAddress
@@ -76,7 +77,7 @@ class Passive extends Connector {
       });
 
       return new Promise((resolve, reject) => {
-        this.dataServer.listen(port, err => {
+        this.dataServer.listen(port, this.server.url.hostname, err => {
           if (err) reject(err);
           else {
             this.log.debug({port}, 'Passive connection listening');

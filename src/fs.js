@@ -8,15 +8,28 @@ const errors = require('./errors');
 class FileSystem {
   constructor(connection, {root, cwd} = {}) {
     this.connection = connection;
-    this.cwd = cwd || nodePath.sep;
-    this.root = root || process.cwd();
+    this.cwd = cwd ? nodePath.join(nodePath.sep, cwd) : nodePath.sep;
+    this._root = nodePath.resolve(root || process.cwd());
   }
 
-  _resolvePath(path = '') {
-    const isFromRoot = _.startsWith(path, '/') || _.startsWith(path, nodePath.sep);
-    const cwd = isFromRoot ? nodePath.sep : this.cwd || nodePath.sep;
-    const serverPath = nodePath.join(nodePath.sep, cwd, path);
-    const fsPath = nodePath.join(this.root, serverPath);
+  get root() {
+    return this._root;
+  }
+
+  _resolvePath(path = '.') {
+    const serverPath = (() => {
+      path = nodePath.normalize(path);
+      if (nodePath.isAbsolute(path)) {
+        return nodePath.join(path);
+      } else {
+        return nodePath.join(this.cwd, path);
+      }
+    })();
+
+    const fsPath = (() => {
+      const resolvedPath = nodePath.resolve(this.root, `.${nodePath.sep}${serverPath}`);
+      return nodePath.join(resolvedPath);
+    })();
 
     return {
       serverPath,

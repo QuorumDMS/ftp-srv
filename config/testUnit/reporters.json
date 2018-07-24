@@ -1,5 +1,5 @@
 {
-  "reporterEnabled": "mocha-pretty-bunyan-nyan",
+  "reporterEnabled": "spec",
   "mochaJunitReporterReporterOptions": {
     "mochaFile": "reports/junit.xml"
   }

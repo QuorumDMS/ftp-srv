@@ -1,87 +1,65 @@
 version: 2
+
+create-cache-file: &create-cache-file
+  run:
+    name: Setup cache
+    command: echo "$NODE_VERSION" > _cache_node_version
+
+package-json-cache: &package-json-cache
+  key: npm-install-{{ checksum "_cache_node_version" }}-{{ checksum "package-lock.json" }}
+
+base-build: &base-build
+  steps:
+    - checkout
+    - <<: *create-cache-file
+    - restore_cache:
+        <<: *package-json-cache
+    - run:
+        name: Install
+        command: npm install
+    - save_cache:
+        <<: *package-json-cache
+        paths:
+          - node_modules
+    - run:
+        name: Lint
+        command: npm run verify:js
+    - run:
+        name: Test
+        command: npm run test:unit:once
+
 jobs:
-  build_node_8:
+  test_node_10:
     docker:
-      - image: circleci/node:8
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-install-node-8-{{ checksum "package.json" }}
-      - run:
-          name: Install
-          command: npm install
-      - save_cache:
-          key: npm-install-node-8-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-
-  build_node_6:
-    docker:
-      - image: circleci/node:6
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-install-node-6-{{ checksum "package.json" }}
-      - run:
-          name: Install
-          command: npm install
-      - save_cache:
-          key: npm-install-node-6-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-
-  lint:
-    docker:
-      - image: circleci/node:8
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-install-node-8-{{ checksum "package.json" }}
-      - run:
-          name: Lint
-          command: npm run verify:js
+      - image: circleci/node:10
+    environment:
+      - NODE_VERSION: 10
+    <<: *base-build
 
   test_node_8:
     docker:
       - image: circleci/node:8
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-install-node-8-{{ checksum "package.json" }}
-      - run:
-          name: Test Node 8
-          command: npm run test:coverage
-          when: always
-      - store_test_results:
-          path: reports
-      - store_artifacts:
-          path: reports/coverage
-          prefix: coverage
+    environment:
+      - NODE_VERSION: 8
+    <<: *base-build
 
   test_node_6:
     docker:
       - image: circleci/node:6
-    steps:
-      - checkout
-      - restore_cache:
-          key: npm-install-node-6-{{ checksum "package.json" }}
-      - run:
-          name: Test Node 6
-          command: npm run test:coverage
-          when: always
-      - store_test_results:
-          path: reports
-      - store_artifacts:
-          path: reports/coverage
-          prefix: coverage
+    environment:
+      - NODE_VERSION: 6
+    <<: *base-build
 
   release:
     docker:
       - image: circleci/node:8
+    environment:
+      - NODE_VERSION: 8
     steps:
       - checkout
+      - <<: *create-cache-file
       - restore_cache:
-          key: npm-install-node-6-{{ checksum "package.json" }}
+          <<: *package-json-cache
       - run:
           name: Update NPM
           command: |
@@ -96,45 +74,35 @@ workflows:
   version: 2
   test_and_tag:
     jobs:
-      - build_node_8:
+      - test_node_10:
           filters:
             branches:
               only: master
-      - build_node_6:
-          filters:
-            branches:
-              only: master
-      - lint:
-          requires:
-            - build_node_8
-      - test_node_6:
-          requires:
-            - build_node_6
       - test_node_8:
-          requires:
-            - build_node_8
+          filters:
+            branches:
+              only: master
+      - test_node_6:
+          filters:
+            branches:
+              only: master
       - release:
           requires:
-            - lint
             - test_node_6
             - test_node_8
+            - test_node_10
 
   build_and_test:
     jobs:
-      - build_node_8:
+      - test_node_10:
           filters:
             branches:
               ignore: master
-      - build_node_6:
-          filters:
-            branches:
-              ignore: master
-      - lint:
-          requires:
-            - build_node_8
-      - test_node_6:
-          requires:
-            - build_node_6
       - test_node_8:
-          requires:
-            - build_node_8
+          filters:
+            branches:
+              ignore: master
+      - test_node_6:
+          filters:
+            branches:
+              ignore: master
