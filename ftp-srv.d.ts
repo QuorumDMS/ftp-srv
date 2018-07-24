@@ -78,7 +78,7 @@ export class FtpServer extends EventEmitter {
 
     emitPromise(action: any, ...data: any[]): Promise<any>;
 
-    emit(action: any, ...data: any[]): void;
+    // emit is exported from super class
 
     setupTLS(_tls: boolean): boolean | {
       cert: string;
@@ -108,7 +108,7 @@ export class FtpServer extends EventEmitter {
             whitelist?: Array<string>
         }) => void,
 		reject: (err?: Error) => void
-	) => void): EventEmitter;
+	) => void): this;
 
 	on(event: "client-error", listener: (
 		data: {
@@ -116,7 +116,7 @@ export class FtpServer extends EventEmitter {
 			context: string,
 			error: Error,
 		}
-	) => void): EventEmitter;
+	) => void): this;
 }
 
 export {FtpServer as FtpSrv};
