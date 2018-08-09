@@ -385,7 +385,7 @@ describe('Integration', function () {
     runFileSystemTests('binary');
   });
 
-  describe.skip('#EXPLICIT', function () {
+  describe('#EXPLICIT', function () {
     before(() => {
       return server.close()
       .then(() => startServer('ftp://127.0.0.1:8880', {
