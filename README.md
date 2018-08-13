@@ -36,6 +36,8 @@
 ## Overview
 `ftp-srv` is a modern and extensible FTP server designed to be simple yet configurable.
 
+You can use `ftp-srv` to traverse the file system on the server, but it's biggest strength comes from it's customizable file system. This allows you to serve a custom, dynamic, or unique file system to users. You can even server a different system depending on the user connecting.
+
 ## Features
 - Extensible [file systems](#file-system) per connection
 - Passive and active transfers
@@ -123,6 +125,11 @@ __Allowable values:__
 
 #### `log`
 A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
+
+Piping the output into bunyan will format logs nicely, eg:  
+```
+$ node ./test/start.js | npx bunyan
+```
 
 ## CLI
 
