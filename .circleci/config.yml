@@ -23,7 +23,7 @@ base-build: &base-build
           - node_modules
     - run:
         name: Lint
-        command: npm run verify:js
+        command: npm run verify -- --silent
     - run:
         name: Test
         command: npm run test:once
