@@ -19,8 +19,13 @@ describe('Connector - Active //', function () {
   before(() => {
     active = new ActiveConnector(mockConnection);
   });
+<<<<<<< HEAD
   beforeEach((done) => {
     sandbox = sinon.sandbox.create().usingPromise(Promise);
+=======
+  beforeEach(done => {
+    sandbox = sinon.createSandbox();
+>>>>>>> test: update sinon sandbox creation
 
     getNextPort()
     .then((port) => {

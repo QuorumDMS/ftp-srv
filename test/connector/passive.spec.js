@@ -28,6 +28,11 @@ describe('Connector - Passive //', function () {
   before(() => {
     sandbox = sinon.sandbox.create().usingPromise(Promise);
   });
+<<<<<<< HEAD
+=======
+  beforeEach(() => {
+    sandbox = sinon.createSandbox();
+>>>>>>> test: update sinon sandbox creation
 
   beforeEach(() => {
     sandbox.spy(mockConnection, 'reply');

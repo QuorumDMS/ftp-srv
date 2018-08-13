@@ -7,7 +7,7 @@ describe('helpers //resolve-host', function () {
 
   let sandbox;
   beforeEach(() => {
-    sandbox = sinon.sandbox.create().usingPromise(Promise);
+    sandbox = sinon.createSandbox().usingPromise(Promise);
   });
   afterEach(() => sandbox.restore());
 

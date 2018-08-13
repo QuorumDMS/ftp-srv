@@ -25,7 +25,7 @@ describe('Integration', function () {
     return startServer({url: 'ftp://127.0.0.1:8880'});
   });
   beforeEach(() => {
-    sandbox = sinon.sandbox.create().usingPromise(Promise);
+    sandbox = sinon.createSandbox().usingPromise(Promise);
   });
   afterEach(() => sandbox.restore());
   after(() => server.close());

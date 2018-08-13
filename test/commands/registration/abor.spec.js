@@ -15,7 +15,7 @@ describe.skip(CMD, function () {
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create().usingPromise(Promise);
+    sandbox = sinon.createSandbox().usingPromise(Promise);
 
     sandbox.spy(mockClient, 'reply');
     sandbox.spy(mockClient.connector, 'waitForConnection');

@@ -10,7 +10,7 @@ describe(CMD, function () {
   const cmdFn = require(`../../../../src/commands/registration/site/${CMD.toLowerCase()}`).bind(mockClient);
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create().usingPromise(Promise);
+    sandbox = sinon.createSandbox().usingPromise(Promise);
 
     mockClient.fs = {
       chmod: () => Promise.resolve()
