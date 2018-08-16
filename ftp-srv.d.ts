@@ -58,10 +58,22 @@ export class FtpConnection extends EventEmitter {
 
 }
 
+export interface SecureContextFilesOptions extends tls.SecureContextOptions {
+    cert: string;
+    key: string;
+    ca: string | string[];
+}
+
+export interface SecureContextDataOptions extends tls.SecureContextOptions {
+    isContextCompliant: true;
+}
+
+export type SecureContextOptions = SecureContextDataOptions | SecureContextFilesOptions;
+
 export interface FtpServerOptions {
     pasv_range?: number | string,
     greeting?: string | string[],
-    tls?: tls.SecureContext | false,
+    tls?: tls.SecureContextOptions | false,
     anonymous?: boolean,
     blacklist?: Array<string>,
     whitelist?: Array<string>,
@@ -80,11 +92,7 @@ export class FtpServer extends EventEmitter {
 
     // emit is exported from super class
 
-    setupTLS(_tls: boolean): boolean | {
-      cert: string;
-      key: string;
-      ca: string
-    };
+    setupTLS(_tls: SecureContextOptions | false): false | tls.SecureContextOptions;
 
     setupGreeting(greet: string): string[];
 
