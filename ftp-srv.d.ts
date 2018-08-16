@@ -73,7 +73,7 @@ export type SecureContextOptions = SecureContextDataOptions | SecureContextFiles
 export interface FtpServerOptions {
     pasv_range?: number | string,
     greeting?: string | string[],
-    tls?: tls.SecureContextOptions | false,
+    tls?: SecureContextOptions | false,
     anonymous?: boolean,
     blacklist?: Array<string>,
     whitelist?: Array<string>,
