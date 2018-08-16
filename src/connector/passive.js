@@ -48,16 +48,7 @@ class Passive extends Connector {
         }
         this.log.trace({port, remoteAddress: socket.remoteAddress}, 'Passive connection fulfilled.');
 
-        if (this.connection.secure) {
-          const secureContext = tls.createSecureContext(this.server._tls);
-          const secureSocket = new tls.TLSSocket(socket, {
-            isServer: true,
-            secureContext
-          });
-          this.dataSocket = secureSocket;
-        } else {
-          this.dataSocket = socket;
-        }
+        this.dataSocket = socket;
         this.dataSocket.connected = true;
         this.dataSocket.setEncoding(this.connection.transferType);
         this.dataSocket.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
@@ -68,8 +59,11 @@ class Passive extends Connector {
       };
 
       this.dataSocket = null;
-      this.dataServer = net.createServer({pauseOnConnect: true}, connectionHandler);
+
+      const serverOptions = Object.assign({}, this.connection.secure ? this.server._tls : {}, {pauseOnConnect: true});
+      this.dataServer = (this.connection.secure ? tls : net).createServer(serverOptions, connectionHandler);
       this.dataServer.maxConnections = 1;
+
       this.dataServer.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataServer', error: err}));
       this.dataServer.on('close', () => {
         this.log.trace('Passive server closed');
