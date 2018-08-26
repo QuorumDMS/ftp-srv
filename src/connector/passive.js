@@ -28,8 +28,8 @@ class Passive extends Connector {
   }
 
   setupServer() {
-    const closeExistingServer = () => this.dataServer ?
-      new Promise(resolve => this.dataServer.close(() => resolve())) :
+    const closeExistingServer = () => this.connection.dataServer ?
+      new Promise(resolve => this.connection.dataServer.close(() => resolve())) :
       Promise.resolve();
 
     return closeExistingServer()
@@ -70,6 +70,10 @@ class Passive extends Connector {
         this.dataServer = null;
       });
 
+      // This stops the old PASV connections being lost, and never closed
+      this.connection.dataServer = this.dataServer;
+
+
       return new Promise((resolve, reject) => {
         this.dataServer.listen(port, this.server.url.hostname, err => {
           if (err) reject(err);
@@ -94,3 +98,4 @@ class Passive extends Connector {
 
 }
 module.exports = Passive;
+
