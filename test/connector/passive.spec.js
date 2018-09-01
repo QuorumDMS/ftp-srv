@@ -7,6 +7,7 @@ const net = require('net');
 const bunyan = require('bunyan');
 
 const PassiveConnector = require('../../src/connector/passive');
+const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('Connector - Passive //', function () {
   let mockConnection = {
@@ -21,7 +22,8 @@ describe('Connector - Passive //', function () {
       options: {
         pasv_min: 1024
       },
-      url: ''
+      url: '',
+      getNextPasvPort: getNextPortFactory()
     }
   };
   let sandbox;
