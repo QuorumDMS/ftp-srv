@@ -19,13 +19,13 @@ describe(CMD, function () {
       waitForConnection: () => Promise.resolve({
         resume: () => {}
       }),
-      end: () => {}
+      end: () => Promise.resolve({})
     }
   };
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
 
     mockClient.fs = {
       write: () => {}

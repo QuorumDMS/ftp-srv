@@ -20,7 +20,7 @@ describe('FtpCommands', function () {
   };
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
 
     commands = new FtpCommands(mockConnection);
 
