@@ -22,7 +22,7 @@ describe('Integration', function () {
   const clientDirectory = `${process.cwd()}/test_tmp`;
 
   before(() => {
-    return startServer('ftp://127.0.0.1:8880');
+    return startServer({url: 'ftp://127.0.0.1:8880'});
   });
   beforeEach(() => {
     sandbox = sinon.sandbox.create().usingPromise(Promise);
@@ -36,9 +36,17 @@ describe('Integration', function () {
   });
   after(() => directoryPurge(clientDirectory));
 
-  function startServer(url, options = {}) {
+  function readFile(path) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(path, 'utf8', (err, data) => {
+        if (err) reject(err);
+        else resolve(data);
+      });
+    });
+  }
+
+  function startServer(options = {}) {
     server = new FtpServer(_.assign({
-      url,
       log,
       pasv_min: 8881,
       greeting: ['hello', 'world'],
@@ -389,12 +397,14 @@ describe('Integration', function () {
   describe('#EXPLICIT', function () {
     before(() => {
       return server.close()
-      .then(() => startServer('ftp://127.0.0.1:8880', {
-        tls: {
-          key: `${process.cwd()}/test/cert/server.key`,
-          cert: `${process.cwd()}/test/cert/server.crt`,
-          ca: `${process.cwd()}/test/cert/server.csr`
-        }
+      .then(() => Promise.all([
+        readFile(`${process.cwd()}/test/cert/server.key`),
+        readFile(`${process.cwd()}/test/cert/server.crt`),
+        readFile(`${process.cwd()}/test/cert/server.csr`)
+      ]))
+      .then(([key, cert, ca]) => startServer({
+        url: 'ftp://127.0.0.1:8880',
+        tls: {key, cert, ca}
       }))
       .then(() => {
         return connectClient({
@@ -415,12 +425,14 @@ describe('Integration', function () {
   describe.skip('#IMPLICIT', function () {
     before(() => {
       return server.close()
-      .then(() => startServer('ftps://127.0.0.1:8880', {
-        tls: {
-          key: `${process.cwd()}/test/cert/server.key`,
-          cert: `${process.cwd()}/test/cert/server.crt`,
-          ca: `${process.cwd()}/test/cert/server.csr`
-        }
+      .then(() => Promise.all([
+        readFile(`${process.cwd()}/test/cert/server.key`),
+        readFile(`${process.cwd()}/test/cert/server.crt`),
+        readFile(`${process.cwd()}/test/cert/server.csr`)
+      ]))
+      .then(([key, cert, ca]) => startServer({
+        url: 'ftps://127.0.0.1:8880',
+        tls: {key, cert, ca}
       }))
       .then(() => {
         return connectClient({

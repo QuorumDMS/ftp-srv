@@ -67,7 +67,11 @@ describe('Connector - Active //', function () {
 
   it('upgrades to a secure connection', function () {
     mockConnection.secure = true;
-    mockConnection.server = {_tls: {}};
+    mockConnection.server = {
+      options: {
+        tls: {}
+      }
+    };
 
     return active.setupConnection('127.0.0.1', PORT)
     .then(() => {
