@@ -13,7 +13,7 @@ describe(CMD, function () {
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
 
     sandbox.stub(mockClient, 'reply').resolves();
     sandbox.stub(mockClient.fs, 'get').resolves({mtime: 'Mon, 10 Oct 2011 23:24:11 GMT'});

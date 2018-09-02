@@ -28,8 +28,8 @@ class Connector {
 
   end() {
     const closeDataSocket = new Promise(resolve => {
-      if (this.dataSocket) this.dataSocket.end();
-      else resolve();
+      if (this.dataSocket) this.dataSocket.destroy();
+      resolve();
     });
     const closeDataServer = new Promise(resolve => {
       if (this.dataServer) this.dataServer.close(() => resolve());
@@ -41,6 +41,8 @@ class Connector {
       this.dataSocket = null;
       this.dataServer = null;
       this.type = false;
+
+      this.connection.connector = new Connector(this);
     });
   }
 }
