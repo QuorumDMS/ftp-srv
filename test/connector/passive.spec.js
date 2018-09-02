@@ -87,18 +87,22 @@ describe('Connector - Passive //', function () {
     return passive.setupServer()
     .then(() => {
       expect(passive.dataServer).to.exist;
+      return passive.end();
     });
   });
 
   describe('setup', function () {
     let passive;
     let closeFnSpy;
-    before(function () {
+    beforeEach(function () {
       passive = new PassiveConnector(mockConnection);
       return passive.setupServer()
       .then(() => {
         closeFnSpy = sandbox.spy(passive.dataServer, 'close');
       });
+    });
+    afterEach(function () {
+      return passive.end();
     });
 
     it('destroys existing server, then sets up a server', function () {
@@ -124,7 +128,9 @@ describe('Connector - Passive //', function () {
         setTimeout(() => {
           expect(passive.connection.reply.callCount).to.equal(1);
           expect(passive.connection.reply.args[0][0]).to.equal(550);
-          done();
+
+          passive.end()
+          .then(() => done());
         }, 100);
       });
     })
