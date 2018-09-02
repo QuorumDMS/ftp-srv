@@ -26,7 +26,7 @@ base-build: &base-build
         command: npm run verify:js
     - run:
         name: Test
-        command: npm run test:unit:once
+        command: npm run test:once
 
 jobs:
   test_node_10:
