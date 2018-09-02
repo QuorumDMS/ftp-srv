@@ -262,52 +262,52 @@ class MyFileSystem extends FileSystem {
 Custom file systems can implement the following variables depending on the developers needs:
 
 ### Methods
-#### [`currentDirectory()`](src/fs.js#L29)
+#### [`currentDirectory()`](src/fs.js#L40)
 Returns a string of the current working directory  
 __Used in:__ `PWD`
 
-#### [`get(fileName)`](src/fs.js#L33)
+#### [`get(fileName)`](src/fs.js#L44)
 Returns a file stat object of file or directory  
 __Used in:__ `LIST`, `NLST`, `STAT`, `SIZE`, `RNFR`, `MDTM`
 
-#### [`list(path)`](src/fs.js#L39)
+#### [`list(path)`](src/fs.js#L50)
 Returns array of file and directory stat objects  
 __Used in:__ `LIST`, `NLST`, `STAT`
 
-#### [`chdir(path)`](src/fs.js#L56)
+#### [`chdir(path)`](src/fs.js#L67)
 Returns new directory relative to current directory  
 __Used in:__ `CWD`, `CDUP`
 
-#### [`mkdir(path)`](src/fs.js#L96)
+#### [`mkdir(path)`](src/fs.js#L114)
 Returns a path to a newly created directory  
 __Used in:__ `MKD`
 
-#### [`write(fileName, {append, start})`](src/fs.js#L68)
+#### [`write(fileName, {append, start})`](src/fs.js#L79)
 Returns a writable stream  
 Options:  
  `append` if true, append to existing file  
  `start` if set, specifies the byte offset to write to  
 __Used in:__ `STOR`, `APPE`
 
-#### [`read(fileName, {start})`](src/fs.js#L75)
+#### [`read(fileName, {start})`](src/fs.js#L90)
 Returns a readable stream  
 Options:  
  `start` if set, specifies the byte offset to read from  
 __Used in:__ `RETR`
 
-#### [`delete(path)`](src/fs.js#L87)
+#### [`delete(path)`](src/fs.js#L105)
 Delete a file or directory  
 __Used in:__ `DELE`
 
-#### [`rename(from, to)`](src/fs.js#L102)
+#### [`rename(from, to)`](src/fs.js#L120)
 Renames a file or directory  
 __Used in:__ `RNFR`, `RNTO`
 
-#### [`chmod(path)`](src/fs.js#L108)
+#### [`chmod(path)`](src/fs.js#L126)
 Modifies a file or directory's permissions  
 __Used in:__ `SITE CHMOD`
 
-#### [`getUniqueName()`](src/fs.js#L113)
+#### [`getUniqueName()`](src/fs.js#L131)
 Returns a unique file name to write to  
 __Used in:__ `STOU`
 
