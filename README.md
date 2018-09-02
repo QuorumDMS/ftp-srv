@@ -62,7 +62,7 @@ ftpServer.listen()
 
 ## API
 
-### `new FtpSrv(url, [{options}])`
+### `new FtpSrv({options})`
 #### url
 [URL string](https://nodejs.org/api/url.html#url_url_strings_and_url_objects) indicating the protocol, hostname, and port to listen on for connections.
 Supported protocols:
@@ -72,45 +72,47 @@ Supported protocols:
 _Note:_ The hostname must be the external IP address to accept external connections. `0.0.0.0` will listen on any available hosts for server and passive connections.  
 __Default:__ `"ftp://127.0.0.1:21"`
 
-#### options
-
-##### `pasv_url`
+#### `pasv_url`
 The hostname to provide a client when attempting a passive connection (`PASV`). This defaults to the provided `url` hostname.
 
 _Note:_ If set to `0.0.0.0`, this will automatically resolve to the external IP of the box.  
 __Default:__ `"127.0.0.1"`
 
-##### `pasv_range`
-A starting port (eg `8000`) or a range (eg `"8000-9000"`) to accept passive connections.  
-This range is then queried for an available port to use when required.  
-__Default:__ `22`
+#### `pasv_min`
+Tne starting port to accept passive connections.  
+__Default:__ `1024`
 
-##### `greeting`
+#### `pasv_max`
+The ending port to accept passive connections.  
+The range is then queried for an available port to use when required.  
+__Default:__ `65535`
+
+#### `greeting`
 A human readable array of lines or string to send when a client connects.  
 __Default:__ `null`
 
-##### `tls`
+#### `tls`
 Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit (`ftps` protocol) or explicit (`AUTH TLS`) connections.  
 __Default:__ `false`
 
-##### `anonymous`
+#### `anonymous`
 If true, will allow clients to authenticate using the username `anonymous`, not requiring a password from the user.  
 Can also set as a string which allows users to authenticate using the username provided.  
 The `login` event is then sent with the provided username and `@anonymous` as the password.  
 __Default:__ `false`
 
-##### `blacklist`
+#### `blacklist`
 Array of commands that are not allowed.  
 Response code `502` is sent to clients sending one of these commands.  
 __Example:__ `['RMD', 'RNFR', 'RNTO']` will not allow users to delete directories or rename any files.  
 __Default:__ `[]`
 
-##### `whitelist`
+#### `whitelist`
 Array of commands that are only allowed.  
 Response code `502` is sent to clients sending any other command.  
 __Default:__ `[]`
 
-##### `file_format`
+#### `file_format`
 Sets the format to use for file stat queries such as `LIST`.  
 __Default:__ `"ls"`  
 __Allowable values:__
@@ -119,7 +121,7 @@ __Allowable values:__
   - `function () {}` A custom function returning a format or promise for one.
     - Only one argument is passed in: a node [file stat](https://nodejs.org/api/fs.html#fs_class_fs_stats) object with additional file `name` parameter
 
-##### `log`
+#### `log`
 A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
 
 ## CLI
