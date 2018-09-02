@@ -9,7 +9,7 @@ describe('helpers // file-stat', function () {
   let sandbox;
 
   before(function () {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
   });
   afterEach(function () {
     sandbox.restore();

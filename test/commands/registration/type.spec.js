@@ -11,7 +11,7 @@ describe(CMD, function () {
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
 
     mockClient.transferType = null;
     sandbox.spy(mockClient, 'reply');

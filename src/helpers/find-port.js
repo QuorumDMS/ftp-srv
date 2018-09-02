@@ -13,8 +13,8 @@ function* portNumberGenerator(min, max) {
 }
 
 function getNextPortFactory(min, max = Infinity) {
-  let nextPortNumber = portNumberGenerator(min, max);
-  let portCheckServer = net.createServer();
+  const nextPortNumber = portNumberGenerator(min, max);
+  const portCheckServer = net.createServer();
   portCheckServer.maxConnections = 0;
   portCheckServer.on('error', () => {
     portCheckServer.listen(nextPortNumber.next().value);

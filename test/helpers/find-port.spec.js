@@ -10,7 +10,7 @@ describe('helpers // find-port', function () {
   let getNextPort;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
 
     getNextPort = getNextPortFactory(1, 2);
   });

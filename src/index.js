@@ -9,6 +9,7 @@ const EventEmitter = require('events');
 
 const Connection = require('./connection');
 const resolveHost = require('./helpers/resolve-host');
+const {getNextPortFactory} = require('./helpers/find-port');
 
 class FtpServer extends EventEmitter {
   constructor(options = {}) {
@@ -37,7 +38,9 @@ class FtpServer extends EventEmitter {
     this.connections = {};
     this.log = this.options.log;
     this.url = nodeUrl.parse(this.options.url || 'ftp://127.0.0.1:21');
-
+    this.getNextPasvPort = getNextPortFactory(
+      _.get(this, 'options.pasv_min'),
+      _.get(this, 'options.pasv_max'));
 
     const serverConnectionHandler = socket => {
       let connection = new Connection(this, {log: this.log, socket});

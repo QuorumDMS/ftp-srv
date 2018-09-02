@@ -7,6 +7,7 @@ const net = require('net');
 const bunyan = require('bunyan');
 
 const PassiveConnector = require('../../src/connector/passive');
+const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('Connector - Passive //', function () {
   let mockConnection = {
@@ -18,16 +19,14 @@ describe('Connector - Passive //', function () {
       remoteAddress: '::ffff:127.0.0.1'
     },
     server: {
-      options: {
-        pasv_min: 1024
-      },
-      url: ''
+      url: '',
+      getNextPasvPort: getNextPortFactory(1024)
     }
   };
   let sandbox;
 
   before(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
   });
 
   beforeEach(() => {
@@ -49,8 +48,7 @@ describe('Connector - Passive //', function () {
 
   describe('setup', function () {
     before(function () {
-      sandbox.stub(mockConnection.server.options, 'pasv_min').value(undefined);
-      sandbox.stub(mockConnection.server.options, 'pasv_max').value(undefined);
+      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory());
     });
 
     it('no pasv range provided', function (done) {
@@ -70,8 +68,7 @@ describe('Connector - Passive //', function () {
   describe('setup', function () {
     let connection;
     before(function () {
-      sandbox.stub(mockConnection.server.options, 'pasv_min').value(-1);
-      sandbox.stub(mockConnection.server.options, 'pasv_max').value(-1);
+      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory(-1, -1));
 
       connection = new PassiveConnector(mockConnection);
     });
