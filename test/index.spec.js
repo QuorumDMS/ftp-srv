@@ -437,4 +437,31 @@ describe('Integration', function () {
 
     runFileSystemTests('implicit');
   });
+
+  describe('#EXPLICIT COMPLIANT', function () {
+    before(() => {
+      return server.close()
+      .then(() => startServer('ftp://127.0.0.1:8880', {
+        tls: {
+          isContextCompliant: true,
+          key: fs.readFileSync(`${process.cwd()}/test/cert/server.key`),
+          cert: fs.readFileSync(`${process.cwd()}/test/cert/server.crt`),
+          ca: fs.readFileSync(`${process.cwd()}/test/cert/server.csr`)
+        }
+      }))
+      .then(() => {
+        return connectClient({
+          secure: true,
+          secureOptions: {
+            rejectUnauthorized: false,
+            checkServerIdentity: () => undefined
+          }
+        });
+      });
+    });
+
+    after(() => closeClient());
+
+    runFileSystemTests('explicit');
+  });
 });

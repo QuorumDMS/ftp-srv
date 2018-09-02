@@ -99,6 +99,7 @@ class FtpServer extends EventEmitter {
 
   setupTLS(_tls) {
     if (!_tls) return false;
+    if (_tls.isContextCompliant) return _tls;
     return _.assign({}, _tls, {
       cert: _tls.cert ? fs.readFileSync(_tls.cert) : undefined,
       key: _tls.key ? fs.readFileSync(_tls.key) : undefined,

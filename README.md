@@ -90,8 +90,9 @@ A human readable array of lines or string to send when a client connects.
 __Default:__ `null`
 
 ##### `tls`
-Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit (`ftps` protocol) or explicit (`AUTH TLS`) connections.  
-__Default:__ `false`
+Node [TLS secure context options object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit (`ftps` protocol) or explicit (`AUTH TLS`) connections.  
+__Default:__ `false`  
+__Note:__ If the property `isContextCompliant` is _not truthy_ the `ca`, `cert`, and `key` properties will be treated as file paths and be read synchronously if set.
 
 ##### `anonymous`
 If true, will allow clients to authenticate using the username `anonymous`, not requiring a password from the user.  
