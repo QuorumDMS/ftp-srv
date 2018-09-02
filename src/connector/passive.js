@@ -59,7 +59,7 @@ class Passive extends Connector {
 
       this.dataSocket = null;
 
-      const serverOptions = Object.assign({}, this.connection.secure ? this.server._tls : {}, {pauseOnConnect: true});
+      const serverOptions = Object.assign({}, this.connection.secure ? this.server.options.tls : {}, {pauseOnConnect: true});
       this.dataServer = (this.connection.secure ? tls : net).createServer(serverOptions, connectionHandler);
       this.dataServer.maxConnections = 1;
 
