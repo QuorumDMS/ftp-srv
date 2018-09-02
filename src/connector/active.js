@@ -34,7 +34,7 @@ class Active extends Connector {
         this.dataSocket.pause();
 
         if (this.connection.secure) {
-          const secureContext = tls.createSecureContext(this.server._tls);
+          const secureContext = tls.createSecureContext(this.server.options.tls);
           const secureSocket = new tls.TLSSocket(this.dataSocket, {
             isServer: true,
             secureContext

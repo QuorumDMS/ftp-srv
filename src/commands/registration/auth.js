@@ -20,12 +20,12 @@ module.exports = {
 };
 
 function handleTLS() {
-  if (!this.server._tls) return this.reply(502);
+  if (!this.server.options.tls) return this.reply(502);
   if (this.secure) return this.reply(202);
 
   return this.reply(234)
   .then(() => {
-    const secureContext = tls.createSecureContext(this.server._tls);
+    const secureContext = tls.createSecureContext(this.server.options.tls);
     const secureSocket = new tls.TLSSocket(this.commandSocket, {
       isServer: true,
       secureContext
