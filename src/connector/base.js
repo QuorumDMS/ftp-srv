@@ -32,12 +32,12 @@ class Connector {
         this.dataSocket.end().destroy();
         this.dataSocket = null;
       }
-
       resolve();
     });
     const closeDataServer = new Promise(resolve => {
-      if (this.dataServer) this.dataServer.close(() => resolve());
-      else resolve();
+      if (this.dataServer) {
+        this.dataServer.close(() => resolve());
+      } else resolve();
     });
 
     return Promise.all([closeDataSocket, closeDataServer])

@@ -21,7 +21,10 @@ module.exports = {
       const serverPath = stream.path || fileName;
 
       const destroyConnection = (connection, reject) => err => {
-        if (connection) connection.destroy(err);
+        if (connection) {
+          if (connection.writeable) connection.end();
+          connection.destroy(err);
+        }
         reject(err);
       };
 
@@ -48,7 +51,7 @@ module.exports = {
       this.restByteCount = 0;
 
       return this.reply(150).then(() => this.connector.socket.resume())
-      .then(() => Promise.join(streamPromise, socketPromise))
+      .then(() => Promise.all([streamPromise, socketPromise]))
       .tap(() => this.emit('STOR', null, serverPath))
       .then(() => this.reply(226, clientPath))
       .finally(() => stream.destroy && stream.destroy());

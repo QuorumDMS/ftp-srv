@@ -108,7 +108,7 @@ describe('Connector - Passive //', function () {
     it('destroys existing server, then sets up a server', function () {
       return passive.setupServer()
       .then(() => {
-        expect(closeFnSpy.callCount).to.equal(1);
+        expect(closeFnSpy.callCount).to.equal(2);
         expect(passive.dataServer).to.exist;
       });
     });

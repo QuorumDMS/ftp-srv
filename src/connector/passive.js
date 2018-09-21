@@ -51,7 +51,7 @@ class Passive extends Connector {
         this.dataSocket.connected = true;
         this.dataSocket.setEncoding(this.connection.transferType);
         this.dataSocket.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
-        this.dataSocket.on('close', () => {
+        this.dataSocket.once('close', () => {
           this.log.trace('Passive connection closed');
           this.end();
         });
@@ -64,9 +64,9 @@ class Passive extends Connector {
       this.dataServer.maxConnections = 1;
 
       this.dataServer.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataServer', error: err}));
-      this.dataServer.on('close', () => {
+      this.dataServer.once('close', () => {
         this.log.trace('Passive server closed');
-        this.dataServer = null;
+        this.end();
       });
 
       return new Promise((resolve, reject) => {
