@@ -1,19 +1,17 @@
 require('dotenv').load();
 const bunyan = require('bunyan');
-
+const fs = require('fs');
 const FtpServer = require('../src');
 
-const log = bunyan.createLogger({name: 'test'});
-log.level('trace');
 const server = new FtpServer({
-  url: 'ftp://127.0.0.1:8880',
-  log,
-  pasv_range: 8881,
+  log: bunyan.createLogger({name: 'test', level: 'trace'}),
+  url: 'ftps://127.0.0.1:8880',
+  pasv_min: 8881,
   greeting: ['Welcome', 'to', 'the', 'jungle!'],
   tls: {
-    key: `${process.cwd()}/test/cert/server.key`,
-    cert: `${process.cwd()}/test/cert/server.crt`,
-    ca: `${process.cwd()}/test/cert/server.csr`
+    key: fs.readFileSync(`${process.cwd()}/test/cert/server.key`),
+    cert: fs.readFileSync(`${process.cwd()}/test/cert/server.crt`),
+    ca: fs.readFileSync(`${process.cwd()}/test/cert/server.csr`)
   },
   file_format: 'ep',
   anonymous: 'sillyrabbit'
