@@ -13,16 +13,18 @@ class FtpCommands {
 
   parse(message) {
     const strippedMessage = message.replace(/"/g, '');
-    const [directive, ...args] = strippedMessage.split(' ');
-    const hasFlags = !['RETR', 'SIZE'].includes(directive);
+    let [directive, ...args] = strippedMessage.split(' ');
+    directive = _.chain(directive).trim().toUpper().value();
+
+    const parseCommandFlags = !['RETR', 'SIZE'].includes(directive);
     const params = args.reduce(({arg, flags}, param) => {
-      if (hasFlags && /^-{1,2}[a-zA-Z0-9_]+/.test(param)) flags.push(param);
+      if (parseCommandFlags && /^-{1,2}[a-zA-Z0-9_]+/.test(param)) flags.push(param);
       else arg.push(param);
       return {arg, flags};
     }, {arg: [], flags: []});
 
     const command = {
-      directive: _.chain(directive).trim().toUpper().value(),
+      directive,
       arg: params.arg.length ? params.arg.join(' ') : null,
       flags: params.flags,
       raw: message
