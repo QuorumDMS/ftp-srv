@@ -64,8 +64,8 @@ describe('FtpCommands', function () {
     it('two args, with flags: test -l arg1 -A arg2 --zz88A', () => {
       const cmd = commands.parse('test -l arg1 -A arg2 --zz88A');
       expect(cmd.directive).to.equal('TEST');
-      expect(cmd.arg).to.equal('arg1 arg2');
-      expect(cmd.flags).to.deep.equal(['-l', '-A', '--zz88A']);
+      expect(cmd.arg).to.equal('arg1 arg2 --zz88A');
+      expect(cmd.flags).to.deep.equal(['-l', '-A']);
       expect(cmd.raw).to.equal('test -l arg1 -A arg2 --zz88A');
     });
 

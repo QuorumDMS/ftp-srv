@@ -3,6 +3,8 @@ const Promise = require('bluebird');
 
 const REGISTRY = require('./registry');
 
+const CMD_FLAG_REGEX = new RegExp(/^-(\w{1})$/);
+
 class FtpCommands {
   constructor(connection) {
     this.connection = connection;
@@ -16,9 +18,9 @@ class FtpCommands {
     let [directive, ...args] = strippedMessage.split(' ');
     directive = _.chain(directive).trim().toUpper().value();
 
-    const parseCommandFlags = !['RETR', 'SIZE'].includes(directive);
+    const parseCommandFlags = !['RETR', 'SIZE', 'STOR'].includes(directive);
     const params = args.reduce(({arg, flags}, param) => {
-      if (parseCommandFlags && /^-{1,2}[a-zA-Z0-9_]+/.test(param)) flags.push(param);
+      if (parseCommandFlags && CMD_FLAG_REGEX.test(param)) flags.push(param);
       else arg.push(param);
       return {arg, flags};
     }, {arg: [], flags: []});
