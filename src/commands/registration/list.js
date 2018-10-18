@@ -24,19 +24,18 @@ module.exports = {
         return getFileStat(file, _.get(this, 'server.options.file_format', 'ls'));
       };
 
-      return Promise.try(() => fileList = files.map(file => {
+      return Promise.try(() => files.map(file => {
         const message = getFileMessage(file);
         return {
           raw: true,
           message,
           socket: this.connector.socket
         };
-      })
-      );
+      }));
     })
     .tap(() => this.reply(150))
-    .then(fileList => { 
-       if (fileList.length) return this.reply({}, ...fileList);
+    .then(fileList => {
+      if (fileList.length) return this.reply({}, ...fileList);
     })
     .tap(() => this.reply(226))
     .catch(Promise.TimeoutError, err => {
@@ -47,10 +46,7 @@ module.exports = {
       log.error(err);
       return this.reply(451, err.message || 'No directory');
     })
-    .finally(() => {
-      this.connector.end()
-      .then(() => this.commandSocket.resume());
-    });
+    .finally(() => this.connector.end().then(() => this.commandSocket.resume()));
   },
   syntax: '{{cmd}} [<path>]',
   description: 'Returns information of a file or directory if specified, else information of the current working directory is returned'
