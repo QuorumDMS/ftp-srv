@@ -76,6 +76,13 @@ describe('FtpCommands', function () {
       expect(cmd.flags).to.deep.equal(['-l']);
       expect(cmd.raw).to.equal('list -l');
     });
+
+    it('does not check for option flags', () => {
+      const cmd = commands.parse('retr -test');
+      expect(cmd.directive).to.equal('RETR');
+      expect(cmd.arg).to.equal('-test');
+      expect(cmd.flags).to.deep.equal([]);
+    });
   });
 
   describe('handle', function () {
