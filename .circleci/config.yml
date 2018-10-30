@@ -60,15 +60,10 @@ jobs:
       - <<: *create-cache-file
       - restore_cache:
           <<: *package-json-cache
-      - run:
-          name: Update NPM
-          command: |
-            npm install npm@5
-            npm install semantic-release@11
       - deploy:
           name: Semantic Release
           command: |
-            npm run semantic-release || true
+            npm run semantic-release
 
 workflows:
   version: 2
