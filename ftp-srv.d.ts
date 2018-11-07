@@ -59,18 +59,20 @@ export class FtpConnection extends EventEmitter {
 }
 
 export interface FtpServerOptions {
-    pasv_range?: number | string,
+    url?: string,
+    pasv_min?: number,
+    pasv_max?: number,
     greeting?: string | string[],
     tls?: tls.SecureContext | false,
     anonymous?: boolean,
     blacklist?: Array<string>,
     whitelist?: Array<string>,
     file_format?: (stat: Stats) => string | Promise<string> | "ls" | "ep",
-	log?: any
+    log?: any,
 }
 
 export class FtpServer extends EventEmitter {
-    constructor(url: string, options?: FtpServerOptions);
+    constructor(options?: FtpServerOptions);
 
     readonly isTLS: boolean;
 
