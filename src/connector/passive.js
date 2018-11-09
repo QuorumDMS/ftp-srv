@@ -12,7 +12,7 @@ class Passive extends Connector {
     this.type = 'passive';
   }
 
-  waitForConnection({timeout = 5000, delay = 250} = {}) {
+  waitForConnection({timeout = 5000, delay = 50} = {}) {
     if (!this.dataServer) return Promise.reject(new errors.ConnectorError('Passive server not setup'));
 
     const checkSocket = () => {
@@ -27,9 +27,7 @@ class Passive extends Connector {
   }
 
   setupServer() {
-    const closeExistingServer = () => this.dataServer ?
-      new Promise(resolve => this.dataServer.close(() => resolve())) :
-      Promise.resolve();
+    const closeExistingServer = () => this.closeServer();
 
     return closeExistingServer()
     .then(() => this.server.getNextPasvPort())
@@ -48,13 +46,10 @@ class Passive extends Connector {
         this.log.trace({port, remoteAddress: socket.remoteAddress}, 'Passive connection fulfilled.');
 
         this.dataSocket = socket;
-        this.dataSocket.connected = true;
+        
         this.dataSocket.setEncoding(this.connection.transferType);
         this.dataSocket.on('error', err => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
-        this.dataSocket.once('close', () => {
-          this.log.trace('Passive connection closed');
-          this.end();
-        });
+
       };
 
       this.dataSocket = null;
@@ -68,6 +63,10 @@ class Passive extends Connector {
         this.log.trace('Passive server closed');
         this.end();
       });
+      this.dataServer.on('secureConnection', (socket) => {
+        socket.connected = true;  
+      });
+
 
       return new Promise((resolve, reject) => {
         this.dataServer.listen(port, this.server.url.hostname, err => {
