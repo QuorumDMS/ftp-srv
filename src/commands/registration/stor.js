@@ -40,7 +40,7 @@ module.exports = {
             stream.write(data, this.transferType, () => this.connector.socket && this.connector.socket.resume());
           }
         });
-        this.connector.socket.once('close', () => {
+        this.connector.socket.once('end', () => {
           if (stream.listenerCount('close')) stream.emit('close');
           else stream.end();
           resolve();

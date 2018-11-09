@@ -26,7 +26,7 @@ class Connector {
     return Promise.reject(new errors.ConnectorError('No connector setup, send PASV or PORT'));
   }
 
-  end() {
+  closeSocket() {
     const closeDataSocket = new Promise(resolve => {
       if (this.dataSocket) {
         this.dataSocket.end().destroy();
@@ -34,16 +34,30 @@ class Connector {
       }
       resolve();
     });
+
+    return closeDataSocket;
+  }
+    
+  closeServer() {
     const closeDataServer = new Promise(resolve => {
       if (this.dataServer) {
-        this.dataServer.close(() => resolve());
-      } else resolve();
+        this.dataServer.close();
+        this.dataServer = null;
+      }
+      resolve();
     });
+
+    return closeDataServer;
+  }
+
+      
+  end() {
+    const closeDataSocket = this.closeSocket();
+
+    const closeDataServer = this.closeServer();
 
     return Promise.all([closeDataSocket, closeDataServer])
     .then(() => {
-      this.dataSocket = null;
-      this.dataServer = null;
       this.type = false;
 
       this.connection.connector = new Connector(this);
