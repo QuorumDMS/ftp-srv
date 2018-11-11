@@ -29,10 +29,13 @@ class Connector {
   closeSocket() {
     return new Promise((resolve) => {
       if (this.dataSocket) {
-        this.dataSocket.end().destroy();
+        const socket = this.dataSocket;
+        this.dataSocket.end(() => {
+          socket.destroy();
+          resolve();
+        });
         this.dataSocket = null;
-      }
-      resolve();
+      } else resolve();
     });
   }
 
