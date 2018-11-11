@@ -15,7 +15,7 @@ module.exports = {
     .then(() => {
       return this.reply(250);
     })
-    .catch(err => {
+    .catch((err) => {
       log.error(err);
       return this.reply(550, err.message);
     })

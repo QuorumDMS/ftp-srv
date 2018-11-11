@@ -8,11 +8,11 @@ module.exports = {
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
     return Promise.try(() => this.fs.get(command.arg))
-    .then(fileStat => {
+    .then((fileStat) => {
       const modificationTime = moment.utc(fileStat.mtime).format('YYYYMMDDHHmmss.SSS');
       return this.reply(213, modificationTime);
     })
-    .catch(err => {
+    .catch((err) => {
       log.error(err);
       return this.reply(550, err.message);
     });

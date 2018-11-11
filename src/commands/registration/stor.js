@@ -12,7 +12,7 @@ module.exports = {
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())
     .then(() => Promise.try(() => this.fs.write(fileName, {append, start: this.restByteCount})))
-    .then(fsResponse => {
+    .then((fsResponse) => {
       let {stream, clientPath} = fsResponse;
       if (!stream && !clientPath) {
         stream = fsResponse;
@@ -20,7 +20,7 @@ module.exports = {
       }
       const serverPath = stream.path || fileName;
 
-      const destroyConnection = (connection, reject) => err => {
+      const destroyConnection = (connection, reject) => (err) => {
         if (connection) {
           if (connection.writeable) connection.end();
           connection.destroy(err);
@@ -34,7 +34,7 @@ module.exports = {
       });
 
       const socketPromise = new Promise((resolve, reject) => {
-        this.connector.socket.on('data', data => {
+        this.connector.socket.on('data', (data) => {
           if (this.connector.socket) this.connector.socket.pause();
           if (stream) {
             stream.write(data, this.transferType, () => this.connector.socket && this.connector.socket.resume());
@@ -56,11 +56,11 @@ module.exports = {
       .then(() => this.reply(226, clientPath))
       .finally(() => stream.destroy && stream.destroy());
     })
-    .catch(Promise.TimeoutError, err => {
+    .catch(Promise.TimeoutError, (err) => {
       log.error(err);
       return this.reply(425, 'No connection established');
     })
-    .catch(err => {
+    .catch((err) => {
       log.error(err);
       this.emit('STOR', err);
       return this.reply(550, err.message);

@@ -44,19 +44,19 @@ class FileSystem {
   get(fileName) {
     const {fsPath} = this._resolvePath(fileName);
     return fs.statAsync(fsPath)
-    .then(stat => _.set(stat, 'name', fileName));
+    .then((stat) => _.set(stat, 'name', fileName));
   }
 
   list(path = '.') {
     const {fsPath} = this._resolvePath(path);
     return fs.readdirAsync(fsPath)
-    .then(fileNames => {
-      return Promise.map(fileNames, fileName => {
+    .then((fileNames) => {
+      return Promise.map(fileNames, (fileName) => {
         const filePath = nodePath.join(fsPath, fileName);
         return fs.accessAsync(filePath, fs.constants.F_OK)
         .then(() => {
           return fs.statAsync(filePath)
-          .then(stat => _.set(stat, 'name', fileName));
+          .then((stat) => _.set(stat, 'name', fileName));
         })
         .catch(() => null);
       });
@@ -67,7 +67,7 @@ class FileSystem {
   chdir(path = '.') {
     const {fsPath, clientPath} = this._resolvePath(path);
     return fs.statAsync(fsPath)
-    .tap(stat => {
+    .tap((stat) => {
       if (!stat.isDirectory()) throw new errors.FileSystemError('Not a valid directory');
     })
     .then(() => {
@@ -90,7 +90,7 @@ class FileSystem {
   read(fileName, {start = undefined} = {}) {
     const {fsPath, clientPath} = this._resolvePath(fileName);
     return fs.statAsync(fsPath)
-    .tap(stat => {
+    .tap((stat) => {
       if (stat.isDirectory()) throw new errors.FileSystemError('Cannot read a directory');
     })
     .then(() => {
@@ -105,7 +105,7 @@ class FileSystem {
   delete(path) {
     const {fsPath} = this._resolvePath(path);
     return fs.statAsync(fsPath)
-    .then(stat => {
+    .then((stat) => {
       if (stat.isDirectory()) return fs.rmdirAsync(fsPath);
       else return fs.unlinkAsync(fsPath);
     });

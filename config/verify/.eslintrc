@@ -136,7 +136,7 @@
     "comma-dangle": 1,
     "new-cap": 2,
     "new-parens": 2,
-    "arrow-parens": [2, "as-needed"],
+    "arrow-parens": [2, "always"],
     "no-array-constructor": 2,
     "array-callback-return": 1,
     "no-extra-parens": 2,

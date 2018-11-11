@@ -64,7 +64,7 @@ describe('Integration', function () {
     return new Promise((resolve, reject) => {
       client = new FtpClient();
       client.once('ready', () => resolve(client));
-      client.once('error', err => reject(err));
+      client.once('error', (err) => reject(err));
       client.connect(_.assign({
         host: server.url.hostname,
         port: server.url.port,
@@ -72,7 +72,7 @@ describe('Integration', function () {
         password: 'test'
       }, options));
     })
-    .then(instance => {
+    .then((instance) => {
       client = instance;
     });
   }
@@ -80,8 +80,8 @@ describe('Integration', function () {
   function closeClient() {
     return new Promise((resolve, reject) => {
       client.once('close', () => resolve());
-      client.once('error', err => reject(err));
-      client.logout(err => {
+      client.once('error', (err) => reject(err));
+      client.logout((err) => {
         expect(err).to.be.undefined;
       });
     });
@@ -92,7 +92,7 @@ describe('Integration', function () {
     if (!dirExists) return;
 
     const list = fs.readdirSync(dir);
-    list.map(item => nodePath.resolve(dir, item)).forEach(item => {
+    list.map((item) => nodePath.resolve(dir, item)).forEach((item) => {
       const itemExists = fs.existsSync(dir);
       if (!itemExists) return;
 
@@ -113,7 +113,7 @@ describe('Integration', function () {
 
     after(() => directoryPurge(`${clientDirectory}/${name}/`));
 
-    it('STAT', done => {
+    it('STAT', (done) => {
       client.status((err, status) => {
         expect(err).to.not.exist;
         expect(status).to.equal('Status OK');
@@ -121,7 +121,7 @@ describe('Integration', function () {
       });
     });
 
-    it('SYST', done => {
+    it('SYST', (done) => {
       client.system((err, os) => {
         expect(err).to.not.exist;
         expect(os).to.equal('UNIX');
@@ -129,7 +129,7 @@ describe('Integration', function () {
       });
     });
 
-    it('CWD ..', done => {
+    it('CWD ..', (done) => {
       client.cwd('..', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.equal('/');
@@ -137,7 +137,7 @@ describe('Integration', function () {
       });
     });
 
-    it(`CWD ${name}`, done => {
+    it(`CWD ${name}`, (done) => {
       client.cwd(`${name}`, (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.equal(`/${name}`);
@@ -145,7 +145,7 @@ describe('Integration', function () {
       });
     });
 
-    it('PWD', done => {
+    it('PWD', (done) => {
       client.pwd((err, data) => {
         expect(err).to.not.exist;
         expect(data).to.equal(`/${name}`);
@@ -153,7 +153,7 @@ describe('Integration', function () {
       });
     });
 
-    it('LIST .', done => {
+    it('LIST .', (done) => {
       client.list('.', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.be.an('array');
@@ -163,7 +163,7 @@ describe('Integration', function () {
       });
     });
 
-    it('LIST fake.txt', done => {
+    it('LIST fake.txt', (done) => {
       client.list('fake.txt', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.be.an('array');
@@ -173,7 +173,7 @@ describe('Integration', function () {
       });
     });
 
-    it('STOR fail.txt', done => {
+    it('STOR fail.txt', (done) => {
       const buffer = Buffer.from('test text file');
       const fsPath = `${clientDirectory}/${name}/fail.txt`;
 
@@ -185,7 +185,7 @@ describe('Integration', function () {
         return stream;
       });
 
-      client.put(buffer, 'fail.txt', err => {
+      client.put(buffer, 'fail.txt', (err) => {
         setImmediate(() => {
           const fileExists = fs.existsSync(fsPath);
           expect(err).to.exist;
@@ -195,15 +195,15 @@ describe('Integration', function () {
       });
     });
 
-    it('STOR tést.txt', done => {
+    it('STOR tést.txt', (done) => {
       const buffer = Buffer.from('test text file');
       const fsPath = `${clientDirectory}/${name}/tést.txt`;
 
-      connection.once('STOR', err => {
+      connection.once('STOR', (err) => {
         expect(err).to.not.exist;
       });
 
-      client.put(buffer, 'tést.txt', err => {
+      client.put(buffer, 'tést.txt', (err) => {
         expect(err).to.not.exist;
         setImmediate(() => {
           expect(fs.existsSync(fsPath)).to.equal(true);
@@ -216,10 +216,10 @@ describe('Integration', function () {
       });
     });
 
-    it('APPE tést.txt', done => {
+    it('APPE tést.txt', (done) => {
       const buffer = Buffer.from(', awesome!');
       const fsPath = `${clientDirectory}/${name}/tést.txt`;
-      client.append(buffer, 'tést.txt', err => {
+      client.append(buffer, 'tést.txt', (err) => {
         expect(err).to.not.exist;
         setImmediate(() => {
           expect(fs.existsSync(fsPath)).to.equal(true);
@@ -232,15 +232,15 @@ describe('Integration', function () {
       });
     });
 
-    it('RETR tést.txt', done => {
-      connection.once('RETR', err => {
+    it('RETR tést.txt', (done) => {
+      connection.once('RETR', (err) => {
         expect(err).to.not.exist;
       });
 
       client.get('tést.txt', (err, stream) => {
         expect(err).to.not.exist;
         let text = '';
-        stream.on('data', data => {
+        stream.on('data', (data) => {
           text += data.toString();
         });
         stream.on('end', () => {
@@ -251,8 +251,8 @@ describe('Integration', function () {
       });
     });
 
-    it('RNFR tést.txt, RNTO awesome.txt', done => {
-      client.rename('tést.txt', 'awesome.txt', err => {
+    it('RNFR tést.txt, RNTO awesome.txt', (done) => {
+      client.rename('tést.txt', 'awesome.txt', (err) => {
         expect(err).to.not.exist;
         expect(fs.existsSync(`${clientDirectory}/${name}/tést.txt`)).to.equal(false);
         expect(fs.existsSync(`${clientDirectory}/${name}/awesome.txt`)).to.equal(true);
@@ -264,7 +264,7 @@ describe('Integration', function () {
       });
     });
 
-    it('SIZE awesome.txt', done => {
+    it('SIZE awesome.txt', (done) => {
       client.size('awesome.txt', (err, size) => {
         expect(err).to.not.exist;
         expect(size).to.be.a('number');
@@ -272,7 +272,7 @@ describe('Integration', function () {
       });
     });
 
-    it('MDTM awesome.txt', done => {
+    it('MDTM awesome.txt', (done) => {
       client.lastMod('awesome.txt', (err, modTime) => {
         expect(err).to.not.exist;
         expect(modTime).to.be.instanceOf(Date);
@@ -281,14 +281,14 @@ describe('Integration', function () {
       });
     });
 
-    it.skip('MLSD .', done => {
+    it.skip('MLSD .', (done) => {
       client.mlsd('.', () => {
         done();
       });
     });
 
-    it('SITE CHMOD 700 awesome.txt', done => {
-      client.site('CHMOD 600 awesome.txt', err => {
+    it('SITE CHMOD 700 awesome.txt', (done) => {
+      client.site('CHMOD 600 awesome.txt', (err) => {
         expect(err).to.not.exist;
         fs.stat(`${clientDirectory}/${name}/awesome.txt`, (fserr, stats) => {
           expect(fserr).to.not.exist;
@@ -299,27 +299,27 @@ describe('Integration', function () {
       });
     });
 
-    it('DELE awesome.txt', done => {
-      client.delete('awesome.txt', err => {
+    it('DELE awesome.txt', (done) => {
+      client.delete('awesome.txt', (err) => {
         expect(err).to.not.exist;
         expect(fs.existsSync(`${clientDirectory}/${name}/awesome.txt`)).to.equal(false);
         done();
       });
     });
 
-    it('MKD témp', done => {
+    it('MKD témp', (done) => {
       const path = `${clientDirectory}/${name}/témp`;
       if (fs.existsSync(path)) {
         fs.rmdirSync(path);
       }
-      client.mkdir('témp', err => {
+      client.mkdir('témp', (err) => {
         expect(err).to.not.exist;
         expect(fs.existsSync(path)).to.equal(true);
         done();
       });
     });
 
-    it('CWD témp', done => {
+    it('CWD témp', (done) => {
       client.cwd('témp', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.to.be.a('string');
@@ -327,23 +327,23 @@ describe('Integration', function () {
       });
     });
 
-    it('CDUP', done => {
-      client.cdup(err => {
+    it('CDUP', (done) => {
+      client.cdup((err) => {
         expect(err).to.not.exist;
         done();
       });
     });
 
-    it('RMD témp', done => {
-      client.rmdir('témp', err => {
+    it('RMD témp', (done) => {
+      client.rmdir('témp', (err) => {
         expect(err).to.not.exist;
         expect(fs.existsSync(`${clientDirectory}/${name}/témp`)).to.equal(false);
         done();
       });
     });
 
-    it('CDUP', done => {
-      client.cdup(err => {
+    it('CDUP', (done) => {
+      client.cdup((err) => {
         expect(err).to.not.exist;
         done();
       });
@@ -362,8 +362,8 @@ describe('Integration', function () {
 
     after(() => closeClient(client));
 
-    it('TYPE A', done => {
-      client.ascii(err => {
+    it('TYPE A', (done) => {
+      client.ascii((err) => {
         expect(err).to.not.exist;
         done();
       });
@@ -384,8 +384,8 @@ describe('Integration', function () {
 
     after(() => closeClient(client));
 
-    it('TYPE I', done => {
-      client.binary(err => {
+    it('TYPE I', (done) => {
+      client.binary((err) => {
         expect(err).to.not.exist;
         done();
       });

@@ -11,7 +11,7 @@ module.exports = {
         return feats;
       }, ['UTF8'])
       .sort()
-      .map(feat => ({
+      .map((feat) => ({
         message: ` ${feat}`,
         raw: true
       }));

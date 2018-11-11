@@ -28,7 +28,7 @@ describe('FileSystem', function () {
 
     it('handles error', function () {
       return Promise.try(() => ovFs.chdir())
-      .catch(err => {
+      .catch((err) => {
         expect(err).to.be.instanceof(errors.FileSystemError);
       });
     });
