@@ -25,7 +25,7 @@ describe('helpers // find-port', function () {
     });
 
     return getNextPort()
-    .then(port => {
+    .then((port) => {
       expect(port).to.equal(1);
     });
   });
@@ -37,15 +37,15 @@ describe('helpers // find-port', function () {
     });
 
     return getNextPort()
-    .then(port => {
+    .then((port) => {
       expect(port).to.equal(1);
     })
     .then(() => getNextPort())
-    .then(port => {
+    .then((port) => {
       expect(port).to.equal(2);
     })
     .then(() => getNextPort())
-    .then(port => {
+    .then((port) => {
       expect(port).to.equal(1);
     });
   });

@@ -11,7 +11,7 @@ module.exports = {
     return Promise.try(() => this.fs.get(fileName))
     .then(() => Promise.try(() => this.fs.getUniqueName()))
     .catch(() => fileName)
-    .then(name => {
+    .then((name) => {
       args.command.arg = name;
       return stor.call(this, args);
     });

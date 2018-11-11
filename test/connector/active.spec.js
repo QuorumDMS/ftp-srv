@@ -19,18 +19,18 @@ describe('Connector - Active //', function () {
   before(() => {
     active = new ActiveConnector(mockConnection);
   });
-  beforeEach(done => {
+  beforeEach((done) => {
     sandbox = sinon.sandbox.create().usingPromise(Promise);
 
     getNextPort()
-    .then(port => {
+    .then((port) => {
       PORT = port;
       server = net.createServer()
-      .on('connection', socket => socket.destroy())
+      .on('connection', (socket) => socket.destroy())
       .listen(PORT, () => done());
     });
   });
-  afterEach(done => {
+  afterEach((done) => {
     sandbox.restore();
     server.close(done);
   });
@@ -58,7 +58,7 @@ describe('Connector - Active //', function () {
       expect(active.dataSocket).to.exist;
       return active.waitForConnection();
     })
-    .then(dataSocket => {
+    .then((dataSocket) => {
       expect(dataSocket.connected).to.equal(true);
       expect(dataSocket instanceof net.Socket).to.equal(true);
       expect(dataSocket instanceof tls.TLSSocket).to.equal(false);
@@ -78,7 +78,7 @@ describe('Connector - Active //', function () {
       expect(active.dataSocket).to.exist;
       return active.waitForConnection();
     })
-    .then(dataSocket => {
+    .then((dataSocket) => {
       expect(dataSocket.connected).to.equal(true);
       expect(dataSocket instanceof net.Socket).to.equal(true);
       expect(dataSocket instanceof tls.TLSSocket).to.equal(true);

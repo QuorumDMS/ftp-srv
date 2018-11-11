@@ -20,14 +20,14 @@ function getNextPortFactory(min, max = Infinity) {
     portCheckServer.listen(nextPortNumber.next().value);
   });
 
-  return () => new Promise(resolve => {
+  return () => new Promise((resolve) => {
     portCheckServer.once('listening', () => {
       const {port} = portCheckServer.address();
       portCheckServer.close(() => resolve(port));
     });
     portCheckServer.listen(nextPortNumber.next().value);
   })
-  .catch(RangeError, err => Promise.reject(new errors.ConnectorError(err.message)));
+  .catch(RangeError, (err) => Promise.reject(new errors.ConnectorError(err.message)));
 }
 
 module.exports = {

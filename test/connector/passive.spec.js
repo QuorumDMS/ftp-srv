@@ -40,7 +40,7 @@ describe('Connector - Passive //', function () {
   it('cannot wait for connection with no server', function (done) {
     let passive = new PassiveConnector(mockConnection);
     passive.waitForConnection()
-    .catch(err => {
+    .catch((err) => {
       expect(err.name).to.equal('ConnectorError');
       done();
     });
@@ -54,7 +54,7 @@ describe('Connector - Passive //', function () {
     it('no pasv range provided', function (done) {
       let passive = new PassiveConnector(mockConnection);
       passive.setupServer()
-      .catch(err => {
+      .catch((err) => {
         try {
           expect(err.name).to.equal('ConnectorError');
           done();
@@ -75,7 +75,7 @@ describe('Connector - Passive //', function () {
 
     it('has invalid pasv range', function (done) {
       connection.setupServer()
-      .catch(err => {
+      .catch((err) => {
         expect(err.name).to.equal('ConnectorError');
         done();
       });

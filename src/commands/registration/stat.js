@@ -12,27 +12,27 @@ module.exports = {
       if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
       return Promise.try(() => this.fs.get(path))
-      .then(stat => {
+      .then((stat) => {
         if (stat.isDirectory()) {
           if (!this.fs.list) return this.reply(402, 'Not supported by file system');
 
           return Promise.try(() => this.fs.list(path))
-          .then(stats => [213, stats]);
+          .then((stats) => [213, stats]);
         }
         return [212, [stat]];
       })
       .then(([code, fileStats]) => {
-        return Promise.map(fileStats, file => {
+        return Promise.map(fileStats, (file) => {
           const message = getFileStat(file, _.get(this, 'server.options.file_format', 'ls'));
           return {
             raw: true,
             message
           };
         })
-        .then(messages => [code, messages]);
+        .then((messages) => [code, messages]);
       })
       .then(([code, messages]) => this.reply(code, 'Status begin', ...messages, 'Status end'))
-      .catch(err => {
+      .catch((err) => {
         log.error(err);
         return this.reply(450, err.message);
       });

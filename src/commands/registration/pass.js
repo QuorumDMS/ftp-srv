@@ -12,7 +12,7 @@ module.exports = {
     .then(() => {
       return this.reply(230);
     })
-    .catch(err => {
+    .catch((err) => {
       log.error(err);
       return this.reply(530, err.message || 'Authentication failed');
     });

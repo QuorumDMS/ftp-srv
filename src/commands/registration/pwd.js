@@ -8,11 +8,11 @@ module.exports = {
     if (!this.fs.currentDirectory) return this.reply(402, 'Not supported by file system');
 
     return Promise.try(() => this.fs.currentDirectory())
-    .then(cwd => {
+    .then((cwd) => {
       const path = cwd ? `"${escapePath(cwd)}"` : undefined;
       return this.reply(257, path);
     })
-    .catch(err => {
+    .catch((err) => {
       log.error(err);
       return this.reply(550, err.message);
     });

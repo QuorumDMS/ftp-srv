@@ -12,7 +12,7 @@ module.exports = {
       this.renameFrom = fileName;
       return this.reply(350);
     })
-    .catch(err => {
+    .catch((err) => {
       log.error(err);
       return this.reply(550, err.message);
     });

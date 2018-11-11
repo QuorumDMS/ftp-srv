@@ -12,7 +12,7 @@ module.exports = {
       const reply = _.concat([syntax.replace('{{cmd}}', directive), description]);
       return this.reply(214, ...reply);
     } else {
-      const supportedCommands = _.chunk(Object.keys(registry), 5).map(chunk => chunk.join('\t'));
+      const supportedCommands = _.chunk(Object.keys(registry), 5).map((chunk) => chunk.join('\t'));
       return this.reply(211, 'Supported commands:', ...supportedCommands, 'Use "HELP [command]" for syntax help.');
     }
   },

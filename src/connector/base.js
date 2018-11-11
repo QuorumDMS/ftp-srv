@@ -27,36 +27,27 @@ class Connector {
   }
 
   closeSocket() {
-    const closeDataSocket = new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.dataSocket) {
         this.dataSocket.end().destroy();
         this.dataSocket = null;
       }
       resolve();
     });
-
-    return closeDataSocket;
   }
-    
+
   closeServer() {
-    const closeDataServer = new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.dataServer) {
-        this.dataServer.close();
+        this.dataServer.close(() => resolve());
         this.dataServer = null;
-      }
-      resolve();
+      } else resolve();
     });
-
-    return closeDataServer;
   }
 
-      
+
   end() {
-    const closeDataSocket = this.closeSocket();
-
-    const closeDataServer = this.closeServer();
-
-    return Promise.all([closeDataSocket, closeDataServer])
+    return Promise.all([this.closeSocket(), this.closeServer()])
     .then(() => {
       this.type = false;
 
