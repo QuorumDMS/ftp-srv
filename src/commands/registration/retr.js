@@ -54,7 +54,10 @@ module.exports = {
       this.emit('RETR', err);
       return this.reply(551, err.message);
     })
-    .finally(() => this.connector.end().then(() => this.commandSocket.resume()));
+    .finally(() => {
+      this.connector.end();
+      this.commandSocket.resume();
+    });
   },
   syntax: '{{cmd}} <path>',
   description: 'Retrieve a copy of the file'

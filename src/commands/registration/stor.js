@@ -65,7 +65,10 @@ module.exports = {
       this.emit('STOR', err);
       return this.reply(550, err.message);
     })
-    .finally(() => this.connector.end().then(() => this.commandSocket.resume()));
+    .finally(() => {
+      this.connector.end();
+      this.commandSocket.resume();
+    });
   },
   syntax: '{{cmd}} <path>',
   description: 'Store data as a file at the server site'
