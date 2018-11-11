@@ -46,7 +46,10 @@ module.exports = {
       log.error(err);
       return this.reply(451, err.message || 'No directory');
     })
-    .finally(() => this.connector.end().then(() => this.commandSocket.resume()));
+    .finally(() => {
+      this.connector.end();
+      this.commandSocket.resume();
+    });
   },
   syntax: '{{cmd}} [<path>]',
   description: 'Returns information of a file or directory if specified, else information of the current working directory is returned'

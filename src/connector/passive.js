@@ -27,10 +27,8 @@ class Passive extends Connector {
   }
 
   setupServer() {
-    const closeExistingServer = () => this.closeServer();
-
-    return closeExistingServer()
-    .then(() => this.server.getNextPasvPort())
+    this.closeServer();
+    return this.server.getNextPasvPort()
     .then((port) => {
       const connectionHandler = (socket) => {
         if (!ip.isEqual(this.connection.commandSocket.remoteAddress, socket.remoteAddress)) {
