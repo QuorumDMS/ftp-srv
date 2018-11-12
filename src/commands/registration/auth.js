@@ -30,7 +30,7 @@ function handleTLS() {
       isServer: true,
       secureContext
     });
-    ['data', 'timeout', 'end', 'close', 'drain', 'error'].forEach(event => {
+    ['data', 'timeout', 'end', 'close', 'drain', 'error'].forEach((event) => {
       function forwardEvent() {
         this.emit.apply(this, arguments);
       }

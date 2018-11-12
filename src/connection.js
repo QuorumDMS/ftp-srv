@@ -25,7 +25,7 @@ class FtpConnection extends EventEmitter {
     this.connector = new BaseConnector(this);
 
     this.commandSocket = options.socket;
-    this.commandSocket.on('error', err => {
+    this.commandSocket.on('error', (err) => {
       this.log.error(err, 'Client error');
       this.server.emit('client-error', {connection: this, context: 'commandSocket', error: err});
     });
@@ -41,7 +41,7 @@ class FtpConnection extends EventEmitter {
   _handleData(data) {
     const messages = _.compact(data.toString(this.encoding).split('\r\n'));
     this.log.trace(messages);
-    return Promise.mapSeries(messages, message => this.commands.handle(message));
+    return Promise.mapSeries(messages, (message) => this.commands.handle(message));
   }
 
   get ip() {
@@ -68,7 +68,7 @@ class FtpConnection extends EventEmitter {
 
   close(code = 421, message = 'Closing connection') {
     return Promise.resolve(code)
-      .then(_code => _code && this.reply(_code, message))
+      .then((_code) => _code && this.reply(_code, message))
       .then(() => this.commandSocket && this.commandSocket.end());
   }
 
@@ -96,7 +96,7 @@ class FtpConnection extends EventEmitter {
       if (!letters.length) letters = [{}];
       return Promise.map(letters, (promise, index) => {
         return Promise.resolve(promise)
-        .then(letter => {
+        .then((letter) => {
           if (!letter) letter = {};
           else if (typeof letter === 'string') letter = {message: letter}; // allow passing in message as first param
 
@@ -104,7 +104,7 @@ class FtpConnection extends EventEmitter {
           if (!letter.message) letter.message = DEFAULT_MESSAGE[options.code] || 'No information';
           if (!letter.encoding) letter.encoding = this.encoding;
           return Promise.resolve(letter.message) // allow passing in a promise as a message
-          .then(message => {
+          .then((message) => {
             const seperator = !options.hasOwnProperty('eol') ?
               letters.length - 1 === index ? ' ' : '-' :
               options.eol ? ' ' : '-';
@@ -116,11 +116,11 @@ class FtpConnection extends EventEmitter {
       });
     };
 
-    const processLetter = letter => {
+    const processLetter = (letter) => {
       return new Promise((resolve, reject) => {
         if (letter.socket && letter.socket.writable) {
           this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, message: letter.message}, 'Reply');
-          letter.socket.write(letter.message + '\r\n', letter.encoding, err => {
+          letter.socket.write(letter.message + '\r\n', letter.encoding, (err) => {
             if (err) {
               this.log.error(err);
               return reject(err);
@@ -132,10 +132,10 @@ class FtpConnection extends EventEmitter {
     };
 
     return satisfyParameters()
-    .then(satisfiedLetters => Promise.mapSeries(satisfiedLetters, (letter, index) => {
+    .then((satisfiedLetters) => Promise.mapSeries(satisfiedLetters, (letter, index) => {
       return processLetter(letter, index);
     }))
-    .catch(err => {
+    .catch((err) => {
       this.log.error(err);
     });
   }

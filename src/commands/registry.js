@@ -43,7 +43,7 @@ const commands = [
 
 const registry = commands.reduce((result, cmd) => {
   const aliases = Array.isArray(cmd.directive) ? cmd.directive : [cmd.directive];
-  aliases.forEach(alias => result[alias] = cmd);
+  aliases.forEach((alias) => result[alias] = cmd);
   return result;
 }, {});
 

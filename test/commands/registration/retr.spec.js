@@ -87,7 +87,7 @@ describe(CMD, function () {
     });
 
     let errorEmitted = false;
-    emitter.once('RETR', err => {
+    emitter.once('RETR', (err) => {
       errorEmitted = !!err;
     });
 

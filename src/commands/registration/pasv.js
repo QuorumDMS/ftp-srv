@@ -5,7 +5,7 @@ module.exports = {
   handler: function () {
     this.connector = new PassiveConnector(this);
     return this.connector.setupServer()
-    .then(server => {
+    .then((server) => {
       const address = this.server.options.pasv_url;
       const {port} = server.address();
       const host = address.replace(/\./g, ',');

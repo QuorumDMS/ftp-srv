@@ -40,7 +40,7 @@ describe('Connector - Passive //', function () {
   it('cannot wait for connection with no server', function (done) {
     let passive = new PassiveConnector(mockConnection);
     passive.waitForConnection()
-    .catch(err => {
+    .catch((err) => {
       expect(err.name).to.equal('ConnectorError');
       done();
     });
@@ -54,7 +54,7 @@ describe('Connector - Passive //', function () {
     it('no pasv range provided', function (done) {
       let passive = new PassiveConnector(mockConnection);
       passive.setupServer()
-      .catch(err => {
+      .catch((err) => {
         try {
           expect(err.name).to.equal('ConnectorError');
           done();
@@ -75,7 +75,7 @@ describe('Connector - Passive //', function () {
 
     it('has invalid pasv range', function (done) {
       connection.setupServer()
-      .catch(err => {
+      .catch((err) => {
         expect(err.name).to.equal('ConnectorError');
         done();
       });
@@ -108,7 +108,7 @@ describe('Connector - Passive //', function () {
     it('destroys existing server, then sets up a server', function () {
       return passive.setupServer()
       .then(() => {
-        expect(closeFnSpy.callCount).to.equal(2);
+        expect(closeFnSpy.callCount).to.equal(1);
         expect(passive.dataServer).to.exist;
       });
     });
@@ -129,8 +129,8 @@ describe('Connector - Passive //', function () {
           expect(passive.connection.reply.callCount).to.equal(1);
           expect(passive.connection.reply.args[0][0]).to.equal(550);
 
-          passive.end()
-          .then(() => done());
+          passive.end();
+          done();
         }, 100);
       });
     })

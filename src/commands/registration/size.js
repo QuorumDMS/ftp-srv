@@ -7,10 +7,10 @@ module.exports = {
     if (!this.fs.get) return this.reply(402, 'Not supported by file system');
 
     return Promise.try(() => this.fs.get(command.arg))
-    .then(fileStat => {
+    .then((fileStat) => {
       return this.reply(213, {message: fileStat.size});
     })
-    .catch(err => {
+    .catch((err) => {
       log.error(err);
       return this.reply(550, err.message);
     });

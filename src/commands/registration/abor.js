@@ -2,7 +2,7 @@ module.exports = {
   directive: 'ABOR',
   handler: function () {
     return this.connector.waitForConnection()
-    .then(socket => {
+    .then((socket) => {
       return this.reply(426, {socket})
       .then(() => this.reply(226));
     })

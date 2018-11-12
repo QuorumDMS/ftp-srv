@@ -39,7 +39,7 @@ class FtpServer extends EventEmitter {
       _.get(this, 'options.pasv_min'),
       _.get(this, 'options.pasv_max'));
 
-    const serverConnectionHandler = socket => {
+    const serverConnectionHandler = (socket) => {
       let connection = new Connection(this, {log: this.log, socket});
       this.connections[connection.id] = connection;
 
@@ -53,7 +53,7 @@ class FtpServer extends EventEmitter {
     const serverOptions = Object.assign({}, this.isTLS ? this.options.tls : {}, {pauseOnConnect: true});
 
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
-    this.server.on('error', err => this.log.error(err, '[Event] error'));
+    this.server.on('error', (err) => this.log.error(err, '[Event] error'));
 
     const quit = _.debounce(this.quit.bind(this), 100);
 
@@ -68,12 +68,12 @@ class FtpServer extends EventEmitter {
 
   listen() {
     return resolveHost(this.options.pasv_url || this.url.hostname)
-    .then(pasvUrl => {
+    .then((pasvUrl) => {
       this.options.pasv_url = pasvUrl;
 
       return new Promise((resolve, reject) => {
         this.server.once('error', reject);
-        this.server.listen(this.url.port, this.url.hostname, err => {
+        this.server.listen(this.url.port, this.url.hostname, (err) => {
           this.server.removeListener('error', reject);
           if (err) return reject(err);
           this.log.info({
@@ -112,7 +112,7 @@ class FtpServer extends EventEmitter {
   }
 
   disconnectClient(id) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const client = this.connections[id];
       if (!client) return resolve();
       delete this.connections[id];
@@ -134,9 +134,9 @@ class FtpServer extends EventEmitter {
   close() {
     this.log.info('Server closing...');
     this.server.maxConnections = 0;
-    return Promise.map(Object.keys(this.connections), id => Promise.try(this.disconnectClient.bind(this, id)))
-    .then(() => new Promise(resolve => {
-      this.server.close(err => {
+    return Promise.map(Object.keys(this.connections), (id) => Promise.try(this.disconnectClient.bind(this, id)))
+    .then(() => new Promise((resolve) => {
+      this.server.close((err) => {
         if (err) this.log.error(err, 'Error closing server');
         resolve('Closed');
       });

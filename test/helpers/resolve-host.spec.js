@@ -14,7 +14,7 @@ describe('helpers //resolve-host', function () {
   it('fetches ip address', () => {
     const hostname = '0.0.0.0';
     return resolveHost(hostname)
-    .then(resolvedHostname => {
+    .then((resolvedHostname) => {
       expect(resolvedHostname).to.match(/^\d+\.\d+\.\d+\.\d+$/);
     });
   });
@@ -22,7 +22,7 @@ describe('helpers //resolve-host', function () {
   it('fetches ip address', () => {
     const hostname = null;
     return resolveHost(hostname)
-    .then(resolvedHostname => {
+    .then((resolvedHostname) => {
       expect(resolvedHostname).to.match(/^\d+\.\d+\.\d+\.\d+$/);
     });
   });
@@ -30,7 +30,7 @@ describe('helpers //resolve-host', function () {
   it('does nothing', () => {
     const hostname = '127.0.0.1';
     return resolveHost(hostname)
-    .then(resolvedHostname => {
+    .then((resolvedHostname) => {
       expect(resolvedHostname).to.equal(hostname);
     });
   });
@@ -44,7 +44,7 @@ describe('helpers //resolve-host', function () {
 
     return resolveHost(null)
     .then(() => expect(1).to.equal(2))
-    .catch(err => {
+    .catch((err) => {
       expect(err.code).to.equal(420);
     });
   });

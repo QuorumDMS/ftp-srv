@@ -26,28 +26,28 @@ class Connector {
     return Promise.reject(new errors.ConnectorError('No connector setup, send PASV or PORT'));
   }
 
-  end() {
-    const closeDataSocket = new Promise(resolve => {
-      if (this.dataSocket) {
-        this.dataSocket.end().destroy();
-        this.dataSocket = null;
-      }
-      resolve();
-    });
-    const closeDataServer = new Promise(resolve => {
-      if (this.dataServer) {
-        this.dataServer.close(() => resolve());
-      } else resolve();
-    });
-
-    return Promise.all([closeDataSocket, closeDataServer])
-    .then(() => {
+  closeSocket() {
+    if (this.dataSocket) {
+      const socket = this.dataSocket;
+      this.dataSocket.end(() => socket.destroy());
       this.dataSocket = null;
-      this.dataServer = null;
-      this.type = false;
+    }
+  }
 
-      this.connection.connector = new Connector(this);
-    });
+  closeServer() {
+    if (this.dataServer) {
+      this.dataServer.close();
+      this.dataServer = null;
+    }
+  }
+
+
+  end() {
+    this.closeSocket();
+    this.closeServer();
+
+    this.type = false;
+    this.connection.connector = new Connector(this);
   }
 }
 module.exports = Connector;

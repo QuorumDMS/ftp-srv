@@ -23,7 +23,7 @@ describe(CMD, function () {
     sandbox.restore();
   });
 
-  it('// unsuccessful | no file system', done => {
+  it('// unsuccessful | no file system', (done) => {
     delete mockClient.fs;
 
     cmdFn()
@@ -34,7 +34,7 @@ describe(CMD, function () {
     .catch(done);
   });
 
-  it('// unsuccessful | file system does not have functions', done => {
+  it('// unsuccessful | file system does not have functions', (done) => {
     mockClient.fs = {};
 
     cmdFn()
@@ -45,7 +45,7 @@ describe(CMD, function () {
     .catch(done);
   });
 
-  it('777 test // unsuccessful | file chmod fails', done => {
+  it('777 test // unsuccessful | file chmod fails', (done) => {
     mockClient.fs.chmod.restore();
     sandbox.stub(mockClient.fs, 'chmod').rejects(new Error('test'));
 
@@ -57,7 +57,7 @@ describe(CMD, function () {
     .catch(done);
   });
 
-  it('777 test // successful', done => {
+  it('777 test // successful', (done) => {
     cmdFn({log: mockLog, command: {arg: '777 test'}})
     .then(() => {
       expect(mockClient.fs.chmod.args[0]).to.eql(['test', 511]);

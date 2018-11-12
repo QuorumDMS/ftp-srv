@@ -10,7 +10,7 @@ module.exports = function ({log, command} = {}) {
   .then(() => {
     return this.reply(200);
   })
-  .catch(err => {
+  .catch((err) => {
     log.error(err);
     return this.reply(500);
   });

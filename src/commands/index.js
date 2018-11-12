@@ -9,8 +9,8 @@ class FtpCommands {
   constructor(connection) {
     this.connection = connection;
     this.previousCommand = {};
-    this.blacklist = _.get(this.connection, 'server.options.blacklist', []).map(cmd => _.upperCase(cmd));
-    this.whitelist = _.get(this.connection, 'server.options.whitelist', []).map(cmd => _.upperCase(cmd));
+    this.blacklist = _.get(this.connection, 'server.options.blacklist', []).map((cmd) => _.upperCase(cmd));
+    this.whitelist = _.get(this.connection, 'server.options.whitelist', []).map((cmd) => _.upperCase(cmd));
   }
 
   parse(message) {
