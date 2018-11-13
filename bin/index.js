@@ -19,7 +19,8 @@ function setupYargs() {
     })
     .option('username', {
       describe: 'Blank for anonymous',
-      type: 'string'
+      type: 'string',
+      default: ''
     })
     .option('password', {
       describe: 'Password for given username',
@@ -36,6 +37,20 @@ function setupYargs() {
       boolean: true,
       default: false
     })
+    .option('pasv_url', {
+      describe: 'URL to provide for passive connections',
+      type: 'string'
+    })
+    .option('pasv_min', {
+      describe: 'Starting point to use when creating passive connections',
+      type: 'number',
+      default: 1024
+    })
+    .option('pasv_max', {
+      describe: 'Ending port to use when creating passive connections',
+      type: 'number',
+      default: 65535
+    })
     .parse();
 }
 
@@ -46,6 +61,9 @@ function setupState(_args) {
     if (_args._ && _args._.length > 0) {
       _state.url = _args._[0];
     }
+    _state.pasv_url = _args.pasv_url;
+    _state.pasv_min = _args.pasv_min;
+    _state.pasv_max = _args.pasv_max;
     _state.anonymous = _args.username === '';
   }
 
@@ -105,7 +123,11 @@ function startFtpServer(_state) {
     return reject(new errors.GeneralError('Invalid username or password', 401));
   }
 
-  const ftpServer = new FtpSrv(_state.url, {
+  const ftpServer = new FtpSrv({
+    url: _state.url,
+    pasv_url: _state.pasv_url,
+    pasv_min: _state.pasv_min,
+    pasv_max: _state.pasv_max,
     anonymous: _state.anonymous,
     blacklist: _state.blacklist
   });
