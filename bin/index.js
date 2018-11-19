@@ -105,7 +105,8 @@ function startFtpServer(_state) {
     return reject(new errors.GeneralError('Invalid username or password', 401));
   }
 
-  const ftpServer = new FtpSrv(_state.url, {
+  const ftpServer = new FtpSrv({
+    url: _state.url,
     anonymous: _state.anonymous,
     blacklist: _state.blacklist
   });
