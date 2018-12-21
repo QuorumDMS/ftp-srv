@@ -70,9 +70,9 @@ function setupState(_args) {
   function setupRoot() {
     const dirPath = _args.root;
     if (dirPath) {
-      _state.root = process.cwd();
-    } else {
       _state.root = dirPath;
+    } else {
+      _state.root = process.cwd();
     }
   }
 
