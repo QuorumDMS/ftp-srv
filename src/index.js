@@ -13,6 +13,11 @@ const {getNextPortFactory} = require('./helpers/find-port');
 class FtpServer extends EventEmitter {
   constructor(options = {}) {
     super();
+    // Remove null/undefined options so they get set to defaults, below
+    for (const k in options) {
+      if (options[k] == null) delete options[k];
+    }
+
     this.options = Object.assign({
       log: buyan.createLogger({name: 'ftp-srv'}),
       url: 'ftp://127.0.0.1:21',
