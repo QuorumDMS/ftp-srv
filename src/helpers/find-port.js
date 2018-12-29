@@ -20,10 +20,14 @@ function getNextPortFactory(min, max = Infinity) {
     portCheckServer.listen(nextPortNumber.next().value);
   });
 
-  return () => new Promise((resolve) => {
+  return () => new Promise((resolve, reject) => {
     portCheckServer.once('listening', () => {
-      const {port} = portCheckServer.address();
-      portCheckServer.close(() => resolve(port));
+      const address = portCheckServer.address();
+      if (address) {
+        portCheckServer.close(() => resolve(address.port));
+      } else {
+        reject(Error('Unable to find server port'));
+      }
     });
     portCheckServer.listen(nextPortNumber.next().value);
   })
