@@ -21,15 +21,16 @@ function getNextPortFactory(min, max = Infinity) {
   });
 
   return () => new Promise((resolve, reject) => {
+    const port = nextPortNumber.next().value;
     portCheckServer.once('listening', () => {
       const address = portCheckServer.address();
       if (address) {
         portCheckServer.close(() => resolve(address.port));
       } else {
-        reject(Error('Unable to find server port'));
+        reject(Error(`Port ${port} not available`));
       }
     });
-    portCheckServer.listen(nextPortNumber.next().value);
+    portCheckServer.listen(port);
   })
   .catch(RangeError, (err) => Promise.reject(new errors.ConnectorError(err.message)));
 }
