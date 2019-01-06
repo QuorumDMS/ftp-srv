@@ -113,9 +113,13 @@ function setupState(_args) {
 }
 
 function startFtpServer(_state) {
+   // Remove null/undefined options so they get set to defaults, below
+   for (const key in _state) {
+    if (_state[key] === undefined) delete _state[key];
+  }
 
   function checkLogin(data, resolve, reject) {
-    const user = _state.credentials[data.username]
+    const user = _state.credentials[data.username];
     if (_state.anonymous || (user && user.password === data.password)) {
       return resolve({root: (user && user.root) || _state.root});
     }
