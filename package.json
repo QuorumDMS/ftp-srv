@@ -27,8 +27,8 @@
   "scripts": {
     "pre-release": "npm run verify",
     "commitmsg": "cz-customizable-ghooks",
-    "dev": "cross-env NODE_ENV=development npm run verify:watch",
-    "prepush": "npm run verify && npm run test:once --silent",
+    "dev": "cross-env NODE_ENV=development npm run verify",
+    "prepush": "npm run verify && npm run test",
     "semantic-release": "semantic-release",
     "start": "npm run dev",
     "test": "cross-env NODE_ENV=test mocha --opts config/testUnit/mocha.opts",
