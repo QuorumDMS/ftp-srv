@@ -1,52 +1,28 @@
 /* eslint no-unused-expressions: 0 */
 const {expect} = require('chai');
 const net = require('net');
-const sinon = require('sinon');
 
 const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('helpers // find-port', function () {
-  let sandbox;
-  let getNextPort;
+  describe('keeps trying new ports', () => {
+    let getNextPort;
+    let serverAlreadyRunning;
+    beforeEach((done) => {
+      const host = '0.0.0.0';
+      getNextPort = getNextPortFactory(host, 8821);
 
-  beforeEach(() => {
-    sandbox = sinon.sandbox.create().usingPromise(Promise);
-
-    getNextPort = getNextPortFactory(1, 2);
-  });
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('finds a port', () => {
-    sandbox.stub(net.Server.prototype, 'listen').callsFake(function (port) {
-      this.address = () => ({port});
-      setImmediate(() => this.emit('listening'));
+      serverAlreadyRunning = net.createServer();
+      serverAlreadyRunning.listen(8821, host, () => done());
     });
 
-    return getNextPort()
-    .then((port) => {
-      expect(port).to.equal(1);
-    });
-  });
-
-  it('restarts count', () => {
-    sandbox.stub(net.Server.prototype, 'listen').callsFake(function (port) {
-      this.address = () => ({port});
-      setImmediate(() => this.emit('listening'));
+    afterEach((done) => {
+      serverAlreadyRunning.close(() => done());
     });
 
-    return getNextPort()
-    .then((port) => {
-      expect(port).to.equal(1);
+    it('test', async () => {
+      const port = await getNextPort();
+      expect(port).to.equal(8822);
     })
-    .then(() => getNextPort())
-    .then((port) => {
-      expect(port).to.equal(2);
-    })
-    .then(() => getNextPort())
-    .then((port) => {
-      expect(port).to.equal(1);
-    });
   });
 });
