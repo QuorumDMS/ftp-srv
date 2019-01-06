@@ -32,8 +32,7 @@
     "semantic-release": "semantic-release",
     "start": "npm run dev",
     "test": "cross-env NODE_ENV=test mocha --opts config/testUnit/mocha.opts",
-    "verify": "npm run verify:js -- --silent",
-    "verify:js": "eslint -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\""
+    "verify": "eslint -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\" \"bin/**/*.js\""
   },
   "release": {
     "verifyConditions": "condition-circle"
