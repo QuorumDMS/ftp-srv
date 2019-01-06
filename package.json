@@ -31,11 +31,9 @@
     "prepush": "npm run verify && npm run test:once --silent",
     "semantic-release": "semantic-release",
     "start": "npm run dev",
-    "test": "cross-env NODE_ENV=test mocha --opts config/testUnit/mocha.opts -w",
-    "test:once": "cross-env NODE_ENV=test mocha --opts config/testUnit/mocha.opts",
-    "verify": "npm run verify:js --silent",
-    "verify:js": "eslint -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js success",
-    "verify:js:fix": "eslint --fix -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js:fix success"
+    "test": "cross-env NODE_ENV=test mocha --opts config/testUnit/mocha.opts",
+    "verify": "npm run verify:js -- --silent",
+    "verify:js": "eslint -c config/verify/.eslintrc \"src/**/*.js\" \"test/**/*.js\""
   },
   "release": {
     "verifyConditions": "condition-circle"
