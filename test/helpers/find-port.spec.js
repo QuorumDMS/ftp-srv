@@ -20,9 +20,11 @@ describe('helpers // find-port', function () {
       serverAlreadyRunning.close(() => done());
     });
 
-    it('test', async () => {
-      const port = await getNextPort();
-      expect(port).to.equal(8822);
-    })
+    it('test', () => {
+      return getNextPort()
+      .then((port) => {
+        expect(port).to.equal(8822);
+      });
+    });
   });
 });
