@@ -22,7 +22,7 @@ module.exports = {
 
       const destroyConnection = (connection, reject) => (err) => {
         if (connection) {
-          if (connection.writeable) connection.end();
+          if (connection.writable) connection.end();
           connection.destroy(err);
         }
         reject(err);
