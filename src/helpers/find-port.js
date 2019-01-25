@@ -15,16 +15,23 @@ function* portNumberGenerator(min, max) {
 function getNextPortFactory(min, max = Infinity) {
   const nextPortNumber = portNumberGenerator(min, max);
   const portCheckServer = net.createServer();
+
   portCheckServer.maxConnections = 0;
+  
   portCheckServer.on('error', () => {
     portCheckServer.listen(nextPortNumber.next().value);
   });
 
-  return () => new Promise((resolve) => {
+  return () => new Promise((resolve, reject) => {
     portCheckServer.once('listening', () => {
-      const {port} = portCheckServer.address();
-      portCheckServer.close(() => resolve(port));
+      const address = portCheckServer.address();
+      const port = address && address.port;
+
+      portCheckServer.close(() => 
+        port ? resolve(port) : reject('No Port Found')
+      );
     });
+
     portCheckServer.listen(nextPortNumber.next().value);
   })
   .catch(RangeError, (err) => Promise.reject(new errors.ConnectorError(err.message)));
