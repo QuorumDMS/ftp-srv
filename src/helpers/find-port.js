@@ -28,9 +28,9 @@ function getNextPortFactory(min, max = Infinity) {
       const port = address && address.port;
 
       portCheckServer.close(() => 
-        port 
+        return port 
           ? resolve(port) 
-          : reject(new Error('No Port Found'))
+          : getNextPortFactory(min, max).then(resolve)
       );
     });
 
