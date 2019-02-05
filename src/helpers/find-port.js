@@ -31,7 +31,7 @@ function getNextPortFactory(min, max = Infinity) {
         portCheckServer.close(() => 
           port 
             ? resolve(port) 
-            : getNextPortFactory(min, max).then(resolve)
+            : getNextPortFactory(min, max)().then(resolve)
         );
       });
     });
