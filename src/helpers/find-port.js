@@ -28,7 +28,7 @@ function getNextPortFactory(min, max = Infinity) {
       const port = address && address.port;
 
       portCheckServer.close(() => 
-        return port 
+        port 
           ? resolve(port) 
           : getNextPortFactory(min, max).then(resolve)
       );
