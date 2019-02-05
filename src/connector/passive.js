@@ -79,6 +79,9 @@ class Passive extends Connector {
           }
         });
       });
+    })
+    .catch((error) => {
+      return this.setupServer();
     });
   }
 
