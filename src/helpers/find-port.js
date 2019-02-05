@@ -24,14 +24,16 @@ function getNextPortFactory(min, max = Infinity) {
 
   return () => new Promise((resolve, reject) => {
     portCheckServer.once('listening', () => {
-      const address = portCheckServer.address();
-      const port = address && address.port;
+      process.nextTick(() => {
+        const address = portCheckServer.address();
+        const port = address && address.port;
 
-      portCheckServer.close(() => 
-        port 
-          ? resolve(port) 
-          : getNextPortFactory(min, max).then(resolve)
-      );
+        portCheckServer.close(() => 
+          port 
+            ? resolve(port) 
+            : getNextPortFactory(min, max).then(resolve)
+        );
+      });
     });
 
     portCheckServer.listen(nextPortNumber.next().value);
