@@ -69,52 +69,52 @@ Supported protocols:
 - `ftp` Plain FTP
 - `ftps` Implicit FTP over TLS
 
-_Note:_ The hostname must be the external IP address to accept external connections. `0.0.0.0` will listen on any available hosts for server and passive connections.
+_Note:_ The hostname must be the external IP address to accept external connections. `0.0.0.0` will listen on any available hosts for server and passive connections.  
 __Default:__ `"ftp://127.0.0.1:21"`
 
 #### `pasv_url`
 The hostname to provide a client when attempting a passive connection (`PASV`). This defaults to the provided `url` hostname.
 
-_Note:_ If set to `0.0.0.0`, this will automatically resolve to the external IP of the box.
+_Note:_ If set to `0.0.0.0`, this will automatically resolve to the external IP of the box.  
 __Default:__ `"127.0.0.1"`
 
 #### `pasv_min`
-Tne starting port to accept passive connections.
+Tne starting port to accept passive connections.  
 __Default:__ `1024`
 
 #### `pasv_max`
-The ending port to accept passive connections.
-The range is then queried for an available port to use when required.
+The ending port to accept passive connections.  
+The range is then queried for an available port to use when required.  
 __Default:__ `65535`
 
 #### `greeting`
-A human readable array of lines or string to send when a client connects.
+A human readable array of lines or string to send when a client connects.  
 __Default:__ `null`
 
 #### `tls`
-Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit (`ftps` protocol) or explicit (`AUTH TLS`) connections.
+Node [TLS secure context object](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options) used for implicit (`ftps` protocol) or explicit (`AUTH TLS`) connections.  
 __Default:__ `false`
 
 #### `anonymous`
-If true, will allow clients to authenticate using the username `anonymous`, not requiring a password from the user.
-Can also set as a string which allows users to authenticate using the username provided.
-The `login` event is then sent with the provided username and `@anonymous` as the password.
+If true, will allow clients to authenticate using the username `anonymous`, not requiring a password from the user.  
+Can also set as a string which allows users to authenticate using the username provided.  
+The `login` event is then sent with the provided username and `@anonymous` as the password.  
 __Default:__ `false`
 
 #### `blacklist`
-Array of commands that are not allowed.
-Response code `502` is sent to clients sending one of these commands.
-__Example:__ `['RMD', 'RNFR', 'RNTO']` will not allow users to delete directories or rename any files.
+Array of commands that are not allowed.  
+Response code `502` is sent to clients sending one of these commands.  
+__Example:__ `['RMD', 'RNFR', 'RNTO']` will not allow users to delete directories or rename any files.  
 __Default:__ `[]`
 
 #### `whitelist`
-Array of commands that are only allowed.
-Response code `502` is sent to clients sending any other command.
+Array of commands that are only allowed.  
+Response code `502` is sent to clients sending any other command.  
 __Default:__ `[]`
 
 #### `file_format`
-Sets the format to use for file stat queries such as `LIST`.
-__Default:__ `"ls"`
+Sets the format to use for file stat queries such as `LIST`.  
+__Default:__ `"ls"`  
 __Allowable values:__
   - `ls` [bin/ls format](https://cr.yp.to/ftp/list/binls.html)
   - `ep` [Easily Parsed LIST format](https://cr.yp.to/ftp/list/eplf.html)
@@ -184,10 +184,10 @@ ftpServer.on('login', ({connection, username, password}, resolve, reject) => { .
 
 Occurs when a client is attempting to login. Here you can resolve the login request by username and password.
 
-`connection` [client class object](src/connection.js)
-`username` string of username from `USER` command
-`password` string of password from `PASS` command
-`resolve` takes an object of arguments:
+`connection` [client class object](src/connection.js)  
+`username` string of username from `USER` command  
+`password` string of password from `PASS` command  
+`resolve` takes an object of arguments:  
 - `fs`
   - Set a custom file system class for this connection to use.
   - See [File System](#file-system) for implementation details.
@@ -211,8 +211,8 @@ ftpServer.on('client-error', ({connection, context, error}) => { ... });
 
 Occurs when an error arises in the client connection.
 
-`connection` [client class object](src/connection.js)
-`context` string of where the error occurred
+`connection` [client class object](src/connection.js)  
+`context` string of where the error occurred  
 `error` error object
 
 ### `RETR`
@@ -222,7 +222,7 @@ connection.on('RETR', (error, filePath) => { ... });
 
 Occurs when a file is downloaded.
 
-`error` if successful, will be `null`
+`error` if successful, will be `null`  
 `filePath` location to which file was downloaded
 
 ### `STOR`
@@ -232,7 +232,7 @@ connection.on('STOR', (error, fileName) => { ... });
 
 Occurs when a file is uploaded.
 
-`error` if successful, will be `null`
+`error` if successful, will be `null`  
 `fileName` name of the file that was uploaded
 
 ### `RNTO`
@@ -250,11 +250,11 @@ Occurs when a file is renamed.
 See the [command registry](src/commands/registration) for a list of all implemented FTP commands.
 
 ## File System
-The default [file system](src/fs.js) can be overwritten to use your own implementation.
-This can allow for virtual file systems, and more.
-Each connection can set it's own file system based on the user.
+The default [file system](src/fs.js) can be overwritten to use your own implementation.  
+This can allow for virtual file systems, and more.  
+Each connection can set it's own file system based on the user.  
 
-The default file system is exported and can be extended as needed:
+The default file system is exported and can be extended as needed:  
 ```js
 const {FtpSrv, FileSystem} = require('ftp-srv');
 
@@ -273,52 +273,52 @@ Custom file systems can implement the following variables depending on the devel
 
 ### Methods
 #### [`currentDirectory()`](src/fs.js#L40)
-Returns a string of the current working directory
+Returns a string of the current working directory  
 __Used in:__ `PWD`
 
 #### [`get(fileName)`](src/fs.js#L44)
-Returns a file stat object of file or directory
+Returns a file stat object of file or directory  
 __Used in:__ `LIST`, `NLST`, `STAT`, `SIZE`, `RNFR`, `MDTM`
 
 #### [`list(path)`](src/fs.js#L50)
-Returns array of file and directory stat objects
+Returns array of file and directory stat objects  
 __Used in:__ `LIST`, `NLST`, `STAT`
 
 #### [`chdir(path)`](src/fs.js#L67)
-Returns new directory relative to current directory
+Returns new directory relative to current directory  
 __Used in:__ `CWD`, `CDUP`
 
 #### [`mkdir(path)`](src/fs.js#L114)
-Returns a path to a newly created directory
+Returns a path to a newly created directory  
 __Used in:__ `MKD`
 
 #### [`write(fileName, {append, start})`](src/fs.js#L79)
-Returns a writable stream
-Options:
- `append` if true, append to existing file
- `start` if set, specifies the byte offset to write to
+Returns a writable stream  
+Options:  
+ `append` if true, append to existing file  
+ `start` if set, specifies the byte offset to write to  
 __Used in:__ `STOR`, `APPE`
 
 #### [`read(fileName, {start})`](src/fs.js#L90)
-Returns a readable stream
-Options:
- `start` if set, specifies the byte offset to read from
+Returns a readable stream  
+Options:  
+ `start` if set, specifies the byte offset to read from  
 __Used in:__ `RETR`
 
 #### [`delete(path)`](src/fs.js#L105)
-Delete a file or directory
+Delete a file or directory  
 __Used in:__ `DELE`
 
 #### [`rename(from, to)`](src/fs.js#L120)
-Renames a file or directory
+Renames a file or directory  
 __Used in:__ `RNFR`, `RNTO`
 
 #### [`chmod(path)`](src/fs.js#L126)
-Modifies a file or directory's permissions
+Modifies a file or directory's permissions  
 __Used in:__ `SITE CHMOD`
 
 #### [`getUniqueName()`](src/fs.js#L131)
-Returns a unique file name to write to
+Returns a unique file name to write to  
 __Used in:__ `STOU`
 
 <!--[RM_CONTRIBUTING]-->
