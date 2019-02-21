@@ -50,6 +50,21 @@ jobs:
       - NODE_VERSION: 6
     <<: *base-build
 
+  release_dry_run:
+    docker:
+      - image: circleci/node:8
+    environment:
+      - NODE_VERSION: 8
+    steps:
+      - checkout
+      - <<: *create-cache-file
+      - restore_cache:
+          <<: *package-json-cache
+      - deploy:
+          name: Dry Release
+          command: |
+            npm run semantic-release -- --dry-run
+
   release:
     docker:
       - image: circleci/node:8
@@ -61,7 +76,7 @@ jobs:
       - restore_cache:
           <<: *package-json-cache
       - deploy:
-          name: Semantic Release
+          name: Release
           command: |
             npm run semantic-release
 
@@ -81,11 +96,18 @@ workflows:
           filters:
             branches:
               only: master
-      - release:
+      - release_dry_run:
           requires:
             - test_node_6
             - test_node_8
             - test_node_10
+      - hold_release:
+          type: approval
+          requires:
+            - release_dry_run
+      - release:
+          requires:
+            - hold_release
 
   build_and_test:
     jobs:
