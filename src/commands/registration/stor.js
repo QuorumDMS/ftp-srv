@@ -22,7 +22,7 @@ module.exports = {
 
       const destroyConnection = (connection, reject) => (err) => {
         if (connection) {
-          if (connection.writeable) connection.end();
+          if (connection.writable) connection.end();
           connection.destroy(err);
         }
         reject(err);
@@ -36,7 +36,7 @@ module.exports = {
       const socketPromise = new Promise((resolve, reject) => {
         this.connector.socket.on('data', (data) => {
           if (this.connector.socket) this.connector.socket.pause();
-          if (stream) {
+          if (stream && stream.writable) {
             stream.write(data, this.transferType, () => this.connector.socket && this.connector.socket.resume());
           }
         });
