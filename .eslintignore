@@ -1,9 +1,2 @@
-# START_CONFIT_GENERATED_CONTENT
-# Common folders to ignore
 node_modules/*
 bower_components/*
-
-# Config folder (optional - you might want to lint this...)
-config/*
-
-# END_CONFIT_GENERATED_CONTENT
