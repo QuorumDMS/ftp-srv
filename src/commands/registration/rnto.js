@@ -15,8 +15,10 @@ module.exports = {
     .then(() => {
       return this.reply(250);
     })
+    .tap(() => this.emit('RNTO', null, to))
     .catch((err) => {
       log.error(err);
+      this.emit('RNTO', err);
       return this.reply(550, err.message);
     })
     .finally(() => {

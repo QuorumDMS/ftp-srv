@@ -1,11 +1,13 @@
 const Promise = require('bluebird');
 const {expect} = require('chai');
 const sinon = require('sinon');
+const EventEmitter = require('events');
 
 const CMD = 'RNTO';
 describe(CMD, function () {
   let sandbox;
   const mockLog = {error: () => {}};
+  let emitter;
   const mockClient = {reply: () => Promise.resolve()};
   const cmdFn = require(`../../../src/commands/registration/${CMD.toLowerCase()}`).handler.bind(mockClient);
 
@@ -17,6 +19,9 @@ describe(CMD, function () {
       get: () => Promise.resolve(),
       rename: () => Promise.resolve()
     };
+
+    emitter = new EventEmitter();
+    mockClient.emit = emitter.emit.bind(emitter);
 
     sandbox.spy(mockClient, 'reply');
     sandbox.spy(mockClient.fs, 'rename');
