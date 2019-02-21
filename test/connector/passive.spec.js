@@ -20,7 +20,7 @@ describe('Connector - Passive //', function () {
     },
     server: {
       url: '',
-      getNextPasvPort: getNextPortFactory('::', 1024)
+      getNextPasvPort: getNextPortFactory(1024)
     }
   };
   let sandbox;
@@ -48,7 +48,7 @@ describe('Connector - Passive //', function () {
 
   describe('setup', function () {
     before(function () {
-      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory('::'));
+      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory());
     });
 
     it('no pasv range provided', function (done) {
@@ -56,7 +56,7 @@ describe('Connector - Passive //', function () {
       passive.setupServer()
       .catch((err) => {
         try {
-          expect(err.name).to.contain('RangeError');
+          expect(err.name).to.equal('ConnectorError');
           done();
         } catch (ex) {
           done(ex);
@@ -68,7 +68,7 @@ describe('Connector - Passive //', function () {
   describe('setup', function () {
     let connection;
     before(function () {
-      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory('::', -1, -1));
+      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory(-1, -1));
 
       connection = new PassiveConnector(mockConnection);
     });
@@ -76,7 +76,7 @@ describe('Connector - Passive //', function () {
     it('has invalid pasv range', function (done) {
       connection.setupServer()
       .catch((err) => {
-        expect(err.name).to.contain('RangeError');
+        expect(err.name).to.equal('ConnectorError');
         done();
       });
     });
