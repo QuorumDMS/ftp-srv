@@ -7,7 +7,6 @@ const tls = require('tls');
 const EventEmitter = require('events');
 
 const Connection = require('./connection');
-const resolveHost = require('./helpers/resolve-host');
 const {getNextPortFactory} = require('./helpers/find-port');
 
 class FtpServer extends EventEmitter {
@@ -36,6 +35,7 @@ class FtpServer extends EventEmitter {
     this.log = this.options.log;
     this.url = nodeUrl.parse(this.options.url);
     this.getNextPasvPort = getNextPortFactory(
+      _.get(this, 'options.pasv_url'),
       _.get(this, 'options.pasv_min'),
       _.get(this, 'options.pasv_max'));
 
@@ -67,22 +67,21 @@ class FtpServer extends EventEmitter {
   }
 
   listen() {
-    return resolveHost(this.options.pasv_url || this.url.hostname)
-    .then((pasvUrl) => {
-      this.options.pasv_url = pasvUrl;
+    if (!this.options.pasv_url) {
+      this.log.warn('Passive URL not set. Passive connections not available.');
+    }
 
-      return new Promise((resolve, reject) => {
-        this.server.once('error', reject);
-        this.server.listen(this.url.port, this.url.hostname, (err) => {
-          this.server.removeListener('error', reject);
-          if (err) return reject(err);
-          this.log.info({
-            protocol: this.url.protocol.replace(/\W/g, ''),
-            ip: this.url.hostname,
-            port: this.url.port
-          }, 'Listening');
-          resolve('Listening');
-        });
+    return new Promise((resolve, reject) => {
+      this.server.once('error', reject);
+      this.server.listen(this.url.port, this.url.hostname, (err) => {
+        this.server.removeListener('error', reject);
+        if (err) return reject(err);
+        this.log.info({
+          protocol: this.url.protocol.replace(/\W/g, ''),
+          ip: this.url.hostname,
+          port: this.url.port
+        }, 'Listening');
+        resolve('Listening');
       });
     });
   }
