@@ -235,6 +235,16 @@ Occurs when a file is uploaded.
 `error` if successful, will be `null`  
 `fileName` name of the file that was uploaded
 
+### `RNTO`
+```js
+connection.on('RNTO', (error, fileName) => { ... });
+```
+
+Occurs when a file is renamed.
+
+`error` if successful, will be `null`
+`fileName` name of the file that was renamed
+
 ## Supported Commands
 
 See the [command registry](src/commands/registration) for a list of all implemented FTP commands.
