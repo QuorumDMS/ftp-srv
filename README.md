@@ -242,7 +242,7 @@ connection.on('RNTO', (error, fileName) => { ... });
 
 Occurs when a file is renamed.
 
-`error` if successful, will be `null`  
+`error` if successful, will be `null`
 `fileName` name of the file that was renamed
 
 ## Supported Commands
@@ -321,33 +321,31 @@ __Used in:__ `SITE CHMOD`
 Returns a unique file name to write to  
 __Used in:__ `STOU`
 
+<!--[RM_CONTRIBUTING]-->
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+<!--[]-->
+
 ## Contributors
 
 - [OzairP](https://github.com/OzairP)
-- [TimLuq](https://github.com/TimLuq)
-- [crabl](https://github.com/crabl)
-- [hirviid](https://github.com/hirviid)
-- [DiegoRBaquero](https://github.com/DiegoRBaquero)
-- [edin-m](https://github.com/edin-m)
-- [voxsoftware](https://github.com/voxsoftware)
-- [jorinvo](https://github.com/jorinvo)
-- [Johnnyrook777](https://github.com/Johnnyrook777)
 - [qchar](https://github.com/qchar)
-- [mikejestes](https://github.com/mikejestes)
+- [jorinvo](https://github.com/jorinvo)
+- [voxsoftware](https://github.com/voxsoftware)
 - [pkeuter](https://github.com/pkeuter)
-- [qiansc](https://github.com/qiansc)
-- [broofa](https://github.com/broofa)
-- [lafin](https://github.com/lafin)
-- [alancnet](https://github.com/alancnet)
-- [zgwit](https://github.com/zgwit)
+- [TimLuq](https://github.com/TimLuq)
+- [edin-mg](https://github.com/edin-m)
+- [DiegoRBaquero](https://github.com/DiegoRBaquero)
+- [Johnnyrook777](https://github.com/Johnnyrook777)
 
+<!--[RM_LICENSE]-->
 ## License
 
 This software is licensed under the MIT Licence. See [LICENSE](LICENSE).
+
+<!--[]-->
 
 ## References
 

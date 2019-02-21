@@ -23,10 +23,10 @@ base-build: &base-build
           - node_modules
     - run:
         name: Lint
-        command: npm run verify
+        command: npm run verify:js
     - run:
         name: Test
-        command: npm run test
+        command: npm run test:once
 
 jobs:
   test_node_10:

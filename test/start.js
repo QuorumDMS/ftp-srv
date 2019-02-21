@@ -1,3 +1,4 @@
+require('dotenv').load();
 const bunyan = require('bunyan');
 const fs = require('fs');
 const FtpServer = require('../src');
