@@ -124,6 +124,10 @@ __Allowable values:__
 #### `log`
 A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
 
+#### `socketTimeout`
+__Default:__ `0`
+Sets the timeout (in ms) after that an idle connection is closed by the server (default behaviour: no timeout)
+
 ## CLI
 
 `ftp-srv` also comes with a builtin CLI.

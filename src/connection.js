@@ -30,8 +30,8 @@ class FtpConnection extends EventEmitter {
       this.server.emit('client-error', {connection: this, context: 'commandSocket', error: err});
     });
     this.commandSocket.on('data', this._handleData.bind(this));
-    this.commandSocket.on('timeout', (err) => {
-      this.log.trace(err, 'Client timeout');
+    this.commandSocket.on('timeout', () => {
+      this.log.trace('Client timeout');
       this.close().catch((e) => this.log.trace(e, 'Client close error'));
     });
     this.commandSocket.on('close', () => {
