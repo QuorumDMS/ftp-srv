@@ -40,7 +40,8 @@ class FtpServer extends EventEmitter {
       _.get(this, 'options.pasv_min'),
       _.get(this, 'options.pasv_max'));
 
-    this.socketTimeout = isNaN(Number(this.options.socketTimeout)) ? 0 : Number(this.options.socketTimeout);
+	const timeout = Number(this.options.socketTimeout);
+	this.socketTimeout = isNaN(timeout) ? 0 : timeout;
 
     const serverConnectionHandler = (socket) => {
       socket.setTimeout(this.socketTimeout);
