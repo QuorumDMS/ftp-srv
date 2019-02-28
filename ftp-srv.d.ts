@@ -64,7 +64,7 @@ export interface FtpServerOptions {
     pasv_max?: number,
     pasv_url?: string,
     greeting?: string | string[],
-    tls?: tls.SecureContext | false,
+    tls?: tls.SecureContextOptions | false,
     anonymous?: boolean,
     blacklist?: Array<string>,
     whitelist?: Array<string>,

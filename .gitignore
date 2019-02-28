@@ -1,7 +1,6 @@
+test_tmp/
+
 node_modules/
 
 dist/
-reports/
 npm-debug.log
-.nyc_output/
-test_tmp/

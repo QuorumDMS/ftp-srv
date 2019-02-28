@@ -3,6 +3,10 @@ const PassiveConnector = require('../../connector/passive');
 module.exports = {
   directive: 'PASV',
   handler: function () {
+    if (!this.server.options.pasv_url) {
+      return this.reply(502);
+    }
+
     this.connector = new PassiveConnector(this);
     return this.connector.setupServer()
     .then((server) => {

@@ -48,6 +48,7 @@ describe('Integration', function () {
   function startServer(options = {}) {
     server = new FtpServer(_.assign({
       log,
+      pasv_url: '127.0.0.1',
       pasv_min: 8881,
       greeting: ['hello', 'world'],
       anonymous: true

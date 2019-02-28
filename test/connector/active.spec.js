@@ -9,7 +9,7 @@ const ActiveConnector = require('../../src/connector/active');
 const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('Connector - Active //', function () {
-  let getNextPort = getNextPortFactory(1024);
+  let getNextPort = getNextPortFactory('::', 1024);
   let PORT;
   let active;
   let mockConnection = {};

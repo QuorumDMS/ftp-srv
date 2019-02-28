@@ -1,44 +1,56 @@
 const net = require('net');
-const Promise = require('bluebird');
 const errors = require('../errors');
 
-function* portNumberGenerator(min, max) {
+const MAX_PORT = 65535;
+const MAX_PORT_CHECK_ATTEMPT = 5;
+
+function* portNumberGenerator(min, max = MAX_PORT) {
   let current = min;
   while (true) {
-    if (current > 65535 || current > max) {
+    if (current > MAX_PORT || current > max) {
       current = min;
     }
     yield current++;
   }
 }
 
-function getNextPortFactory(min, max = Infinity) {
-  const nextPortNumber = portNumberGenerator(min, max);
+function getNextPortFactory(host, portMin, portMax, maxAttempts = MAX_PORT_CHECK_ATTEMPT) {
+  const nextPortNumber = portNumberGenerator(portMin, portMax);
   const portCheckServer = net.createServer();
-
   portCheckServer.maxConnections = 0;
-  
-  portCheckServer.on('error', () => {
-    portCheckServer.listen(nextPortNumber.next().value);
-  });
 
   return () => new Promise((resolve, reject) => {
-    portCheckServer.once('listening', () => {
-      process.nextTick(() => {
-        const address = portCheckServer.address();
-        const port = address && address.port;
+    let attemptCount = 0;
+    const tryGetPort = () => {
+      attemptCount++;
+      if (attemptCount > maxAttempts) {
+        reject(new errors.ConnectorError('Unable to find valid port'));
+        return;
+      }
 
-        portCheckServer.close(() => 
-          port 
-            ? resolve(port) 
-            : getNextPortFactory(min, max)().then(resolve)
-        );
+      const {value: port} = nextPortNumber.next();
+
+      portCheckServer.removeAllListeners();
+      portCheckServer.once('error', (err) => {
+        if (['EADDRINUSE'].includes(err.code)) {
+          tryGetPort();
+        } else {
+          reject(err);
+        }
       });
-    });
+      portCheckServer.once('listening', () => {
+        portCheckServer.close(() => resolve(port));
+      });
 
-    portCheckServer.listen(nextPortNumber.next().value);
-  })
-  .catch(RangeError, (err) => Promise.reject(new errors.ConnectorError(err.message)));
+      try {
+        portCheckServer.listen(port, host);
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    tryGetPort();
+  });
 }
 
 module.exports = {
