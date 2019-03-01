@@ -18,6 +18,7 @@ class FtpServer extends EventEmitter {
       pasv_min: 1024,
       pasv_max: 65535,
       pasv_url: null,
+      public_pasv_url: null,
       anonymous: false,
       file_format: 'ls',
       blacklist: [],
