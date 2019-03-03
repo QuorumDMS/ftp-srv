@@ -125,7 +125,7 @@ class FtpConnection extends EventEmitter {
           this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, message: letter.message}, 'Reply');
           letter.socket.write(letter.message + '\r\n', letter.encoding, (error) => {
             if (error) {
-              this.log.error('[Process Letter] Socket Write Error', { error: error });
+              this.log.error('[Process Letter] Socket Write Error', { error: error.message });
               return reject(error);
             }
             resolve();
@@ -139,7 +139,7 @@ class FtpConnection extends EventEmitter {
       return processLetter(letter, index);
     }))
     .catch((error) => {
-        this.log.error('Satisfy Parameters Error', { error: error });
+        this.log.error('Satisfy Parameters Error', { error: error.message });
     });
   }
 }
