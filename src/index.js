@@ -24,7 +24,7 @@ class FtpServer extends EventEmitter {
       whitelist: [],
       greeting: null,
       tls: false,
-      socketTimeout: 0
+      timeout: 0
     }, options);
 
     this._greeting = this.setupGreeting(this.options.greeting);
@@ -40,11 +40,10 @@ class FtpServer extends EventEmitter {
       _.get(this, 'options.pasv_min'),
       _.get(this, 'options.pasv_max'));
 
-	const timeout = Number(this.options.socketTimeout);
-	this.socketTimeout = isNaN(timeout) ? 0 : timeout;
+	this.timeout = isNaN(Number(this.options.timeout)) ? 0 : Number(this.options.timeout);
 
     const serverConnectionHandler = (socket) => {
-      socket.setTimeout(this.socketTimeout);
+      socket.setTimeout(this.timeout);
       let connection = new Connection(this, {log: this.log, socket});
       this.connections[connection.id] = connection;
 

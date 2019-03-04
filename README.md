@@ -124,7 +124,7 @@ __Allowable values:__
 #### `log`
 A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by default.
 
-#### `socketTimeout`
+#### `timeout`
 Sets the timeout (in ms) after that an idle connection is closed by the server  
 __Default:__ `0`
 
