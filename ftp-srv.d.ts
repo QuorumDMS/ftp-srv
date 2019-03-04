@@ -69,7 +69,8 @@ export interface FtpServerOptions {
     blacklist?: Array<string>,
     whitelist?: Array<string>,
     file_format?: (stat: Stats) => string | Promise<string> | "ls" | "ep",
-    log?: any,
+	log?: any,
+	timeout?: number
 }
 
 export class FtpServer extends EventEmitter {
