@@ -9,11 +9,10 @@ describe('helpers // find-port', function () {
     let getNextPort;
     let serverAlreadyRunning;
     beforeEach((done) => {
-      const host = '0.0.0.0';
-      getNextPort = getNextPortFactory(host, 8821);
+      getNextPort = getNextPortFactory(8821);
 
       serverAlreadyRunning = net.createServer();
-      serverAlreadyRunning.listen(8821, host, () => done());
+      serverAlreadyRunning.listen(8821, () => done());
     });
 
     afterEach((done) => {

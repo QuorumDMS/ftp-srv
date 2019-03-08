@@ -36,7 +36,6 @@ class FtpServer extends EventEmitter {
     this.log = this.options.log;
     this.url = nodeUrl.parse(this.options.url);
     this.getNextPasvPort = getNextPortFactory(
-      _.get(this, 'url.hostname'),
       _.get(this, 'options.pasv_min'),
       _.get(this, 'options.pasv_max'));
 
