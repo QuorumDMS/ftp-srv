@@ -9,7 +9,7 @@ describe('helpers // find-port', function () {
     let getNextPort;
     let serverAlreadyRunning;
     beforeEach((done) => {
-      getNextPort = getNextPortFactory(8821);
+      getNextPort = getNextPortFactory('::', 8821);
 
       serverAlreadyRunning = net.createServer();
       serverAlreadyRunning.listen(8821, () => done());

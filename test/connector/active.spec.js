@@ -9,7 +9,8 @@ const ActiveConnector = require('../../src/connector/active');
 const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('Connector - Active //', function () {
-  let getNextPort = getNextPortFactory(1024);
+  const host = '127.0.0.1';
+  let getNextPort = getNextPortFactory(host, 1024);
   let PORT;
   let active;
   let mockConnection = {};
@@ -36,7 +37,7 @@ describe('Connector - Active //', function () {
   });
 
   it('sets up a connection', function () {
-    return active.setupConnection('127.0.0.1', PORT)
+    return active.setupConnection(host, PORT)
     .then(() => {
       expect(active.dataSocket).to.exist;
     });
@@ -45,7 +46,7 @@ describe('Connector - Active //', function () {
   it('destroys existing connection, then sets up a connection', function () {
     const destroyFnSpy = sandbox.spy(active.dataSocket, 'destroy');
 
-    return active.setupConnection('127.0.0.1', PORT)
+    return active.setupConnection(host, PORT)
     .then(() => {
       expect(destroyFnSpy.callCount).to.equal(1);
       expect(active.dataSocket).to.exist;
@@ -53,7 +54,7 @@ describe('Connector - Active //', function () {
   });
 
   it('waits for connection', function () {
-    return active.setupConnection('127.0.0.1', PORT)
+    return active.setupConnection(host, PORT)
     .then(() => {
       expect(active.dataSocket).to.exist;
       return active.waitForConnection();
@@ -73,7 +74,7 @@ describe('Connector - Active //', function () {
       }
     };
 
-    return active.setupConnection('127.0.0.1', PORT)
+    return active.setupConnection(host, PORT)
     .then(() => {
       expect(active.dataSocket).to.exist;
       return active.waitForConnection();

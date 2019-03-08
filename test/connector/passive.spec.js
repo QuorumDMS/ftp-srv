@@ -10,6 +10,7 @@ const PassiveConnector = require('../../src/connector/passive');
 const {getNextPortFactory} = require('../../src/helpers/find-port');
 
 describe('Connector - Passive //', function () {
+  const host = '127.0.0.1';
   let mockConnection = {
     reply: () => Promise.resolve({}),
     close: () => Promise.resolve({}),
@@ -20,7 +21,7 @@ describe('Connector - Passive //', function () {
     },
     server: {
       url: '',
-      getNextPasvPort: getNextPortFactory(1024)
+      getNextPasvPort: getNextPortFactory(host, 1024)
     }
   };
   let sandbox;
@@ -48,7 +49,7 @@ describe('Connector - Passive //', function () {
 
   describe('setup', function () {
     before(function () {
-      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory());
+      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory(host));
     });
 
     it('no pasv range provided', function (done) {
@@ -68,7 +69,7 @@ describe('Connector - Passive //', function () {
   describe('setup', function () {
     let connection;
     before(function () {
-      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory(-1, -1));
+      sandbox.stub(mockConnection.server, 'getNextPasvPort').value(getNextPortFactory(host, -1, -1));
 
       connection = new PassiveConnector(mockConnection);
     });
