@@ -179,7 +179,7 @@ describe('Integration', function () {
       const fsPath = `${clientDirectory}/${name}/fail.txt`;
 
       sandbox.stub(connection.fs, 'write').callsFake(function () {
-        const stream = fs.createWriteStream(fsPath, {flags: 'w+'});
+        const stream = fs.createWriteStream(fsPath, {flags: 'w+', autoClose: false});
         stream.on('error', () => fs.existsSync(fsPath) && fs.unlinkSync(fsPath));
         stream.on('close', () => stream.end());
         setImmediate(() => stream.emit('error', new Error('STOR fail test')));
@@ -404,7 +404,7 @@ describe('Integration', function () {
         readFile(`${process.cwd()}/test/cert/server.csr`)
       ]))
       .then(([key, cert, ca]) => startServer({
-        url: 'ftp://127.0.0.1:8880',
+        url: 'ftp://127.0.0.1:8881',
         tls: {key, cert, ca}
       }))
       .then(() => {
@@ -432,7 +432,7 @@ describe('Integration', function () {
         readFile(`${process.cwd()}/test/cert/server.csr`)
       ]))
       .then(([key, cert, ca]) => startServer({
-        url: 'ftps://127.0.0.1:8880',
+        url: 'ftps://127.0.0.1:8882',
         tls: {key, cert, ca}
       }))
       .then(() => {
