@@ -18,7 +18,7 @@ base-build: &base-build
         name: Install
         command: npm ci
     - persist_to_workspace:
-        root: .
+        root: "./$NODE_VERSION"
         paths:
           - node_modules
     - save_cache:
@@ -33,6 +33,13 @@ base-build: &base-build
         command: npm run test
 
 jobs:
+  test_node_11:
+    docker:
+      - image: circleci/node:11
+    environment:
+      - NODE_VERSION: 11
+    <<: *base-build
+
   test_node_10:
     docker:
       - image: circleci/node:10
@@ -47,13 +54,6 @@ jobs:
       - NODE_VERSION: 8
     <<: *base-build
 
-  test_node_6:
-    docker:
-      - image: circleci/node:6
-    environment:
-      - NODE_VERSION: 6
-    <<: *base-build
-
   release_dry_run:
     docker:
       - image: circleci/node:10
@@ -62,7 +62,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .
+          at: "./10"
       - deploy:
           name: Dry Release
           command: |
@@ -76,7 +76,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .
+          at: "./10"
       - deploy:
           name: Release
           command: |
@@ -86,6 +86,10 @@ workflows:
   version: 2
   test_and_tag:
     jobs:
+      - test_node_11:
+          filters:
+            branches:
+              only: master
       - test_node_10:
           filters:
             branches:
@@ -94,15 +98,11 @@ workflows:
           filters:
             branches:
               only: master
-      - test_node_6:
-          filters:
-            branches:
-              only: master
       - release_dry_run:
           requires:
-            - test_node_6
             - test_node_8
             - test_node_10
+            - test_node_11
       - hold_release:
           type: approval
           requires:
@@ -113,15 +113,15 @@ workflows:
 
   build_and_test:
     jobs:
+      - test_node_11:
+          filters:
+            branches:
+              ignore: master
       - test_node_10:
           filters:
             branches:
               ignore: master
       - test_node_8:
-          filters:
-            branches:
-              ignore: master
-      - test_node_6:
           filters:
             branches:
               ignore: master
