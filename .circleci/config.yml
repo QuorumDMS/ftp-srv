@@ -6,7 +6,7 @@ create-cache-file: &create-cache-file
     command: echo "$NODE_VERSION" > _cache_node_version
 
 package-json-cache: &package-json-cache
-  key: npm-install-{{ checksum "_cache_node_version" }}-{{ checksum "package-lock.json" }}
+  key: npm-install-{{ checksum "_cache_node_version" }}
 
 base-build: &base-build
   steps:
@@ -16,11 +16,15 @@ base-build: &base-build
         <<: *package-json-cache
     - run:
         name: Install
-        command: npm install
+        command: npm ci
+    - persist_to_workspace:
+        root: .
+        paths:
+          - node_modules
     - save_cache:
         <<: *package-json-cache
         paths:
-          - node_modules
+          - ~/.npm/_cacache
     - run:
         name: Lint
         command: npm run verify
@@ -52,14 +56,13 @@ jobs:
 
   release_dry_run:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
     environment:
-      - NODE_VERSION: 8
+      - NODE_VERSION: 10
     steps:
       - checkout
-      - <<: *create-cache-file
-      - restore_cache:
-          <<: *package-json-cache
+      - attach_workspace:
+          at: .
       - deploy:
           name: Dry Release
           command: |
@@ -67,14 +70,13 @@ jobs:
 
   release:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
     environment:
-      - NODE_VERSION: 8
+      - NODE_VERSION: 10
     steps:
       - checkout
-      - <<: *create-cache-file
-      - restore_cache:
-          <<: *package-json-cache
+      - attach_workspace:
+          at: .
       - deploy:
           name: Release
           command: |
