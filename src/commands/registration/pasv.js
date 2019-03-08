@@ -2,7 +2,7 @@ const PassiveConnector = require('../../connector/passive');
 
 module.exports = {
   directive: 'PASV',
-  handler: function () {
+  handler: function ({log} = {}) {
     if (!this.server.options.pasv_url) {
       return this.reply(502);
     }
@@ -17,6 +17,10 @@ module.exports = {
       const portByte2 = port % 256;
 
       return this.reply(227, `PASV OK (${host},${portByte1},${portByte2})`);
+    })
+    .catch((err) => {
+      log.error(err);
+      return this.reply(425);
     });
   },
   syntax: '{{cmd}}',

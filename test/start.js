@@ -5,6 +5,7 @@ const FtpServer = require('../src');
 const server = new FtpServer({
   log: bunyan.createLogger({name: 'test', level: 'trace'}),
   url: 'ftp://127.0.0.1:8880',
+  pasv_url: '127.0.0.1',
   pasv_min: 8881,
   greeting: ['Welcome', 'to', 'the', 'jungle!'],
   tls: {

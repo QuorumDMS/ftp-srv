@@ -3,7 +3,7 @@ const ActiveConnector = require('../../connector/active');
 
 module.exports = {
   directive: 'PORT',
-  handler: function ({command} = {}) {
+  handler: function ({log, command} = {}) {
     this.connector = new ActiveConnector(this);
 
     const rawConnection = _.get(command, 'arg', '').split(',');
@@ -14,7 +14,11 @@ module.exports = {
     const port = portBytes[0] * 256 + portBytes[1];
 
     return this.connector.setupConnection(ip, port)
-    .then(() => this.reply(200));
+    .then(() => this.reply(200))
+    .catch((err) => {
+      log.error(err);
+      return this.reply(425);
+    });
   },
   syntax: '{{cmd}} <x>,<x>,<x>,<x>,<y>,<y>',
   description: 'Specifies an address and port to which the server should connect'
