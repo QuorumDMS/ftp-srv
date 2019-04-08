@@ -2,8 +2,21 @@ const _ = require('lodash');
 const nodePath = require('path');
 const uuid = require('uuid');
 const Promise = require('bluebird');
-const fs = Promise.promisifyAll(require('fs'));
+const fs = require('fs');
 const errors = require('./errors');
+
+// BUG: `Promise.promisifyAll` breaks other libraries
+//   - http://bluebirdjs.com/docs/error-explanations.html#error-cannot-promisify-an-api-that-has-normal-methods
+// const fs = Promise.promisifyAll(require('fs'));
+
+// NOTE:
+Object.keys(fs).forEach((name) => {
+  try {
+    fs[`${name}Async`] = Promise.promisify(fs[`${name}`])
+  } catch (error) {
+    // pass
+  }
+})
 
 class FileSystem {
   constructor(connection, {root, cwd} = {}) {
