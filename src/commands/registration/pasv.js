@@ -10,7 +10,7 @@ module.exports = {
     this.connector = new PassiveConnector(this);
     return this.connector.setupServer()
     .then((server) => {
-      const address = this.server.options.pasv_url;
+      const address = (this.ip == "127.0.0.1" ? "127.0.0.1" : (this.ip == "::1" ? "::1" : this.server.options.pasv_url));
       const {port} = server.address();
       const host = address.replace(/\./g, ',');
       const portByte1 = port / 256 | 0;
