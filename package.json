@@ -27,7 +27,7 @@
   "scripts": {
     "pre-release": "npm run verify",
     "semantic-release": "semantic-release",
-    "test": "mocha **/*.spec.js --ui bdd --bail",
+    "test": "mocha test/**/*.spec.js test/*.spec.js --ui bdd",
     "verify": "eslint src/**/*.js test/**/*.js bin/**/*.js"
   },
   "release": {
