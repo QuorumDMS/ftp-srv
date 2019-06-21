@@ -187,9 +187,9 @@ describe('Integration', function () {
       });
 
       client.put(buffer, 'fail.txt', (err) => {
+        expect(err).to.exist;
         setImmediate(() => {
           const fileExists = fs.existsSync(fsPath);
-          expect(err).to.exist;
           expect(fileExists).to.equal(false);
           done();
         });
