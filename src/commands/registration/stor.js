@@ -21,11 +21,14 @@ module.exports = {
       const serverPath = stream.path || fileName;
 
       const destroyConnection = (connection, reject) => (err) => {
-        if (connection) {
-          if (connection.writable) connection.end();
-          connection.destroy(err);
+        try {
+          if (connection) {
+            if (connection.writable) connection.end();
+            connection.destroy(err);
+          }
+        } finally {
+          reject(err);
         }
-        reject(err);
       };
 
       const streamPromise = new Promise((resolve, reject) => {
