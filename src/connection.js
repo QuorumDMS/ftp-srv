@@ -104,8 +104,10 @@ class FtpConnection extends EventEmitter {
           else if (typeof letter === 'string') letter = {message: letter}; // allow passing in message as first param
 
           if (!letter.socket) letter.socket = options.socket ? options.socket : this.commandSocket;
-          if (!letter.message) letter.message = DEFAULT_MESSAGE[options.code] || 'No information';
-          if (!letter.encoding) letter.encoding = this.encoding;
+          if (!options.useEmptyMessage) {
+            if (!letter.message) letter.message = DEFAULT_MESSAGE[options.code] || 'No information';
+            if (!letter.encoding) letter.encoding = this.encoding;
+          }
           return Promise.resolve(letter.message) // allow passing in a promise as a message
           .then((message) => {
             const seperator = !options.hasOwnProperty('eol') ?
