@@ -27,8 +27,8 @@ class FileSystem {
     })();
 
     const fsPath = (() => {
-      const resolvedPath = nodePath.resolve(this.root, `.${nodePath.sep}${clientPath}`);
-      return nodePath.join(resolvedPath);
+      const resolvedPath = nodePath.join(this.root, clientPath);
+      return nodePath.resolve(nodePath.join(resolvedPath));
     })();
 
     return {
