@@ -217,6 +217,24 @@ describe('Integration', function () {
       });
     });
 
+    it('STOR logo.png', (done) => {
+      const logo = `${__dirname}/../logo.png`;
+      const fsPath = `${clientDirectory}/${name}/logo.png`;
+
+      client.put(logo, 'logo.png', (err) => {
+        expect(err).to.not.exist;
+        setImmediate(() => {
+          expect(fs.existsSync(fsPath)).to.equal(true);
+
+          const logoContents = fs.readFileSync(logo);
+          const transferedContects = fs.readFileSync(fsPath);
+
+          expect(logoContents.equals(transferedContects));
+          done();
+        });
+      });
+    });
+
     it('APPE tést.txt', (done) => {
       const buffer = Buffer.from(', awesome!');
       const fsPath = `${clientDirectory}/${name}/tést.txt`;
