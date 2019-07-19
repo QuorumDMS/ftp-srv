@@ -53,6 +53,7 @@ class Passive extends Connector {
         this.dataSocket = socket;
         this.dataSocket.setEncoding(this.connection.transferType);
         this.dataSocket.on('error', (err) => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
+        this.dataSocket.once('close', () => this.closeServer());
 
         if (!this.connection.secure) {
           this.dataSocket.connected = true;
