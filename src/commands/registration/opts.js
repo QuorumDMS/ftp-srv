@@ -33,7 +33,6 @@ function utf8([setting] = []) {
   if (!encoding) return this.reply(501, 'Unknown setting for option');
 
   this.encoding = encoding;
-  if (this.transferType !== 'binary') this.transferType = this.encoding;
 
   return this.reply(200, `UTF8 encoding ${_.toLower(setting)}`);
 }

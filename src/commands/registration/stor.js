@@ -40,7 +40,7 @@ module.exports = {
         this.connector.socket.on('data', (data) => {
           if (this.connector.socket) this.connector.socket.pause();
           if (stream && stream.writable) {
-            stream.write(data, this.transferType, () => this.connector.socket && this.connector.socket.resume());
+            stream.write(data, () => this.connector.socket && this.connector.socket.resume());
           }
         });
         this.connector.socket.once('end', () => {
