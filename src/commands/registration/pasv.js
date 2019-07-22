@@ -1,4 +1,5 @@
 const PassiveConnector = require('../../connector/passive');
+const {isLocalIP} = require('../../helpers/is-local');
 
 module.exports = {
   directive: 'PASV',
@@ -10,7 +11,11 @@ module.exports = {
     this.connector = new PassiveConnector(this);
     return this.connector.setupServer()
     .then((server) => {
-      const address = this.server.options.pasv_url;
+      let address = this.server.options.pasv_url;
+      // Allow connecting from local
+      if (isLocalIP(this.ip)) {
+        address = this.ip;
+      }
       const {port} = server.address();
       const host = address.replace(/\./g, ',');
       const portByte1 = port / 256 | 0;
