@@ -110,11 +110,15 @@ class FtpConnection extends EventEmitter {
           }
           return Promise.resolve(letter.message) // allow passing in a promise as a message
           .then((message) => {
-            const seperator = !options.hasOwnProperty('eol') ?
-              letters.length - 1 === index ? ' ' : '-' :
-              options.eol ? ' ' : '-';
-            message = !letter.raw ? _.compact([letter.code || options.code, message]).join(seperator) : message;
-            letter.message = message;
+            if (!options.useEmptyMessage) {
+              const seperator = !options.hasOwnProperty('eol') ?
+                letters.length - 1 === index ? ' ' : '-' :
+                options.eol ? ' ' : '-';
+              message = !letter.raw ? _.compact([letter.code || options.code, message]).join(seperator) : message;
+              letter.message = message;
+            } else {
+              letter.message = '';
+            }
             return letter;
           });
         });
