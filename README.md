@@ -195,6 +195,8 @@ Occurs when client sets hostname using the `HOST` command before authentication.
 - `motd`
   - Array of lines from the welcome message of the virtualhost.
   - The last line will always be _Host accepted_ regardless of this argument.
+- `anonymous`
+  - Set to a boolean to enable/disable anonymous login on this host
 
 `reject` takes an error object
 

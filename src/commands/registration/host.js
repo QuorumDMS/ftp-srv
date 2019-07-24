@@ -11,8 +11,9 @@ module.exports = {
       return this.reply(501, 'This server does not handle virtualhost changes');
     } else {
       return this.server.emitPromise('virtualhost', {connection: this, host}).then(
-        ({motd = []}) => {
+        ({motd = [], anonymous}) => {
           this.host = host
+          if (anonymous !== undefined) this._vh_anonymous = anonymous
           this.reply(220, 'Host accepted', ...motd)
         },
         (err) => {

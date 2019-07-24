@@ -104,7 +104,8 @@ export class FtpServer extends EventEmitter {
       host: string
     },
     resolve: (config: {
-      motd?: Array<string>
+      motd?: Array<string>,
+      anonymous?: boolean
     }) => void,
     reject: (err?: Error) => void
   ) => void): this
