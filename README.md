@@ -181,9 +181,26 @@ Set the password for the given `username`.
 
 The `FtpSrv` class extends the [node net.Server](https://nodejs.org/api/net.html#net_class_net_server). Some custom events can be resolved or rejected, such as `login`.
 
+### `virtualhost`
+```js
+ftpServer.on('virtualhost', ({connection, host}, resolve, reject) => { ... })
+```
+
+Occurs when client sets hostname using the `HOST` command before authentication. If you attach a listener to this event, you can make the server [RFC 7151](https://tools.ietf
+.org/html/rfc7151) compliant. Here you can setup an environment for different virtualhosts. Note that the client may change the host multiple times before a successful authentication, the last successful attempt will be saved in that case.
+
+`connection` [client class object](src/connection.js)  
+`host` string of hostname from `HOST` command  
+`resolve` takes an object of arguments:  
+- `motd`
+  - Array of lines from the welcome message of the virtualhost.
+  - The last line will always be _Host accepted_ regardless of this argument.
+
+`reject` takes an error object
+
 ### `login`
 ```js
-ftpServer.on('login', ({connection, username, password}, resolve, reject) => { ... });
+ftpServer.on('login', ({connection, username, password, host}, resolve, reject) => { ... });
 ```
 
 Occurs when a client is attempting to login. Here you can resolve the login request by username and password.
@@ -191,6 +208,7 @@ Occurs when a client is attempting to login. Here you can resolve the login requ
 `connection` [client class object](src/connection.js)  
 `username` string of username from `USER` command  
 `password` string of password from `PASS` command  
+`host` string of hostname from `HOST` command, if issued before login  
 `resolve` takes an object of arguments:  
 - `fs`
   - Set a custom file system class for this connection to use.

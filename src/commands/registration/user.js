@@ -9,7 +9,7 @@ module.exports = {
 
     if (this.server.options.anonymous === true && this.username === 'anonymous' ||
         this.username === this.server.options.anonymous) {
-      return this.login(this.username, '@anonymous')
+      return this.login(this.username, '@anonymous', this.host)
       .then(() => {
         return this.reply(230);
       })
