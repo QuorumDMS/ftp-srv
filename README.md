@@ -75,7 +75,6 @@ __Default:__ `"ftp://127.0.0.1:21"`
 #### `pasv_url`
 The hostname to provide a client when attempting a passive connection (`PASV`). This defaults to the provided `url` hostname.
 
-_Note:_ If set to `0.0.0.0`, this will automatically resolve to the external IP of the box.  
 __Default:__ `"127.0.0.1"`
 
 #### `pasv_min`
