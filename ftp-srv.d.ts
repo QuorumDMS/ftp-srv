@@ -112,6 +112,13 @@ export class FtpServer extends EventEmitter {
             whitelist?: Array<string>
         }) => void,
 		reject: (err?: Error) => void
+  ) => void): this;
+
+	on(event: "disconnect", listener: (
+		data: {
+      connection: FtpConnection,
+      id: string
+		}
 	) => void): this;
 
 	on(event: "client-error", listener: (
