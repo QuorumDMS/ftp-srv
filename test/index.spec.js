@@ -369,6 +369,39 @@ describe('Integration', function () {
     });
   }
 
+  describe('Server events', function () {
+    const disconnect = sinon.spy();
+    const login = sinon.spy();
+
+    before(() => {
+      server.on('login', login);
+      server.on('disconnect', disconnect);
+      return connectClient({
+        host: server.url.hostname,
+        port: server.url.port,
+        user: 'test',
+        password: 'test'
+      });
+    });
+
+    after(() => {
+      server.off('login', login);
+      server.off('disconnect', disconnect);
+    })
+
+    it('should fire a login event on connect', () => {
+      expect(login.calledOnce).to.be.true;
+    });
+
+    it('should fire a close event on disconnect', (done) => {
+      client.end();
+      setTimeout(() => {
+        expect(disconnect.calledOnce).to.be.true;
+        done();
+      }, 100)
+    });
+  });
+
   describe('#ASCII', function () {
     before(() => {
       return connectClient({
