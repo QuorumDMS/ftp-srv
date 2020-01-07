@@ -90,7 +90,7 @@ describe('FtpCommands', function () {
       return commands.handle('bad')
       .then(() => {
         expect(mockConnection.reply.callCount).to.equal(1);
-        expect(mockConnection.reply.args[0][0]).to.equal(402);
+        expect(mockConnection.reply.args[0][0]).to.equal(502);
       });
     });
 
