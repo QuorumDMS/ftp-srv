@@ -13,6 +13,7 @@ module.exports = {
 
     const simple = command.directive === 'NLST';
 
+    command.arg = command.arg.replace("-la", "");
     const path = command.arg || '.';
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())
