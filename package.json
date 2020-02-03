@@ -27,7 +27,7 @@
   "scripts": {
     "pre-release": "npm run verify",
     "semantic-release": "semantic-release",
-    "test": "mocha test/**/*.spec.js --ui bdd --bail",
+    "test": "mocha test/**/*.spec.js test/*.spec.js --ui bdd",
     "verify": "eslint src/**/*.js test/**/*.js bin/**/*.js"
   },
   "release": {
@@ -66,14 +66,14 @@
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
     "ip": "^1.1.5",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "moment": "^2.22.1",
     "uuid": "^3.2.1",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^7.5.2",
-    "@commitlint/config-conventional": "^7.5.0",
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^8.1.0",
     "@icetee/ftp": "^1.0.2",
     "chai": "^4.2.0",
     "condition-circle": "^2.0.2",
@@ -82,7 +82,7 @@
     "lint-staged": "^8.1.4",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.1",
-    "semantic-release": "^15.10.6",
+    "semantic-release": "^15.13.24",
     "sinon": "^2.3.5"
   },
   "engines": {

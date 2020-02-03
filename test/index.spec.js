@@ -179,7 +179,7 @@ describe('Integration', function () {
       const fsPath = `${clientDirectory}/${name}/fail.txt`;
 
       sandbox.stub(connection.fs, 'write').callsFake(function () {
-        const stream = fs.createWriteStream(fsPath, {flags: 'w+'});
+        const stream = fs.createWriteStream(fsPath, {flags: 'w+', autoClose: false});
         stream.on('error', () => fs.existsSync(fsPath) && fs.unlinkSync(fsPath));
         stream.on('close', () => stream.end());
         setImmediate(() => stream.emit('error', new Error('STOR fail test')));
@@ -187,9 +187,9 @@ describe('Integration', function () {
       });
 
       client.put(buffer, 'fail.txt', (err) => {
+        expect(err).to.exist;
         setImmediate(() => {
           const fileExists = fs.existsSync(fsPath);
-          expect(err).to.exist;
           expect(fileExists).to.equal(false);
           done();
         });
@@ -213,6 +213,24 @@ describe('Integration', function () {
             expect(data.toString()).to.equal('test text file');
             done();
           });
+        });
+      });
+    });
+
+    it('STOR logo.png', (done) => {
+      const logo = `${__dirname}/../logo.png`;
+      const fsPath = `${clientDirectory}/${name}/logo.png`;
+
+      client.put(logo, 'logo.png', (err) => {
+        expect(err).to.not.exist;
+        setImmediate(() => {
+          expect(fs.existsSync(fsPath)).to.equal(true);
+
+          const logoContents = fs.readFileSync(logo);
+          const transferedContects = fs.readFileSync(fsPath);
+
+          expect(logoContents.equals(transferedContects));
+          done();
         });
       });
     });
@@ -351,6 +369,39 @@ describe('Integration', function () {
     });
   }
 
+  describe('Server events', function () {
+    const disconnect = sinon.spy();
+    const login = sinon.spy();
+
+    before(() => {
+      server.on('login', login);
+      server.on('disconnect', disconnect);
+      return connectClient({
+        host: server.url.hostname,
+        port: server.url.port,
+        user: 'test',
+        password: 'test'
+      });
+    });
+
+    after(() => {
+      server.off('login', login);
+      server.off('disconnect', disconnect);
+    })
+
+    it('should fire a login event on connect', () => {
+      expect(login.calledOnce).to.be.true;
+    });
+
+    it('should fire a close event on disconnect', (done) => {
+      client.end();
+      setTimeout(() => {
+        expect(disconnect.calledOnce).to.be.true;
+        done();
+      }, 100)
+    });
+  });
+
   describe('#ASCII', function () {
     before(() => {
       return connectClient({
@@ -404,7 +455,7 @@ describe('Integration', function () {
         readFile(`${process.cwd()}/test/cert/server.csr`)
       ]))
       .then(([key, cert, ca]) => startServer({
-        url: 'ftp://127.0.0.1:8880',
+        url: 'ftp://127.0.0.1:8881',
         tls: {key, cert, ca}
       }))
       .then(() => {
@@ -432,7 +483,7 @@ describe('Integration', function () {
         readFile(`${process.cwd()}/test/cert/server.csr`)
       ]))
       .then(([key, cert, ca]) => startServer({
-        url: 'ftps://127.0.0.1:8880',
+        url: 'ftps://127.0.0.1:8882',
         tls: {key, cert, ca}
       }))
       .then(() => {

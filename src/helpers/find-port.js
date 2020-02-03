@@ -16,10 +16,11 @@ function* portNumberGenerator(min, max = MAX_PORT) {
 
 function getNextPortFactory(host, portMin, portMax, maxAttempts = MAX_PORT_CHECK_ATTEMPT) {
   const nextPortNumber = portNumberGenerator(portMin, portMax);
-  const portCheckServer = net.createServer();
-  portCheckServer.maxConnections = 0;
 
   return () => new Promise((resolve, reject) => {
+    const portCheckServer = net.createServer();
+    portCheckServer.maxConnections = 0;
+
     let attemptCount = 0;
     const tryGetPort = () => {
       attemptCount++;
@@ -39,6 +40,7 @@ function getNextPortFactory(host, portMin, portMax, maxAttempts = MAX_PORT_CHECK
         }
       });
       portCheckServer.once('listening', () => {
+        portCheckServer.removeAllListeners();
         portCheckServer.close(() => resolve(port));
       });
 

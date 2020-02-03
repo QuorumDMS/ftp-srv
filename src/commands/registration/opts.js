@@ -13,7 +13,7 @@ module.exports = {
     const [_option, ...args] = command.arg.split(' ');
     const option = _.toUpper(_option);
 
-    if (!OPTIONS.hasOwnProperty(option)) return this.reply(500);
+    if (!OPTIONS.hasOwnProperty(option)) return this.reply(501, 'Unknown option command');
     return OPTIONS[option].call(this, args);
   },
   syntax: '{{cmd}}',
@@ -33,7 +33,6 @@ function utf8([setting] = []) {
   if (!encoding) return this.reply(501, 'Unknown setting for option');
 
   this.encoding = encoding;
-  if (this.transferType !== 'binary') this.transferType = this.encoding;
 
   return this.reply(200, `UTF8 encoding ${_.toLower(setting)}`);
 }

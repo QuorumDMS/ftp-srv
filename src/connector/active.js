@@ -28,7 +28,6 @@ class Active extends Connector {
     return closeExistingServer()
     .then(() => {
       this.dataSocket = new Socket();
-      this.dataSocket.setEncoding(this.connection.transferType);
       this.dataSocket.on('error', (err) => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
       this.dataSocket.connect({host, port, family}, () => {
         this.dataSocket.pause();

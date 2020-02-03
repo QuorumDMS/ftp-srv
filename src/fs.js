@@ -2,13 +2,14 @@ const _ = require('lodash');
 const nodePath = require('path');
 const uuid = require('uuid');
 const Promise = require('bluebird');
-const fs = Promise.promisifyAll(require('fs'));
+const {createReadStream, createWriteStream, constants} = require('fs');
+const fsAsync = require('./helpers/fs-async');
 const errors = require('./errors');
 
 class FileSystem {
   constructor(connection, {root, cwd} = {}) {
     this.connection = connection;
-    this.cwd = cwd ? nodePath.join(nodePath.sep, cwd) : nodePath.sep;
+    this.cwd = nodePath.normalize(cwd ? nodePath.join(nodePath.sep, cwd) : nodePath.sep);
     this._root = nodePath.resolve(root || process.cwd());
   }
 
@@ -27,8 +28,8 @@ class FileSystem {
     })();
 
     const fsPath = (() => {
-      const resolvedPath = nodePath.resolve(this.root, `.${nodePath.sep}${clientPath}`);
-      return nodePath.join(resolvedPath);
+      const resolvedPath = nodePath.join(this.root, clientPath);
+      return nodePath.resolve(nodePath.normalize(nodePath.join(resolvedPath)));
     })();
 
     return {
@@ -43,19 +44,19 @@ class FileSystem {
 
   get(fileName) {
     const {fsPath} = this._resolvePath(fileName);
-    return fs.statAsync(fsPath)
+    return fsAsync.stat(fsPath)
     .then((stat) => _.set(stat, 'name', fileName));
   }
 
   list(path = '.') {
     const {fsPath} = this._resolvePath(path);
-    return fs.readdirAsync(fsPath)
+    return fsAsync.readdir(fsPath)
     .then((fileNames) => {
       return Promise.map(fileNames, (fileName) => {
         const filePath = nodePath.join(fsPath, fileName);
-        return fs.accessAsync(filePath, fs.constants.F_OK)
+        return fsAsync.access(filePath, constants.F_OK)
         .then(() => {
-          return fs.statAsync(filePath)
+          return fsAsync.stat(filePath)
           .then((stat) => _.set(stat, 'name', fileName));
         })
         .catch(() => null);
@@ -66,7 +67,7 @@ class FileSystem {
 
   chdir(path = '.') {
     const {fsPath, clientPath} = this._resolvePath(path);
-    return fs.statAsync(fsPath)
+    return fsAsync.stat(fsPath)
     .tap((stat) => {
       if (!stat.isDirectory()) throw new errors.FileSystemError('Not a valid directory');
     })
@@ -78,8 +79,8 @@ class FileSystem {
 
   write(fileName, {append = false, start = undefined} = {}) {
     const {fsPath, clientPath} = this._resolvePath(fileName);
-    const stream = fs.createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+', start});
-    stream.once('error', () => fs.unlinkAsync(fsPath));
+    const stream = createWriteStream(fsPath, {flags: !append ? 'w+' : 'a+', start});
+    stream.once('error', () => fsAsync.unlink(fsPath));
     stream.once('close', () => stream.end());
     return {
       stream,
@@ -89,12 +90,12 @@ class FileSystem {
 
   read(fileName, {start = undefined} = {}) {
     const {fsPath, clientPath} = this._resolvePath(fileName);
-    return fs.statAsync(fsPath)
+    return fsAsync.stat(fsPath)
     .tap((stat) => {
       if (stat.isDirectory()) throw new errors.FileSystemError('Cannot read a directory');
     })
     .then(() => {
-      const stream = fs.createReadStream(fsPath, {flags: 'r', start});
+      const stream = createReadStream(fsPath, {flags: 'r', start});
       return {
         stream,
         clientPath
@@ -104,28 +105,28 @@ class FileSystem {
 
   delete(path) {
     const {fsPath} = this._resolvePath(path);
-    return fs.statAsync(fsPath)
+    return fsAsync.stat(fsPath)
     .then((stat) => {
-      if (stat.isDirectory()) return fs.rmdirAsync(fsPath);
-      else return fs.unlinkAsync(fsPath);
+      if (stat.isDirectory()) return fsAsync.rmdir(fsPath);
+      else return fsAsync.unlink(fsPath);
     });
   }
 
   mkdir(path) {
     const {fsPath} = this._resolvePath(path);
-    return fs.mkdirAsync(fsPath)
+    return fsAsync.mkdir(fsPath)
     .then(() => fsPath);
   }
 
   rename(from, to) {
     const {fsPath: fromPath} = this._resolvePath(from);
     const {fsPath: toPath} = this._resolvePath(to);
-    return fs.renameAsync(fromPath, toPath);
+    return fsAsync.rename(fromPath, toPath);
   }
 
   chmod(path, mode) {
     const {fsPath} = this._resolvePath(path);
-    return fs.chmodAsync(fsPath, mode);
+    return fsAsync.chmod(fsPath, mode);
   }
 
   getUniqueName() {

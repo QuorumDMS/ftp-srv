@@ -45,7 +45,7 @@ class FtpCommands {
     log.trace({command: logCommand}, 'Handle command');
 
     if (!REGISTRY.hasOwnProperty(command.directive)) {
-      return this.connection.reply(402, 'Command not allowed');
+      return this.connection.reply(502, 'Command not allowed');
     }
 
     if (_.includes(this.blacklist, command.directive)) {

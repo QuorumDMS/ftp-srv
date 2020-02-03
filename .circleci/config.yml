@@ -1,65 +1,58 @@
 version: 2
 
-create-cache-file: &create-cache-file
-  run:
-    name: Setup cache
-    command: echo "$NODE_VERSION" > _cache_node_version
-
-package-json-cache: &package-json-cache
-  key: npm-install-{{ checksum "_cache_node_version" }}-{{ checksum "package-lock.json" }}
-
-base-build: &base-build
-  steps:
-    - checkout
-    - <<: *create-cache-file
-    - restore_cache:
-        <<: *package-json-cache
-    - run:
-        name: Install
-        command: npm install
-    - save_cache:
-        <<: *package-json-cache
-        paths:
-          - node_modules
-    - run:
-        name: Lint
-        command: npm run verify
-    - run:
-        name: Test
-        command: npm run test
-
 jobs:
-  test_node_10:
+  build:
     docker:
-      - image: circleci/node:10
-    environment:
-      - NODE_VERSION: 10
-    <<: *base-build
+      - image: &node-image circleci/node:lts
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - &npm-cache-key npm-cache-{{ .Branch }}-{{ .Revision }}
+            - npm-cache-{{ .Branch }}
+            - npm-cache
+      - run:
+          name: Install
+          command: npm ci
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+      - save_cache:
+          key: *npm-cache-key
+          paths:
+            - ~/.npm/_cacache
 
-  test_node_8:
+  lint:
     docker:
-      - image: circleci/node:8
-    environment:
-      - NODE_VERSION: 8
-    <<: *base-build
+      - image: *node-image
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Lint
+          command: npm run verify
 
-  test_node_6:
+  test:
     docker:
-      - image: circleci/node:6
-    environment:
-      - NODE_VERSION: 6
-    <<: *base-build
+      - image: *node-image
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - deploy:
+          name: Test
+          command: |
+            npm run test
 
   release_dry_run:
     docker:
-      - image: circleci/node:8
-    environment:
-      - NODE_VERSION: 8
+      - image: *node-image
     steps:
       - checkout
-      - <<: *create-cache-file
-      - restore_cache:
-          <<: *package-json-cache
+      - attach_workspace:
+          at: .
       - deploy:
           name: Dry Release
           command: |
@@ -67,14 +60,11 @@ jobs:
 
   release:
     docker:
-      - image: circleci/node:8
-    environment:
-      - NODE_VERSION: 8
+      - image: *node-image
     steps:
       - checkout
-      - <<: *create-cache-file
-      - restore_cache:
-          <<: *package-json-cache
+      - attach_workspace:
+          at: .
       - deploy:
           name: Release
           command: |
@@ -82,25 +72,22 @@ jobs:
 
 workflows:
   version: 2
-  test_and_tag:
+  publish:
     jobs:
-      - test_node_10:
-          filters:
-            branches:
-              only: master
-      - test_node_8:
-          filters:
-            branches:
-              only: master
-      - test_node_6:
-          filters:
-            branches:
-              only: master
-      - release_dry_run:
+      - build
+      - lint:
           requires:
-            - test_node_6
-            - test_node_8
-            - test_node_10
+            - build
+      - test:
+          requires:
+            - build
+      - release_dry_run:
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
+            - lint
       - hold_release:
           type: approval
           requires:
@@ -108,18 +95,3 @@ workflows:
       - release:
           requires:
             - hold_release
-
-  build_and_test:
-    jobs:
-      - test_node_10:
-          filters:
-            branches:
-              ignore: master
-      - test_node_8:
-          filters:
-            branches:
-              ignore: master
-      - test_node_6:
-          filters:
-            branches:
-              ignore: master

@@ -23,7 +23,8 @@ class FtpServer extends EventEmitter {
       blacklist: [],
       whitelist: [],
       greeting: null,
-      tls: false
+      tls: false,
+      timeout: 0
     }, options);
 
     this._greeting = this.setupGreeting(this.options.greeting);
@@ -39,7 +40,11 @@ class FtpServer extends EventEmitter {
       _.get(this, 'options.pasv_min'),
       _.get(this, 'options.pasv_max'));
 
+    const timeout = Number(this.options.timeout);
+    this.options.timeout = isNaN(timeout) ? 0 : Number(timeout);
+
     const serverConnectionHandler = (socket) => {
+      socket.setTimeout(this.options.timeout);
       let connection = new Connection(this, {log: this.log, socket});
       this.connections[connection.id] = connection;
 
@@ -48,7 +53,7 @@ class FtpServer extends EventEmitter {
       const greeting = this._greeting || [];
       const features = this._features || 'Ready';
       return connection.reply(220, ...greeting, features)
-      .finally(() => socket.resume());
+        .finally(() => socket.resume());
     };
     const serverOptions = Object.assign({}, this.isTLS ? this.options.tls : {}, {pauseOnConnect: true});
 
@@ -114,6 +119,7 @@ class FtpServer extends EventEmitter {
     return new Promise((resolve) => {
       const client = this.connections[id];
       if (!client) return resolve();
+      this.emit('disconnect', {connection: client, id});
       delete this.connections[id];
       try {
         client.close(0);

@@ -36,6 +36,7 @@ module.exports = {
     .tap(() => this.reply(150))
     .then((fileList) => {
       if (fileList.length) return this.reply({}, ...fileList);
+      return this.reply({socket: this.connector.socket, useEmptyMessage: true});
     })
     .tap(() => this.reply(226))
     .catch(Promise.TimeoutError, (err) => {

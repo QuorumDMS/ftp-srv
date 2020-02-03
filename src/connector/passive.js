@@ -6,6 +6,8 @@ const Promise = require('bluebird');
 const Connector = require('./base');
 const errors = require('../errors');
 
+const CONNECT_TIMEOUT = 30 * 1000;
+
 class Passive extends Connector {
   constructor(connection) {
     super(connection);
@@ -30,6 +32,9 @@ class Passive extends Connector {
     this.closeServer();
     return this.server.getNextPasvPort()
     .then((port) => {
+      this.dataSocket = null;
+      let idleServerTimeout;
+
       const connectionHandler = (socket) => {
         if (!ip.isEqual(this.connection.commandSocket.remoteAddress, socket.remoteAddress)) {
           this.log.error({
@@ -41,18 +46,18 @@ class Passive extends Connector {
           return this.connection.reply(550, 'Remote addresses do not match')
           .finally(() => this.connection.close());
         }
+        clearTimeout(idleServerTimeout);
+
         this.log.trace({port, remoteAddress: socket.remoteAddress}, 'Passive connection fulfilled.');
 
         this.dataSocket = socket;
-        this.dataSocket.setEncoding(this.connection.transferType);
         this.dataSocket.on('error', (err) => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
+        this.dataSocket.once('close', () => this.closeServer());
 
         if (!this.connection.secure) {
           this.dataSocket.connected = true;
         }
       };
-
-      this.dataSocket = null;
 
       const serverOptions = Object.assign({}, this.connection.secure ? this.server.options.tls : {}, {pauseOnConnect: true});
       this.dataServer = (this.connection.secure ? tls : net).createServer(serverOptions, connectionHandler);
@@ -74,6 +79,8 @@ class Passive extends Connector {
         this.dataServer.listen(port, this.server.url.hostname, (err) => {
           if (err) reject(err);
           else {
+            idleServerTimeout = setTimeout(() => this.closeServer(), CONNECT_TIMEOUT);
+
             this.log.debug({port}, 'Passive connection listening');
             resolve(this.dataServer);
           }
