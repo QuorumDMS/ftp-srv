@@ -1,4 +1,6 @@
 const Promise = require('bluebird');
+const path = require('path');
+const _ = require('lodash');
 
 module.exports = {
   directive: 'STOR',
@@ -8,6 +10,13 @@ module.exports = {
 
     const append = command.directive === 'APPE';
     const fileName = command.arg;
+
+    console.log(_.lowerCase(path.extname(fileName)))
+    //过滤指定文件拓展名
+    if (_.includes(this.server.options.deny_extension, _.lowerCase(path.extname(fileName))) ) {
+      return this.reply(502, 'file extension blacklisted');
+    }
+
 
     return this.connector.waitForConnection()
     .tap(() => this.commandSocket.pause())

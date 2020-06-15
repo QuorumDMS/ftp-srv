@@ -77,6 +77,12 @@ The hostname to provide a client when attempting a passive connection (`PASV`). 
 
 __Default:__ `"127.0.0.1"`
 
+#### `deny_extension`
+Deny specific file extension, if you define it, those file with not allowed to upload, rename and delete. 
+__Example:__ `['exe', 'dll', 'bat', 'cmd', 'vbs', 'inf', 'vbe','vbs','com', 'ws', 'reg']` will not allow users to delete , rename ,upload any files.  
+__Default:__ `[]`
+
+
 #### `pasv_min`
 Tne starting port to accept passive connections.  
 __Default:__ `1024`
