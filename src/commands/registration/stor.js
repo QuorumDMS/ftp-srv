@@ -13,7 +13,7 @@ module.exports = {
     .tap(() => this.commandSocket.pause())
     .then(() => Promise.try(() => this.fs.write(fileName, {append, start: this.restByteCount})))
     .then((fsResponse) => {
-      let {stream, clientPath} = fsResponse;
+      let {stream, clientPath, allowPipe} = fsResponse;
       if (!stream && !clientPath) {
         stream = fsResponse;
         clientPath = fileName;
@@ -37,23 +37,27 @@ module.exports = {
       });
 
       const socketPromise = new Promise((resolve, reject) => {
-        this.connector.socket.on('data', (data) => {
-          if (this.connector.socket) this.connector.socket.pause();
-          if (stream && stream.writable) {
-            stream.write(data, () => this.connector.socket && this.connector.socket.resume());
-          }
-        });
-        this.connector.socket.once('end', () => {
-          if (stream.listenerCount('close')) stream.emit('close');
-          else stream.end();
-          resolve();
-        });
+        if (allowPipe) this.connector.socket.pipe(stream);
+        else  this.connector.socket.on('data', (data) => {
+                if (this.connector.socket) this.connector.socket.pause();
+                if (stream && stream.writable) {
+                  stream.write(data, () => { 
+                    this.connector.socket && this.connector.socket.resume();
+                  });
+                }
+              });
+       
+              this.connector.socket.once('end', () => {
+                if (stream.listenerCount('close')) stream.emit('close');
+                else stream.end();
+                resolve();
+              });
         this.connector.socket.once('error', destroyConnection(stream, reject));
       });
 
       this.restByteCount = 0;
 
-      return this.reply(150).then(() => this.connector.socket.resume())
+      return this.reply(150).then(() => this.connector.socket && this.connector.socket.resume())
       .then(() => Promise.all([streamPromise, socketPromise]))
       .tap(() => this.emit('STOR', null, serverPath))
       .then(() => this.reply(226, clientPath))
