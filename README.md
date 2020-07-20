@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/trs/ftp-srv">
+  <a href="https://github.com/autovance/ftp-srv">
     <img alt="ftp-srv" src="logo.png" width="600px"  />
   </a>
 </p>
@@ -14,8 +14,8 @@
     <img alt="npm" src="https://img.shields.io/npm/dm/ftp-srv.svg?style=for-the-badge" />
   </a>
 
-  <a href="https://circleci.com/gh/trs/workflows/ftp-srv/tree/master">
-    <img alt="circleci" src="https://img.shields.io/circleci/project/github/trs/ftp-srv/master.svg?style=for-the-badge" />
+  <a href="https://circleci.com/gh/autovance/workflows/ftp-srv/tree/master">
+    <img alt="circleci" src="https://img.shields.io/circleci/project/github/autovance/ftp-srv/master.svg?style=for-the-badge" />
   </a>
 </p>
 
