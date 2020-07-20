@@ -45,25 +45,25 @@ class FtpCommands {
     log.trace({command: logCommand}, 'Handle command');
 
     if (!REGISTRY.hasOwnProperty(command.directive)) {
-      return this.connection.reply(502, 'Command not allowed');
+      return this.connection.reply(502, `Command not allowed: ${command.directive}`);
     }
 
     if (_.includes(this.blacklist, command.directive)) {
-      return this.connection.reply(502, 'Command blacklisted');
+      return this.connection.reply(502, `Command blacklisted: ${command.directive}`);
     }
 
     if (this.whitelist.length > 0 && !_.includes(this.whitelist, command.directive)) {
-      return this.connection.reply(502, 'Command not whitelisted');
+      return this.connection.reply(502, `Command not whitelisted: ${command.directive}`);
     }
 
     const commandRegister = REGISTRY[command.directive];
     const commandFlags = _.get(commandRegister, 'flags', {});
     if (!commandFlags.no_auth && !this.connection.authenticated) {
-      return this.connection.reply(530, 'Command requires authentication');
+      return this.connection.reply(530, `Command requires authentication: ${command.directive}`);
     }
 
     if (!commandRegister.handler) {
-      return this.connection.reply(502, 'Handler not set on command');
+      return this.connection.reply(502, `Handler not set on command: ${command.directive}`);
     }
 
     const handler = commandRegister.handler.bind(this.connection);
