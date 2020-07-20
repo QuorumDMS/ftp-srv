@@ -44,7 +44,7 @@ class FtpServer extends EventEmitter {
     this.options.timeout = isNaN(timeout) ? 0 : Number(timeout);
 
     const serverConnectionHandler = (socket) => {
-      socket.setTimeout(this.options.timeout);
+      this.options.timeout > 0 && socket.setTimeout(this.options.timeout);
       let connection = new Connection(this, {log: this.log, socket});
       this.connections[connection.id] = connection;
 
