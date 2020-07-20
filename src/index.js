@@ -49,6 +49,7 @@ class FtpServer extends EventEmitter {
       this.connections[connection.id] = connection;
 
       socket.on('close', () => this.disconnectClient(connection.id));
+      socket.once('close', () => this.emit('disconnect', {connection, id: connection.id}));
 
       const greeting = this._greeting || [];
       const features = this._features || 'Ready';
@@ -119,7 +120,6 @@ class FtpServer extends EventEmitter {
     return new Promise((resolve) => {
       const client = this.connections[id];
       if (!client) return resolve();
-      this.emit('disconnect', {connection: client, id});
       delete this.connections[id];
       try {
         client.close(0);
