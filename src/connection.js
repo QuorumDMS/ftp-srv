@@ -72,7 +72,7 @@ class FtpConnection extends EventEmitter {
   close(code = 421, message = 'Closing connection') {
     return Promise.resolve(code)
       .then((_code) => _code && this.reply(_code, message))
-      .then(() => this.commandSocket && this.commandSocket.end());
+      .finally(() => this.commandSocket && this.commandSocket.destroy());
   }
 
   login(username, password) {
@@ -136,7 +136,10 @@ class FtpConnection extends EventEmitter {
             }
             resolve();
           });
-        } else reject(new errors.SocketError('Socket not writable'));
+        } else {
+          this.log.trace({message: letter.message}, 'Could not write message');
+          reject(new errors.SocketError('Socket not writable'));
+        }
       });
     };
 
