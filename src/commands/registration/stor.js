@@ -13,7 +13,7 @@ module.exports = {
     .tap(() => this.commandSocket.pause())
     .then(() => Promise.try(() => this.fs.write(fileName, {append, start: this.restByteCount})))
     .then((fsResponse) => {
-      let {stream, clientPath, allowPipe} = fsResponse;
+      let {stream, clientPath, pipeAllowed} = fsResponse;
       if (!stream && !clientPath) {
         stream = fsResponse;
         clientPath = fileName;
@@ -37,7 +37,7 @@ module.exports = {
       });
 
       const socketPromise = new Promise((resolve, reject) => {
-        if (allowPipe) this.connector.socket.pipe(stream);
+        if (pipeAllowed) this.connector.socket.pipe(stream);
         else  this.connector.socket.on('data', (data) => {
                 if (this.connector.socket) this.connector.socket.pause();
                 if (stream && stream.writable) {
