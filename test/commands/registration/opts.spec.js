@@ -29,7 +29,7 @@ describe(CMD, function () {
   it('BAD // unsuccessful', () => {
     return cmdFn({command: {arg: 'BAD', directive: CMD}})
     .then(() => {
-      expect(mockClient.reply.args[0][0]).to.equal(501);
+      expect(mockClient.reply.args[0][0]).to.equal(500);
     });
   });
 

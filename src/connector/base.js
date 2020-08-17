@@ -28,7 +28,7 @@ class Connector {
 
   end() {
     const closeDataSocket = new Promise(resolve => {
-      if (this.dataSocket) this.dataSocket.end(() => socket && socket.destroy());
+      if (this.dataSocket) this.dataSocket.end(() => this.dataSocket && this.dataSocket.destroy());
       else resolve();
     });
     const closeDataServer = new Promise(resolve => {

@@ -20,8 +20,8 @@ describe('helpers // find-port', function () {
   it('finds a port', () => {
     return findPort(1)
     .then(port => {
-      expect(Server.prototype.listen.callCount).to.be.above(1);
-      expect(port).to.be.above(1);
+      expect(Server.prototype.listen.callCount).to.be.above(0);
+      expect(port).to.be.above(0);
     });
   });
 
