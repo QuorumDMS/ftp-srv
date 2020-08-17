@@ -25,7 +25,7 @@ describe(CMD, function () {
   });
 
   it('// successful IPv4', () => {
-    return cmdFn()
+    return cmdFn({})
     .then(() => {
       const [code, message] = mockClient.reply.args[0];
       expect(code).to.equal(229);

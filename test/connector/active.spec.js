@@ -1,6 +1,7 @@
 /* eslint no-unused-expressions: 0 */
 const {expect} = require('chai');
 const sinon = require('sinon');
+const Promise = require('bluebird');
 
 const net = require('net');
 const tls = require('tls');
@@ -11,15 +12,17 @@ const findPort = require('../../src/helpers/find-port');
 describe('Connector - Active //', function () {
   let PORT;
   let active;
-  let mockConnection = {};
+  let mockConnection = {
+    commandSocket: {
+      remoteAddress: '::ffff:127.0.0.1'
+    }
+  };
   let sandbox;
   let server;
 
-  before(() => {
+  beforeEach((done) => {
     active = new ActiveConnector(mockConnection);
-  });
-  beforeEach(done => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.sandbox.create().usingPromise(Promise);
 
     findPort()
     .then(port => {
@@ -29,9 +32,11 @@ describe('Connector - Active //', function () {
       .listen(PORT, () => done());
     });
   });
-  afterEach(done => {
+
+  afterEach(() => {
     sandbox.restore();
-    server.close(done);
+    server.close();
+    active.end();
   });
 
   it('sets up a connection', function () {
@@ -41,13 +46,27 @@ describe('Connector - Active //', function () {
     });
   });
 
-  it('destroys existing connection, then sets up a connection', function () {
-    const destroyFnSpy = sandbox.spy(active.dataSocket, 'destroy');
+  it('rejects alternative host', function () {
+    return active.setupConnection('123.45.67.89', PORT)
+    .catch((err) => {
+      expect(err.code).to.equal(500);
+      expect(err.message).to.equal('The given address is not yours');
+    })
+    .finally(() => {
+      expect(active.dataSocket).not.to.exist;
+    });
+  });
 
+  it('destroys existing connection, then sets up a connection', function () {
     return active.setupConnection('127.0.0.1', PORT)
     .then(() => {
-      expect(destroyFnSpy.callCount).to.equal(1);
-      expect(active.dataSocket).to.exist;
+      const destroyFnSpy = sandbox.spy(active.dataSocket, 'destroy');
+
+      return active.setupConnection('127.0.0.1', PORT)
+      .then(() => {
+        expect(destroyFnSpy.callCount).to.equal(1);
+        expect(active.dataSocket).to.exist;
+      });
     });
   });
 
