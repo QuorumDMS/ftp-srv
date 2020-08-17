@@ -59,11 +59,11 @@ describe('Connector - Active //', function () {
   });
 
   it('destroys existing connection, then sets up a connection', function () {
-    return active.setupConnection(host, PORT)
+    return active.setupConnection('127.0.0.1', PORT)
     .then(() => {
       const destroyFnSpy = sandbox.spy(active.dataSocket, 'destroy');
 
-      return active.setupConnection(host, PORT)
+      return active.setupConnection('127.0.0.1', PORT)
       .then(() => {
         expect(destroyFnSpy.callCount).to.equal(1);
         expect(active.dataSocket).to.exist;

@@ -1,6 +1,6 @@
 {
   "name": "ftp-srv",
-  "version": "0.0.0-development",
+  "version": "3.1.2",
   "description": "Modern, extensible FTP Server",
   "keywords": [
     "ftp",
