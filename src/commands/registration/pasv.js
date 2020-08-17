@@ -25,7 +25,7 @@ module.exports = {
     })
     .catch((err) => {
       log.error(err);
-      return this.reply(425);
+      return this.reply(err.code || 425, err.message);
     });
   },
   syntax: '{{cmd}}',
