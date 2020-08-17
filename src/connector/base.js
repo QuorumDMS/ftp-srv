@@ -29,7 +29,7 @@ class Connector {
   closeSocket() {
     if (this.dataSocket) {
       const socket = this.dataSocket;
-      this.dataSocket.end(() => socket.destroy());
+      this.dataSocket.end(() => socket && socket.destroy());
       this.dataSocket = null;
     }
   }

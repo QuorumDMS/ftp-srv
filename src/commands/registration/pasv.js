@@ -13,6 +13,10 @@ module.exports = {
       const portByte2 = port % 256;
 
       return this.reply(227, `PASV OK (${host},${portByte1},${portByte2})`);
+    })
+    .catch((err) => {
+      log.error(err);
+      return this.reply(err.code || 425, err.message);
     });
   },
   syntax: '{{cmd}}',

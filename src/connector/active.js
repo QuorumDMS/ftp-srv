@@ -1,7 +1,9 @@
 const {Socket} = require('net');
 const tls = require('tls');
+const ip = require('ip');
 const Promise = require('bluebird');
 const Connector = require('./base');
+const {SocketError} = require('../errors');
 
 class Active extends Connector {
   constructor(connection) {
@@ -27,6 +29,10 @@ class Active extends Connector {
 
     return closeExistingServer()
     .then(() => {
+      if (!ip.isEqual(this.connection.commandSocket.remoteAddress, host)) {
+        throw new SocketError('The given address is not yours', 500);
+      }
+
       this.dataSocket = new Socket();
       this.dataSocket.setEncoding(this.connection.transferType);
       this.dataSocket.on('error', (err) => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
