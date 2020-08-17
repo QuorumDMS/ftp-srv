@@ -23,7 +23,7 @@ describe(CMD, function () {
   });
 
   it('// unsuccessful | no argument', () => {
-    return cmdFn()
+    return cmdFn({})
     .then(() => {
       expect(mockClient.reply.args[0][0]).to.equal(504);
     });
