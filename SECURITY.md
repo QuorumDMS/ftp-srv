@@ -8,7 +8,7 @@
 | 3.x   | :white_check_mark: |
 | < 3.0   | :x:                |
 
-Critical vulnerabilities will be ported as far back as possible.
+__Critical vulnerabilities will be ported as far back as possible.__
 
 ## Reporting a Vulnerability
 
