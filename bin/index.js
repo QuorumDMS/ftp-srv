@@ -37,19 +37,22 @@ function setupYargs() {
       boolean: true,
       default: false
     })
-    .option('pasv_url', {
+    .option('pasv-url', {
       describe: 'URL to provide for passive connections',
-      type: 'string'
+      type: 'string',
+      alias: 'pasv_url'
     })
-    .option('pasv_min', {
+    .option('pasv-min', {
       describe: 'Starting point to use when creating passive connections',
       type: 'number',
-      default: 1024
+      default: 1024,
+      alias: 'pasv_min'
     })
-    .option('pasv_max', {
+    .option('pasv-max', {
       describe: 'Ending port to use when creating passive connections',
       type: 'number',
-      default: 65535
+      default: 65535,
+      alias: 'pasv_max'
     })
     .parse();
 }
