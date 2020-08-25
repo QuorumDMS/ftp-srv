@@ -13,7 +13,7 @@ module.exports = {
     .tap(() => this.commandSocket.pause())
     .then(() => Promise.try(() => this.fs.write(fileName, {append, start: this.restByteCount})))
     .then((fsResponse) => {
-      let {stream, clientPath, pipeAllowed} = fsResponse;
+      let {stream, clientPath } = fsResponse;
       if (!stream && !clientPath) {
         stream = fsResponse;
         clientPath = fileName;
