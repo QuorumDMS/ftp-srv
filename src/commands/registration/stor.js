@@ -37,12 +37,7 @@ module.exports = {
       });
 
       const socketPromise = new Promise((resolve, reject) => {
-        this.connector.socket.on('data', (data) => {
-          if (this.connector.socket) this.connector.socket.pause();
-          if (stream && stream.writable) {
-            stream.write(data, () => this.connector.socket && this.connector.socket.resume());
-          }
-        });
+        this.connector.socket.pipe(stream, {end: false});
         this.connector.socket.once('end', () => {
           if (stream.listenerCount('close')) stream.emit('close');
           else stream.end();
