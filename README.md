@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/trs/ftp-srv">
+  <a href="https://github.com/autovance/ftp-srv">
     <img alt="ftp-srv" src="logo.png" width="600px"  />
   </a>
 </p>
@@ -14,8 +14,8 @@
     <img alt="npm" src="https://img.shields.io/npm/dm/ftp-srv.svg?style=for-the-badge" />
   </a>
 
-  <a href="https://circleci.com/gh/trs/workflows/ftp-srv/tree/master">
-    <img alt="circleci" src="https://img.shields.io/circleci/project/github/trs/ftp-srv/master.svg?style=for-the-badge" />
+  <a href="https://circleci.com/gh/autovance/workflows/ftp-srv/tree/master">
+    <img alt="circleci" src="https://img.shields.io/circleci/project/github/autovance/ftp-srv/master.svg?style=for-the-badge" />
   </a>
 </p>
 
@@ -73,9 +73,8 @@ _Note:_ The hostname must be the external IP address to accept external connecti
 __Default:__ `"ftp://127.0.0.1:21"`
 
 #### `pasv_url`
-The hostname to provide a client when attempting a passive connection (`PASV`). This defaults to the provided `url` hostname.
-
-__Default:__ `"127.0.0.1"`
+The hostname to provide a client when attempting a passive connection (`PASV`).  
+If not provided, clients can only connect using an `Active` connection.
 
 #### `pasv_min`
 Tne starting port to accept passive connections.  
@@ -140,19 +139,29 @@ $ ftp-srv ftp://0.0.0.0:9876 --root ~/Documents
 ```
 
 #### `url`
-
 Set the listening URL.
 
 Defaults to `ftp://127.0.0.1:21`
 
-#### `--root` / `-r`
+#### `--pasv_url`
+The hostname to provide a client when attempting a passive connection (`PASV`).  
+If not provided, clients can only connect using an `Active` connection.
 
+#### `--pasv_min`
+The starting port to accept passive connections.  
+__Default:__ `1024`
+
+#### `--pasv_max`
+The ending port to accept passive connections.  
+The range is then queried for an available port to use when required.  
+__Default:__ `65535`
+
+#### `--root` / `-r`
 Set the default root directory for users.
 
 Defaults to the current directory.
 
 #### `--credentials` / `-c`
-
 Set the path to a json credentials file.
 
 Format:
@@ -169,12 +178,13 @@ Format:
 ```
 
 #### `--username`
-
 Set the username for the only user. Do not provide an argument to allow anonymous login.
 
 #### `--password`
-
 Set the password for the given `username`.
+
+#### `--read-only`
+Disable write actions such as upload, delete, etc.
 
 ## Events
 
