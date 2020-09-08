@@ -86,6 +86,10 @@ class Passive extends Connector {
           }
         });
       });
+    })
+    .catch((error) => {
+      this.log.trace(error.message);
+      throw error;
     });
   }
 
