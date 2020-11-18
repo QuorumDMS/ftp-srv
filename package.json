@@ -82,7 +82,7 @@
     "lint-staged": "^8.2.1",
     "mocha": "^8.1.1",
     "rimraf": "^2.6.1",
-    "semantic-release": "^15.14.0",
+    "semantic-release": "^17.2.3",
     "sinon": "^2.3.5"
   },
   "engines": {
