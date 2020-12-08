@@ -14,6 +14,7 @@ class FtpConnection extends EventEmitter {
     super();
     this.server = server;
     this.id = uuid.v4();
+    this.commandSocket = options.socket;
     this.log = options.log.child({id: this.id, ip: this.ip});
     this.commands = new Commands(this);
     this.transferType = 'binary';
@@ -24,7 +25,6 @@ class FtpConnection extends EventEmitter {
 
     this.connector = new BaseConnector(this);
 
-    this.commandSocket = options.socket;
     this.commandSocket.on('error', (err) => {
       this.log.error(err, 'Client error');
       this.server.emit('client-error', {connection: this, context: 'commandSocket', error: err});
