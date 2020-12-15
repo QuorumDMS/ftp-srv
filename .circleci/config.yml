@@ -95,5 +95,6 @@ workflows:
           requires:
             - release_dry_run
       - release:
+          context: deploy-npm
           requires:
             - hold_release
