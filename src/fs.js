@@ -28,8 +28,8 @@ class FileSystem {
     })();
 
     const fsPath = (() => {
-      const resolvedPath = nodePath.join(this.root, clientPath);
-      return nodePath.resolve(nodePath.normalize(nodePath.join(resolvedPath)));
+      const fullPath = nodePath.join(this.root, clientPath);
+      return nodePath.resolve(nodePath.normalize(nodePath.join(fullPath)));
     })();
 
     return {
