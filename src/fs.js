@@ -22,11 +22,11 @@ class FileSystem {
 
   _resolvePath(path = '.') {
     // Unix separators normalize nicer on both unix and win platforms
-    const resolvedPath = nodePath.normalize(path.replace(WIN_SEP_REGEX, '/'));
+    const resolvedPath = path.replace(WIN_SEP_REGEX, '/');
 
     // Join cwd with new path
-    const joinedPath = nodePath.isAbsolute(path)
-      ? resolvedPath
+    const joinedPath = nodePath.isAbsolute(resolvedPath)
+      ? nodePath.normalize(resolvedPath)
       : nodePath.join('/', this.cwd, resolvedPath);
 
     // Create local filesystem path using the platform separator

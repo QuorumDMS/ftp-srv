@@ -36,7 +36,7 @@ describe('FileSystem', function () {
 
   describe('#_resolvePath', function () {
     it('gets correct relative path', function () {
-      const result = fs._resolvePath();
+      const result = fs._resolvePath('.');
       expect(result).to.be.an('object');
       expect(result.clientPath).to.equal(
         nodePath.normalize('/file/1/2/3'));
@@ -51,6 +51,15 @@ describe('FileSystem', function () {
         nodePath.normalize('/file/1/2'));
       expect(result.fsPath).to.equal(
         nodePath.resolve('/tmp/ftp-srv/file/1/2'));
+    });
+
+    it('gets correct relative path', function () {
+      const result = fs._resolvePath('other');
+      expect(result).to.be.an('object');
+      expect(result.clientPath).to.equal(
+        nodePath.normalize('/file/1/2/3/other'));
+      expect(result.fsPath).to.equal(
+        nodePath.resolve('/tmp/ftp-srv/file/1/2/3/other'));
     });
 
     it('gets correct absolute path', function () {
@@ -73,6 +82,15 @@ describe('FileSystem', function () {
 
     it('cannot escape root - win', function () {
       const result = fs._resolvePath('.\\..\\..\\..\\..\\..\\..\\');
+      expect(result).to.be.an('object');
+      expect(result.clientPath).to.equal(
+        nodePath.normalize('/'));
+      expect(result.fsPath).to.equal(
+        nodePath.resolve('/tmp/ftp-srv'));
+    });
+
+    it('cannot escape root - backslash prefix', function () {
+      const result = fs._resolvePath('\\/../../../../../../');
       expect(result).to.be.an('object');
       expect(result.clientPath).to.equal(
         nodePath.normalize('/'));
