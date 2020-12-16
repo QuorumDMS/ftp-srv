@@ -26,6 +26,7 @@ jobs:
     executor: node-lts
     steps:
       - checkout
+      - node/install-packages
       - deploy:
           name: Dry Release
           command: |
@@ -35,6 +36,7 @@ jobs:
     executor: node-lts
     steps:
       - checkout
+      - node/install-packages
       - deploy:
           name: Release
           command: |
