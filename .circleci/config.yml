@@ -1,94 +1,64 @@
-version: 2
+version: 2.1
+
+orbs:
+  node: circleci/node@4.1.0
+
+executors:
+  node-lts:
+    parameters:
+      node-version:
+        type: string
+        default: lts
+    docker:
+      - image: cimg/node:<< parameters.node-version >>
 
 jobs:
-  build:
-    docker:
-      - image: &node-image circleci/node:lts
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - &npm-cache-key npm-cache-{{ .Branch }}-{{ .Revision }}
-            - npm-cache-{{ .Branch }}
-            - npm-cache
-      - run:
-          name: Install
-          command: npm ci
-      - persist_to_workspace:
-          root: .
-          paths:
-            - node_modules
-      - save_cache:
-          key: *npm-cache-key
-          paths:
-            - ~/.npm/_cacache
-
   lint:
-    docker:
-      - image: *node-image
+    executor: node-lts
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - node/install-packages
       - run:
           name: Lint
           command: npm run verify
 
-  test:
-    docker:
-      - image: *node-image
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - deploy:
-          name: Test
-          command: |
-            npm run test
-
   release_dry_run:
-    docker:
-      - image: *node-image
+    executor: node-lts
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - deploy:
           name: Dry Release
           command: |
-            npm run semantic-release -- --dry-run
+            npx semantic-release -- --dry-run
 
   release:
-    docker:
-      - image: *node-image
+    executor: node-lts
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - deploy:
           name: Release
           command: |
-            npm run semantic-release
+            npx semantic-release
 
 workflows:
   version: 2
-  publish:
+  test:
     jobs:
-      - build
-      - lint:
-          requires:
-            - build
-      - test:
-          requires:
-            - build
+      - lint
+      - node/test:
+          matrix:
+            parameters:
+              version:
+                - '10.23'
+                - '12.20'
+                - '14.15'
+                - 'current'
       - release_dry_run:
           filters:
             branches:
-              only: |
-                master
-                /^\d+\.(?:\d+|x)(?:\.x)?$/
+              only: master
           requires:
-            - test
+            - node/test
             - lint
       - hold_release:
           type: approval
