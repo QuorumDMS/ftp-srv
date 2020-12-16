@@ -12,7 +12,6 @@ commands:
           command: |
             git config --global user.name "Bot Vance"
             git config --global user.email bot@autovance.com
-            git branch -u "origin/${CIRCLE_BRANCH}"
 
 executors:
   node-lts:
@@ -42,6 +41,7 @@ jobs:
       - deploy:
           name: Dry Release
           command: |
+            git branch -u "origin/${CIRCLE_BRANCH}"
             npx semantic-release -- --dry-run
 
   release:
@@ -53,6 +53,7 @@ jobs:
       - deploy:
           name: Release
           command: |
+            git branch -u "origin/${CIRCLE_BRANCH}"
             npx semantic-release
 
 workflows:
