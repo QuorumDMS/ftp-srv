@@ -42,7 +42,7 @@ jobs:
           name: Dry Release
           command: |
             git branch -u "origin/${CIRCLE_BRANCH}"
-            npx semantic-release -- --dry-run
+            npx semantic-release --dry-run
 
   release:
     executor: node-lts

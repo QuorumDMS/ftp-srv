@@ -31,7 +31,8 @@
   },
   "release": {
     "verifyConditions": "condition-circle",
-    "branch": "master"
+    "branch": "master",
+    "branches": ["master"]
   },
   "husky": {
     "hooks": {
