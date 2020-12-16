@@ -2,7 +2,7 @@ const _ = require('lodash');
 const nodePath = require('path');
 const uuid = require('uuid');
 const Promise = require('bluebird');
-const {createReadStream, createWriteStream, constants} = require('fs');
+const {createReadStream, createWriteStream, constants, realpathSync, existsSync} = require('fs');
 const fsAsync = require('./helpers/fs-async');
 const errors = require('./errors');
 
@@ -23,20 +23,24 @@ class FileSystem {
   _resolvePath(path = '.') {
     // Unix separators normalize nicer on both unix and win platforms
     const resolvedPath = nodePath.normalize(path.replace(WIN_SEP_REGEX, '/'));
-
     // Join cwd with new path
     const joinedPath = nodePath.isAbsolute(path)
       ? resolvedPath
       : nodePath.join('/', this.cwd, resolvedPath);
-
     // Create local filesystem path using the platform separator
     const fsPath = nodePath.resolve(nodePath.join(this.root, joinedPath)
       .replace(UNIX_SEP_REGEX, nodePath.sep)
       .replace(WIN_SEP_REGEX, nodePath.sep));
+    //Makes sure we are checking the real path of symlinks
+    if(existsSync(fsPath)){
+      let realPath = realpathSync(fsPath)
+      if(!realPath.startsWith(this.root)){
+        throw new errors.FileSystemError('Not a valid directory')
+      }
+    }
 
     // Create FTP client path using unix separator
     const clientPath = joinedPath.replace(WIN_SEP_REGEX, '/');
-
     return {
       clientPath,
       fsPath
