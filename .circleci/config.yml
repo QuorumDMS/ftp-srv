@@ -3,6 +3,17 @@ version: 2.1
 orbs:
   node: circleci/node@4.1.0
 
+commands:
+  setup_git_bot:
+    description: set up the bot git user to make changes
+    steps:
+      - run:
+          name: "Git: Botovance"
+          command: |
+            git config --global user.name "Bot Vance"
+            git config --global user.email bot@autovance.com
+            git branch -u "origin/${CIRCLE_BRANCH}"
+
 executors:
   node-lts:
     parameters:
@@ -27,6 +38,7 @@ jobs:
     steps:
       - checkout
       - node/install-packages
+      - setup_git_bot
       - deploy:
           name: Dry Release
           command: |
@@ -37,6 +49,7 @@ jobs:
     steps:
       - checkout
       - node/install-packages
+      - setup_git_bot
       - deploy:
           name: Release
           command: |
