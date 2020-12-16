@@ -5,7 +5,7 @@ const Promise = require('bluebird');
 const FileSystem = require('../src/fs');
 const errors = require('../src/errors');
 
-describe.only('FileSystem', function () {
+describe('FileSystem', function () {
   let fs;
 
   before(function () {
@@ -62,15 +62,17 @@ describe.only('FileSystem', function () {
         nodePath.resolve('/tmp/ftp-srv/other'));
     });
 
-    it('cannot escape root', function () {
-      // try {
-      //   let res = fs._resolvePath('../../../../../../../../');
-      //   throw new Error('Escaped');
-      // } catch (error) {
-      //   expect(error.message).to.equal('Not a valid directory')
-      // }
+    it('cannot escape root - unix', function () {
+      const result = fs._resolvePath('../../../../../../../../../../..');
+      expect(result).to.be.an('object');
+      expect(result.clientPath).to.equal(
+        nodePath.normalize('/'));
+      expect(result.fsPath).to.equal(
+        nodePath.resolve('/tmp/ftp-srv'));
+    });
 
-      const result = fs._resolvePath('../../../../../');
+    it('cannot escape root - win', function () {
+      const result = fs._resolvePath('.\\..\\..\\..\\..\\..\\..\\');
       expect(result).to.be.an('object');
       expect(result.clientPath).to.equal(
         nodePath.normalize('/'));

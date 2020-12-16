@@ -6,10 +6,13 @@ const {createReadStream, createWriteStream, constants} = require('fs');
 const fsAsync = require('./helpers/fs-async');
 const errors = require('./errors');
 
+const UNIX_SEP_REGEX = /\//g;
+const WIN_SEP_REGEX = /\\/g;
+
 class FileSystem {
   constructor(connection, {root, cwd} = {}) {
     this.connection = connection;
-    this.cwd = nodePath.normalize(cwd ? nodePath.join(nodePath.sep, cwd) : nodePath.sep);
+    this.cwd = nodePath.normalize((cwd || '/').replace(WIN_SEP_REGEX, '/'));
     this._root = nodePath.resolve(root || process.cwd());
   }
 
@@ -18,19 +21,21 @@ class FileSystem {
   }
 
   _resolvePath(path = '.') {
-    const clientPath = (() => {
-      path = nodePath.normalize(path);
-      if (nodePath.isAbsolute(path)) {
-        return nodePath.join(path);
-      } else {
-        return nodePath.join(this.cwd, path);
-      }
-    })();
+    // Unix separators normalize nicer on both unix and win platforms
+    const resolvedPath = nodePath.normalize(path.replace(WIN_SEP_REGEX, '/'));
 
-    const fsPath = (() => {
-      const fullPath = nodePath.join(this.root, clientPath);
-      return nodePath.resolve(nodePath.normalize(nodePath.join(fullPath)));
-    })();
+    // Join cwd with new path
+    const joinedPath = nodePath.isAbsolute(path)
+      ? resolvedPath
+      : nodePath.join('/', this.cwd, resolvedPath);
+
+    // Create local filesystem path using the platform separator
+    const fsPath = nodePath.resolve(nodePath.join(this.root, joinedPath)
+      .replace(UNIX_SEP_REGEX, nodePath.sep)
+      .replace(WIN_SEP_REGEX, nodePath.sep));
+
+    // Create FTP client path using unix separator
+    const clientPath = joinedPath.replace(WIN_SEP_REGEX, '/');
 
     return {
       clientPath,
