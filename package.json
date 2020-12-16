@@ -30,7 +30,8 @@
     "verify": "eslint src/**/*.js test/**/*.js bin/**/*.js"
   },
   "release": {
-    "verifyConditions": "condition-circle"
+    "verifyConditions": "condition-circle",
+    "branches": ["master"]
   },
   "husky": {
     "hooks": {
