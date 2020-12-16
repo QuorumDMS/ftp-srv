@@ -9,16 +9,16 @@ const server = new FtpServer({
   pasv_min: 8881,
   greeting: ['Welcome', 'to', 'the', 'jungle!'],
   tls: {
-    key: fs.readFileSync(`${process.cwd()}/test/cert/server.key`),
-    cert: fs.readFileSync(`${process.cwd()}/test/cert/server.crt`),
-    ca: fs.readFileSync(`${process.cwd()}/test/cert/server.csr`)
+    key: fs.readFileSync(`${__dirname}/cert/server.key`),
+    cert: fs.readFileSync(`${__dirname}/cert/server.crt`),
+    ca: fs.readFileSync(`${__dirname}/cert/server.csr`)
   },
   file_format: 'ep',
   anonymous: 'sillyrabbit'
 });
 server.on('login', ({username, password}, resolve, reject) => {
   if (username === 'test' && password === 'test' || username === 'anonymous') {
-    resolve({root: require('os').homedir()});
+    resolve({root: __dirname});
   } else reject('Bad username or password');
 });
 server.listen();
