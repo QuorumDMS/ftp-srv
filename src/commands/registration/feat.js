@@ -1,22 +1,26 @@
 const _ = require('lodash');
-const registry = require('../registry');
+//const registry = require('../registry');
 
 module.exports = {
   directive: 'FEAT',
   handler: function () {
+    let registry = require('../registry');
     const features = Object.keys(registry)
-      .reduce((feats, cmd) => {
-        const feat = _.get(registry[cmd], 'flags.feat', null);
-        if (feat) return _.concat(feats, feat);
-        return feats;
-      }, ['UTF8'])
-      .sort()
-      .map((feat) => ({
-        message: ` ${feat}`,
-        raw: true
-      }));
-    return features.length
-      ? this.reply(211, 'Extensions supported', ...features, 'End')
+    // console.log(features)
+    let supported_features = []
+    for(let cmd in registry) {
+      if(registry[cmd].flags && registry[cmd].flags.feat) {
+        supported_features.push(
+          {
+            message: ` ${registry[cmd].flags.feat}`,
+            raw: true
+          }
+        )
+      }
+    }
+    // console.log(supported_features)
+    return supported_features.length
+      ? this.reply(211, 'Extensions supported', ...supported_features, 'End')
       : this.reply(211, 'No features');
   },
   syntax: '{{cmd}}',
