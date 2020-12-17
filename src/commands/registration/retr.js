@@ -7,8 +7,6 @@ module.exports = {
     if (!this.fs.read) return this.reply(402, 'Not supported by file system');
 
     const filePath = command.arg;
-    let fsResponse = this.fs.read(filePath, {start: this.restByteCount})
-    this.log.trace("fsresponse: " + fsResponse)
     return this.fs.read(filePath, {start: this.restByteCount})
       .tap(() => this.reply(150))
       .tap(() => this.commandSocket.pause())
