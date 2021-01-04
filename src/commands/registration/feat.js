@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const registry = require('../registry');
 
 module.exports = {
   directive: 'FEAT',
   handler: function () {
+    const registry = require('../registry');
     const features = Object.keys(registry)
       .reduce((feats, cmd) => {
         const feat = _.get(registry[cmd], 'flags.feat', null);
