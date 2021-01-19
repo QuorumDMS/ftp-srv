@@ -77,7 +77,7 @@ The hostname to provide a client when attempting a passive connection (`PASV`).
 If not provided, clients can only connect using an `Active` connection.
 
 #### `pasv_min`
-Tne starting port to accept passive connections.  
+The starting port to accept passive connections.  
 __Default:__ `1024`
 
 #### `pasv_max`
