@@ -73,7 +73,7 @@ _Note:_ The hostname must be the external IP address to accept external connecti
 __Default:__ `"ftp://127.0.0.1:21"`
 
 #### `pasv_url`
-The hostname to provide a client when attempting a passive connection (`PASV`).  
+This **must** be the external WAN **IP address** that the FTP server is bound to. `FTP-srv` provides this IP address to the client when a `PASV` command is received in the handshake for a passive connection. Reference [PASV verb](https://cr.yp.to/ftp/retr.html#pasv).
 If not provided, clients can only connect using an `Active` connection.
 
 #### `pasv_min`
