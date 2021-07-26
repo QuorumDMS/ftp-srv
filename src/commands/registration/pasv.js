@@ -12,7 +12,7 @@ module.exports = {
     this.connector = new PassiveConnector(this);
     return this.connector.setupServer()
     .then((server) => {
-      port = server.address();
+      port = server.address().port;
       // Allow connecting from local
       if (isLocalIP(this.ip)) return this.ip;
       let address = this.server.options.pasv_url;
