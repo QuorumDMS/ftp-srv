@@ -16,7 +16,7 @@ module.exports = {
       // Allow connecting from local
       if (isLocalIP(this.ip)) return this.ip;
       let address = this.server.options.pasv_url;
-      if (typeof address === "function") return address(this.commandSocket.remoteAddress);
+      if (typeof address === "function") return address(this.ip);
       return address;
     })
     .then((address) => {
