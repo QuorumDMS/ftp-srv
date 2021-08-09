@@ -21,7 +21,7 @@ module.exports = {
       if (isLocalIP(this.ip)) pasvAddress = this.ip;
       return {address: pasvAddress, port};
     })
-    .then((address, port) => {
+    .then(({address, port}) => {
       const host = address.replace(/\./g, ',');
       const portByte1 = port / 256 | 0;
       const portByte2 = port % 256;
