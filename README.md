@@ -96,7 +96,6 @@ const resolverFunction = (address) => {
 }
 
 new FtpSrv({pasv_url: resolverFunction});
-
 - A static IP address (ie. an external WAN **IP address** that the FTP server is bound to). In this case, only connections from localhost are handled differently returning `127.0.0.1` to the client. 
 
 If not provided, clients can only connect using an `Active` connection.
