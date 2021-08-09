@@ -73,7 +73,31 @@ _Note:_ The hostname must be the external IP address to accept external connecti
 __Default:__ `"ftp://127.0.0.1:21"`
 
 #### `pasv_url`
-This **must** be the external WAN **IP address** that the FTP server is bound to. `FTP-srv` provides this IP address to the client when a `PASV` command is received in the handshake for a passive connection. Reference [PASV verb](https://cr.yp.to/ftp/retr.html#pasv).
+`FTP-srv` provides an IP address to the client when a `PASV` command is received in the handshake for a passive connection. Reference [PASV verb](https://cr.yp.to/ftp/retr.html#pasv). This can be one of two options:
+- A function which takes one parameter containing the remote IP address of the FTP client. This can be useful when the user wants to return a different IP address depending if the user is connecting from Internet or from an LAN address.
+ ```js
+const {Netmask} = require('netmask');
+const networks = {
+  '$GATEWAY_IP/32': `${public_ip}`, 
+  '10.0.0.0/8'    : `${lan_ip}`
+} 
+
+const resolverFunction = (address) => {
+    for (const network in networks) {
+        try {
+            const mask = new Netmask(network);
+            if (mask.contains(address)) return networks[network];
+        }
+        catch (err) {
+            logger.error('Error checking source network', err);
+        }
+    }
+    return '127.0.0.1';
+}
+
+new FtpSrv({pasv_url: resolverFunction});
+- A static IP address (ie. an external WAN **IP address** that the FTP server is bound to). In this case, only connections from localhost are handled differently returning `127.0.0.1` to the client. 
+
 If not provided, clients can only connect using an `Active` connection.
 
 #### `pasv_min`
