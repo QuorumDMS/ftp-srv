@@ -8,18 +8,20 @@ module.exports = {
       return this.reply(502);
     }
 
-    let port;
     this.connector = new PassiveConnector(this);
     return this.connector.setupServer()
     .then((server) => {
-      port = server.address().port;
+      const {port} = server.address();
+      let pasvAddress = this.server.options.pasv_url;
+      if (typeof pasvAddress === "function") {
+        return Promise.try(() => pasvAddress(this.ip))
+          .then((address) => ({address, port}));
+      }
       // Allow connecting from local
-      if (isLocalIP(this.ip)) return this.ip;
-      let address = this.server.options.pasv_url;
-      if (typeof address === "function") return address(this.ip);
-      return address;
+      if (isLocalIP(this.ip)) pasvAddress = this.ip;
+      return {address: pasvAddress, port};
     })
-    .then((address) => {
+    .then((address, port) => {
       const host = address.replace(/\./g, ',');
       const portByte1 = port / 256 | 0;
       const portByte2 = port % 256;
