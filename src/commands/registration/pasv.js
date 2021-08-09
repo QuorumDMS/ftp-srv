@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const PassiveConnector = require('../../connector/passive');
 const {isLocalIP} = require('../../helpers/is-local');
 
