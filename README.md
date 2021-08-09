@@ -21,18 +21,6 @@
 
 ---
 
-- [Overview](#overview)
-- [Features](#features)
-- [Install](#install)
-- [Usage](#usage)
-  - [API](#api)
-  - [CLI](#cli)
-  - [Events](#events)
-  - [Supported Commands](#supported-commands)
-  - [File System](#file-system)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Overview
 `ftp-srv` is a modern and extensible FTP server designed to be simple yet configurable.
 
@@ -75,6 +63,7 @@ __Default:__ `"ftp://127.0.0.1:21"`
 #### `pasv_url`
 `FTP-srv` provides an IP address to the client when a `PASV` command is received in the handshake for a passive connection. Reference [PASV verb](https://cr.yp.to/ftp/retr.html#pasv). This can be one of two options:
 - A function which takes one parameter containing the remote IP address of the FTP client. This can be useful when the user wants to return a different IP address depending if the user is connecting from Internet or from an LAN address.
+- 
  ```js
 const {Netmask} = require('netmask');
 const networks = {
@@ -96,6 +85,8 @@ const resolverFunction = (address) => {
 }
 
 new FtpSrv({pasv_url: resolverFunction});
+```
+
 - A static IP address (ie. an external WAN **IP address** that the FTP server is bound to). In this case, only connections from localhost are handled differently returning `127.0.0.1` to the client. 
 
 If not provided, clients can only connect using an `Active` connection.
@@ -361,26 +352,6 @@ __Used in:__ `STOU`
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Contributors
-
-- [OzairP](https://github.com/OzairP)
-- [TimLuq](https://github.com/TimLuq)
-- [crabl](https://github.com/crabl)
-- [hirviid](https://github.com/hirviid)
-- [DiegoRBaquero](https://github.com/DiegoRBaquero)
-- [edin-m](https://github.com/edin-m)
-- [voxsoftware](https://github.com/voxsoftware)
-- [jorinvo](https://github.com/jorinvo)
-- [Johnnyrook777](https://github.com/Johnnyrook777)
-- [qchar](https://github.com/qchar)
-- [mikejestes](https://github.com/mikejestes)
-- [pkeuter](https://github.com/pkeuter)
-- [qiansc](https://github.com/qiansc)
-- [broofa](https://github.com/broofa)
-- [lafin](https://github.com/lafin)
-- [alancnet](https://github.com/alancnet)
-- [zgwit](https://github.com/zgwit)
 
 ## License
 
