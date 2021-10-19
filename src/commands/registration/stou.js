@@ -9,7 +9,7 @@ module.exports = {
 
     const fileName = args.command.arg;
     return Promise.try(() => this.fs.get(fileName))
-    .then(() => Promise.try(() => this.fs.getUniqueName()))
+    .then(() => Promise.try(() => this.fs.getUniqueName(fileName)))
     .catch(() => fileName)
     .then((name) => {
       args.command.arg = name;

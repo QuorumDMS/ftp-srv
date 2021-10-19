@@ -345,8 +345,8 @@ __Used in:__ `RNFR`, `RNTO`
 Modifies a file or directory's permissions  
 __Used in:__ `SITE CHMOD`
 
-#### [`getUniqueName()`](src/fs.js#L131)
-Returns a unique file name to write to  
+#### [`getUniqueName(fileName)`](src/fs.js#L131)
+Returns a unique file name to write to. Client requested filename available if you want to base your function on it. 
 __Used in:__ `STOU`
 
 ## Contributing

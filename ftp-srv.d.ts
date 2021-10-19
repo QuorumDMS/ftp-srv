@@ -38,7 +38,7 @@ export class FileSystem {
 
     chmod(path: string, mode: string): Promise<any>;
 
-    getUniqueName(): string;
+    getUniqueName(fileName: string): string;
 }
 
 export class FtpConnection extends EventEmitter {
