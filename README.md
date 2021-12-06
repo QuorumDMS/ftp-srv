@@ -36,16 +36,25 @@
 ## Usage
 
 ```js
-// Quick start
-
+// Quick start, create an active ftp server.
 const FtpSrv = require('ftp-srv');
-const ftpServer = new FtpSrv({ options ... });
 
-ftpServer.on('login', (data, resolve, reject) => { ... });
-...
+const port=21;
+const ftpServer = new FtpSrv({
+    url: "ftp://0.0.0.0:" + port,
+    anonymous: true
+});
 
-ftpServer.listen()
-.then(() => { ... });
+ftpServer.on('login', (data, resolve, reject) => { 
+    if(data.username === 'anonymous' && data.password === 'anonymous'){
+        return resolve({ root:"/" });    
+    }
+    return resolve({ root:"/" });
+});
+
+ftpServer.listen().then(() => { 
+    console.log('Ftp server is starting...')
+});
 ```
 
 ## API
@@ -65,23 +74,34 @@ __Default:__ `"ftp://127.0.0.1:21"`
 - A function which takes one parameter containing the remote IP address of the FTP client. This can be useful when the user wants to return a different IP address depending if the user is connecting from Internet or from an LAN address.
 Example:
  ```js
-const {Netmask} = require('netmask');
-const networks = {
-  '$GATEWAY_IP/32': `${public_ip}`, 
-  '10.0.0.0/8'    : `${lan_ip}`
-} 
+const { networkInterfaces } = require('os');
+const { Netmask } = require('netmask');
 
-const resolverFunction = (address) => {
-    for (const network in networks) {
-        try {
-            const mask = new Netmask(network);
-            if (mask.contains(address)) return networks[network];
-        }
-        catch (err) {
-            logger.error('Error checking source network', err);
+const nets = networkInterfaces();
+function getNetworks() {
+    let networks = {};
+    for (const name of Object.keys(nets)) {
+        for (const net of nets[name]) {
+            if (net.family === 'IPv4' && !net.internal) {
+                networks[net.address + "/24"] = net.address
+            }
         }
     }
-    return '127.0.0.1';
+    return networks;
+}
+
+const resolverFunction = (address) => {
+    // const networks = {
+    //     '$GATEWAY_IP/32': `${public_ip}`, 
+    //     '10.0.0.0/8'    : `${lan_ip}`
+    // } 
+    const networks = getNetworks();
+    for (const network in networks) {
+        if (new Netmask(network).contains(ip)) {
+            return networks[network];
+        }
+    }
+    return "127.0.0.1";
 }
 
 new FtpSrv({pasv_url: resolverFunction});
