@@ -49,7 +49,7 @@ ftpServer.on('login', (data, resolve, reject) => {
     if(data.username === 'anonymous' && data.password === 'anonymous'){
         return resolve({ root:"/" });    
     }
-    return resolve({ root:"/" });
+    return reject(new errors.GeneralError('Invalid username or password', 401));
 });
 
 ftpServer.listen().then(() => { 
