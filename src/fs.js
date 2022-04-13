@@ -119,7 +119,7 @@ class FileSystem {
 
   mkdir(path) {
     const {fsPath} = this._resolvePath(path);
-    return fsAsync.mkdir(fsPath)
+    return fsAsync.mkdir(fsPath, { recursive: true })
     .then(() => fsPath);
   }
 
