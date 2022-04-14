@@ -81,6 +81,6 @@ workflows:
           requires:
             - release_dry_run
       - release:
-          context: deploy-npm
+          context: npm-deploy-av
           requires:
             - hold_release
