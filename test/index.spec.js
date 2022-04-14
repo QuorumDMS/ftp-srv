@@ -263,13 +263,16 @@ describe('Integration', function () {
       client.get('tést.txt', (err, stream) => {
         expect(err).to.not.exist;
         let text = '';
+
         stream.on('data', (data) => {
           text += data.toString();
         });
-        stream.on('end', () => {
+
+        stream.on('finish', () => {
           expect(text).to.equal('test text file, awesome!');
           done();
         });
+
         stream.resume();
       });
     });
