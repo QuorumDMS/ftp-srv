@@ -31,9 +31,9 @@
   },
   "release": {
     "verifyConditions": "condition-circle",
-    "branch": "master",
+    "branch": "main",
     "branches": [
-      "master"
+      "main"
     ]
   },
   "husky": {
