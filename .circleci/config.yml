@@ -58,6 +58,32 @@ jobs:
 
 workflows:
   version: 2
+
+  release_scheduled:
+    triggers:
+      # 6:03 UTC (mornings) 1 monday
+      - schedule:
+          cron: "3 6 * * 1"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - lint
+      - node/test:
+          matrix:
+            parameters:
+              version:
+                - '10.23'
+                - '12.20'
+                - '14.15'
+                - 'current'
+      - release:
+          context: npm-deploy-av
+          requires:
+            - node/test
+            - lint
+
   test:
     jobs:
       - lint
@@ -72,7 +98,7 @@ workflows:
       - release_dry_run:
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - node/test
             - lint
