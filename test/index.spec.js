@@ -338,6 +338,18 @@ describe('Integration', function () {
       });
     });
 
+    it('MKD témp multiple levels deep', (done) => {
+      const path = `${clientDirectory}/${name}/témp/first/second`;
+      if (fs.existsSync(path)) {
+        fs.rmdirSync(path);
+      }
+      client.mkdir('témp/first/second', (err) => {
+        expect(err).to.not.exist;
+        expect(fs.existsSync(path)).to.equal(true);
+        done();
+      });
+    });
+
     it('CWD témp', (done) => {
       client.cwd('témp', (err, data) => {
         expect(err).to.not.exist;
