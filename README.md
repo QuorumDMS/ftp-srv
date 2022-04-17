@@ -97,7 +97,7 @@ const resolverFunction = (address) => {
     // } 
     const networks = getNetworks();
     for (const network in networks) {
-        if (new Netmask(network).contains(ip)) {
+        if (new Netmask(network).contains(address)) {
             return networks[network];
         }
     }
