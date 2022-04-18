@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@4.1.0
+  node: circleci/node@5.0.2
 
 commands:
   setup_git_bot:
@@ -58,6 +58,32 @@ jobs:
 
 workflows:
   version: 2
+
+  release_scheduled:
+    triggers:
+      # 6:03 UTC (mornings) 1 monday
+      - schedule:
+          cron: "3 6 * * 1"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - lint
+      - node/test:
+          matrix:
+            parameters:
+              version:
+                - '12.22'
+                - '14.19'
+                - '16.14'
+                - 'current'
+      - release:
+          context: npm-deploy-av
+          requires:
+            - node/test
+            - lint
+
   test:
     jobs:
       - lint
@@ -65,14 +91,14 @@ workflows:
           matrix:
             parameters:
               version:
-                - '10.23'
-                - '12.20'
-                - '14.15'
+                - '12.22'
+                - '14.19'
+                - '16.14'
                 - 'current'
       - release_dry_run:
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - node/test
             - lint

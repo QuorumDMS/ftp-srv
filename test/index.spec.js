@@ -24,10 +24,13 @@ describe('Integration', function () {
   before(() => {
     return startServer({url: 'ftp://127.0.0.1:8880'});
   });
+
   beforeEach(() => {
     sandbox = sinon.sandbox.create().usingPromise(Promise);
   });
+
   afterEach(() => sandbox.restore());
+
   after(() => server.close());
 
   before(() => {
@@ -101,7 +104,8 @@ describe('Integration', function () {
       if (stat.isDirectory()) directoryPurge(item);
       else fs.unlinkSync(item);
     });
-    fs.rmdirSync(dir);
+
+    fs.rmdirSync(dir, { recursive: true });
   }
 
   function runFileSystemTests(name) {
@@ -259,13 +263,16 @@ describe('Integration', function () {
       client.get('tést.txt', (err, stream) => {
         expect(err).to.not.exist;
         let text = '';
+
         stream.on('data', (data) => {
           text += data.toString();
         });
-        stream.on('end', () => {
+
+        stream.on('finish', () => {
           expect(text).to.equal('test text file, awesome!');
           done();
         });
+
         stream.resume();
       });
     });
@@ -339,18 +346,24 @@ describe('Integration', function () {
     });
 
     it('MKD témp multiple levels deep', (done) => {
-      const path = `${clientDirectory}/${name}/témp/first/second`;
+      const path = `${clientDirectory}/${name}/témp`;
       if (fs.existsSync(path)) {
-        fs.rmdirSync(path);
+        fs.rmdirSync(path, {recursive: true});
       }
+
       client.mkdir('témp/first/second', (err) => {
         expect(err).to.not.exist;
         expect(fs.existsSync(path)).to.equal(true);
+
+        fs.rmdirSync(path, {recursive: true});
         done();
       });
     });
 
     it('CWD témp', (done) => {
+      const path = `${clientDirectory}/${name}/témp`;
+      fs.mkdirSync(path)
+
       client.cwd('témp', (err, data) => {
         expect(err).to.not.exist;
         expect(data).to.to.be.a('string');

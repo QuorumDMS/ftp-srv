@@ -117,17 +117,22 @@ class FtpServer extends EventEmitter {
   }
 
   disconnectClient(id) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const client = this.connections[id];
       if (!client) return resolve();
       delete this.connections[id];
+
+      setTimeout(() => {
+        reject('Timed out disconnecting client')
+      }, this.options.timeout || 1000)
+
       try {
         client.close(0);
       } catch (err) {
         this.log.error(err, 'Error closing connection', {id});
-      } finally {
-        resolve('Disconnected');
       }
+      
+      resolve('Disconnected');
     });
   }
 
@@ -137,16 +142,22 @@ class FtpServer extends EventEmitter {
   }
 
   close() {
-    this.log.info('Server closing...');
     this.server.maxConnections = 0;
-    return Promise.map(Object.keys(this.connections), (id) => Promise.try(this.disconnectClient.bind(this, id)))
+    this.log.info('Closing connections:', Object.keys(this.connections).length);
+
+    return Promise.all(Object.keys(this.connections).map((id) => this.disconnectClient(id)))
     .then(() => new Promise((resolve) => {
       this.server.close((err) => {
+        this.log.info('Server closing...');
         if (err) this.log.error(err, 'Error closing server');
         resolve('Closed');
       });
     }))
-    .then(() => this.removeAllListeners());
+    .then(() => {
+      this.log.debug('Removing event listeners...')
+      this.removeAllListeners();
+      return;
+    });
   }
 
 }
