@@ -49,7 +49,13 @@ class FtpServer extends EventEmitter {
       this.connections[connection.id] = connection;
 
       socket.on('close', () => this.disconnectClient(connection.id));
-      socket.once('close', () => this.emit('disconnect', {connection, id: connection.id}));
+      socket.once('close', () => {
+        let newConnectionCount = Object.keys(this.connections).length;
+        this.emit('disconnect', {connection, id: connection.id, newConnectionCount: newConnectionCount});
+      })
+      
+      let newConnectionCount = Object.keys(this.connections).length;
+      this.emit('connect', {connection, id: connection.id, newConnectionCount: newConnectionCount});
 
       const greeting = this._greeting || [];
       const features = this._features || 'Ready';
@@ -59,8 +65,11 @@ class FtpServer extends EventEmitter {
     const serverOptions = Object.assign({}, this.isTLS ? this.options.tls : {}, {pauseOnConnect: true});
 
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
-    this.server.on('error', (err) => this.log.error(err, '[Event] error'));
-
+    this.server.on('error', (err) => {
+      this.log.error(err, '[Event] error');
+      this.emit('server-error', {error: err});
+    });
+    
     const quit = _.debounce(this.quit.bind(this), 100);
 
     process.on('SIGTERM', quit);
@@ -150,11 +159,13 @@ class FtpServer extends EventEmitter {
       this.server.close((err) => {
         this.log.info('Server closing...');
         if (err) this.log.error(err, 'Error closing server');
+        this.emit('closing', {error: err});
         resolve('Closed');
       });
     }))
     .then(() => {
       this.log.debug('Removing event listeners...')
+      this.emit('closed', {});
       this.removeAllListeners();
       return;
     });
