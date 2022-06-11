@@ -225,6 +225,44 @@ Disable write actions such as upload, delete, etc.
 
 The `FtpSrv` class extends the [node net.Server](https://nodejs.org/api/net.html#net_class_net_server). Some custom events can be resolved or rejected, such as `login`.
 
+### `client-error`
+```js
+ftpServer.on('client-error', ({connection, context, error}) => { ... });
+```
+
+Occurs when an error arises in the client connection.
+
+`connection` [client class object](src/connection.js)  
+`context` string of where the error occurred  
+`error` error object
+
+### `disconnect`
+```js
+ftpServer.on('disconnect', ({connection, id, newConnectionCount}) => { ... });
+```
+
+Occurs when a client has disconnected.
+
+`connection` [client class object](src/connection.js)  
+`id` string of the disconnected connection id  
+`id` number of the new connection count (exclusive the disconnected client connection)
+
+### `closed`
+```js
+ftpServer.on('closed', ({}) => { ... });
+```
+
+Occurs when the FTP server has been closed.
+
+### `closing`
+```js
+ftpServer.on('closing', ({error}) => { ... });
+```
+
+Occurs when the FTP server is closing.
+
+`error` if successful, will be `null` 
+
 ### `login`
 ```js
 ftpServer.on('login', ({connection, username, password}, resolve, reject) => { ... });
@@ -252,15 +290,13 @@ Occurs when a client is attempting to login. Here you can resolve the login requ
 
 `reject` takes an error object
 
-### `client-error`
+### `server-error`
 ```js
-ftpServer.on('client-error', ({connection, context, error}) => { ... });
+ftpServer.on('server-error', ({error}) => { ... });
 ```
 
-Occurs when an error arises in the client connection.
-
-`connection` [client class object](src/connection.js)  
-`context` string of where the error occurred  
+Occurs when an error arises in the FTP server.
+ 
 `error` error object
 
 ### `RETR`
