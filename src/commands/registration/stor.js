@@ -52,7 +52,7 @@ module.exports = {
       .then(() => Promise.all([streamPromise, socketPromise]))
       .tap(() => this.emit('STOR', null, serverPath))
       .then(() => this.reply(226, clientPath))
-      .finally(() => stream.destroy && stream.destroy());
+      .then(() => stream.destroy && stream.destroy());
     })
     .catch(Promise.TimeoutError, (err) => {
       log.error(err);
@@ -63,7 +63,7 @@ module.exports = {
       this.emit('STOR', err);
       return this.reply(550, err.message);
     })
-    .finally(() => {
+    .then(() => {
       this.connector.end();
       this.commandSocket.resume();
     });

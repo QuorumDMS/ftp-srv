@@ -43,7 +43,7 @@ module.exports = {
       .then(() => eventsPromise)
       .tap(() => this.emit('RETR', null, serverPath))
       .then(() => this.reply(226, clientPath))
-      .finally(() => stream.destroy && stream.destroy());
+      .then(() => stream.destroy && stream.destroy());
     })
     .catch(Promise.TimeoutError, (err) => {
       log.error(err);
@@ -54,7 +54,7 @@ module.exports = {
       this.emit('RETR', err);
       return this.reply(551, err.message);
     })
-    .finally(() => {
+    .then(() => {
       this.connector.end();
       this.commandSocket.resume();
     });

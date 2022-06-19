@@ -7,7 +7,7 @@ module.exports = {
       .then(() => this.reply(226));
     })
     .catch(() => this.reply(225))
-    .finally(() => this.connector.end());
+    .then(() => this.connector.end());
   },
   syntax: '{{cmd}}',
   description: 'Abort an active file transfer'

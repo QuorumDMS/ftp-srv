@@ -54,7 +54,7 @@ class FtpServer extends EventEmitter {
       const greeting = this._greeting || [];
       const features = this._features || 'Ready';
       return connection.reply(220, ...greeting, features)
-        .finally(() => socket.resume());
+        .then(() => socket.resume());
     };
     const serverOptions = Object.assign({}, this.isTLS ? this.options.tls : {}, {pauseOnConnect: true});
 
@@ -138,7 +138,7 @@ class FtpServer extends EventEmitter {
 
   quit() {
     return this.close()
-    .finally(() => process.exit(0));
+    .then(() => process.exit(0));
   }
 
   close() {

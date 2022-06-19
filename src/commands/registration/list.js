@@ -47,7 +47,7 @@ module.exports = {
       log.error(err);
       return this.reply(451, err.message || 'No directory');
     })
-    .finally(() => {
+    .then(() => {
       this.connector.end();
       this.commandSocket.resume();
     });

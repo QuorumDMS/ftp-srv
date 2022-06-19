@@ -72,7 +72,7 @@ class FtpConnection extends EventEmitter {
   close(code = 421, message = 'Closing connection') {
     return Promise.resolve(code)
       .then((_code) => _code && this.reply(_code, message))
-      .finally(() => this.commandSocket && this.commandSocket.destroy());
+      .then(() => this.commandSocket && this.commandSocket.destroy());
   }
 
   login(username, password) {
