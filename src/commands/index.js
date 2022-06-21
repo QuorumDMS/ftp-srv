@@ -3,7 +3,7 @@ const Promise = require('bluebird');
 
 const REGISTRY = require('./registry');
 
-const CMD_FLAG_REGEX = new RegExp(/^-(\w{1})$/);
+const CMD_FLAG_REGEX = new RegExp(/^-(\w{1,5})$/);
 
 class FtpCommands {
   constructor(connection) {
