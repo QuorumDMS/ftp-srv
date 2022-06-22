@@ -152,6 +152,7 @@ class FtpServer extends EventEmitter {
 
   close() {
     this.server.maxConnections = 0;
+    this.emit('closing');
     this.log.info('Closing connections:', Object.keys(this.connections).length);
 
     return Promise.all(Object.keys(this.connections).map((id) => this.disconnectClient(id)))
@@ -159,7 +160,6 @@ class FtpServer extends EventEmitter {
       this.server.close((err) => {
         this.log.info('Server closing...');
         if (err) this.log.error(err, 'Error closing server');
-        this.emit('closing', {error: err});
         resolve('Closed');
       });
     }))
