@@ -50,8 +50,7 @@ class FtpServer extends EventEmitter {
 
       socket.on('close', () => this.disconnectClient(connection.id));
       socket.once('close', () => {
-        let newConnectionCount = Object.keys(this.connections).length;
-        this.emit('disconnect', {connection, id: connection.id, newConnectionCount: newConnectionCount});
+        this.emit('disconnect', {connection, id: connection.id, newConnectionCount: Object.keys(this.connections).length});
       })
       
       this.emit('connect', {connection, id: connection.id, newConnectionCount: Object.keys(this.connections).length});
