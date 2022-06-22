@@ -256,12 +256,10 @@ Occurs when the FTP server has been closed.
 
 ### `closing`
 ```js
-ftpServer.on('closing', ({error}) => { ... });
+ftpServer.on('closing', ({}) => { ... });
 ```
 
-Occurs when the FTP server is closing.
-
-`error` if successful, will be `null` 
+Occurs when the FTP server has started closing.
 
 ### `login`
 ```js
