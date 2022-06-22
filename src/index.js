@@ -54,8 +54,7 @@ class FtpServer extends EventEmitter {
         this.emit('disconnect', {connection, id: connection.id, newConnectionCount: newConnectionCount});
       })
       
-      let newConnectionCount = Object.keys(this.connections).length;
-      this.emit('connect', {connection, id: connection.id, newConnectionCount: newConnectionCount});
+      this.emit('connect', {connection, id: connection.id, newConnectionCount: Object.keys(this.connections).length});
 
       const greeting = this._greeting || [];
       const features = this._features || 'Ready';
