@@ -45,7 +45,7 @@ const ftpServer = new FtpSrv({
     anonymous: true
 });
 
-ftpServer.on('login', (data, resolve, reject) => { 
+ftpServer.on('login', ({ connection, username, password }, resolve, reject) => { 
     if(data.username === 'anonymous' && data.password === 'anonymous'){
         return resolve({ root:"/" });    
     }
