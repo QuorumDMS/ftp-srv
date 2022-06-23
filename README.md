@@ -46,7 +46,7 @@ const ftpServer = new FtpSrv({
 });
 
 ftpServer.on('login', ({ connection, username, password }, resolve, reject) => { 
-    if(data.username === 'anonymous' && data.password === 'anonymous'){
+    if(username === 'anonymous' && password === 'anonymous'){
         return resolve({ root:"/" });    
     }
     return reject(new errors.GeneralError('Invalid username or password', 401));
