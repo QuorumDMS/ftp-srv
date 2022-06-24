@@ -130,7 +130,7 @@ class FtpServer extends EventEmitter {
       delete this.connections[id];
 
       setTimeout(() => {
-        reject('Timed out disconnecting client')
+        reject(new Error('Timed out disconnecting the client'))
       }, this.options.timeout || 1000)
 
       try {
