@@ -21,7 +21,7 @@ module.exports = {
       this.emit('RNTO', err);
       return this.reply(550, err.message);
     })
-    .finally(() => {
+    .then(() => {
       delete this.renameFrom;
     });
   },

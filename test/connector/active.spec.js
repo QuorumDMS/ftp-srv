@@ -54,7 +54,7 @@ describe('Connector - Active //', function () {
       expect(err.code).to.equal(500);
       expect(err.message).to.equal('The given address is not yours');
     })
-    .finally(() => {
+    .then(() => {
       expect(active.dataSocket).not.to.exist;
     });
   });

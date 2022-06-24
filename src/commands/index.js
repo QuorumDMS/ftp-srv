@@ -68,7 +68,7 @@ class FtpCommands {
 
     const handler = commandRegister.handler.bind(this.connection);
     return Promise.resolve(handler({log, command, previous_command: this.previousCommand}))
-    .finally(() => {
+    .then(() => {
       this.previousCommand = _.clone(command);
     });
   }

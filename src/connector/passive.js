@@ -44,7 +44,7 @@ class Passive extends Connector {
 
           socket.destroy();
           return this.connection.reply(550, 'Remote addresses do not match')
-          .finally(() => this.connection.close());
+          .then(() => this.connection.close());
         }
         clearTimeout(idleServerTimeout);
 
