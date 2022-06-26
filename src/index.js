@@ -169,5 +169,9 @@ class FtpServer extends EventEmitter {
     });
   }
 
+  renewTlsOptions(tlsOptions) {
+    this.server.setSecureContext(tlsOptions);
+    this.log.debug('Updating TLS options');
+  }
 }
 module.exports = FtpServer;
