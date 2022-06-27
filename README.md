@@ -403,6 +403,23 @@ __Used in:__ `SITE CHMOD`
 Returns a unique file name to write to. Client requested filename available if you want to base your function on it. 
 __Used in:__ `STOU`
 
+#### [`renewTlsOptions(tlsOptions)`](src/fs.js#L172)
+```
+let originalOptions = {};
+originalOptions.tls = {
+   key: fs.readFileSync("\path\to\old\key.pem"),
+   cert: fs.readFileSync("\path\to\old\cert.pem")
+}
+let ftpServer = new FtpServer(originalOptions);
+
+// Afterwards when the certificate is going to expire, it will need to be renewed
+let newTlsOptions = {
+   key: fs.readFileSync("\path\to\new\key.pem"),
+   cert: fs.readFileSync("\path\to\new\cert.pem")
+}
+ftpServer.renewTlsOptions(newTlsOptions);
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
