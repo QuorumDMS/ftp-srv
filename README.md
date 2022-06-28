@@ -161,6 +161,25 @@ A [bunyan logger](https://github.com/trentm/node-bunyan) instance. Created by de
 Sets the timeout (in ms) after that an idle connection is closed by the server  
 __Default:__ `0`
 
+## Renew TLS options
+[`renewTlsOptions(tlsOptions)`](src/index.js#L172) is used to read and use a new set of TLS certificates without restarting the server.
+Receives the same options as the [tls parameter](#tls) parameter in the constructor.
+```js
+let originalOptions = {};
+originalOptions.tls = {
+   key: fs.readFileSync("\path\to\old\key.pem"),
+   cert: fs.readFileSync("\path\to\old\cert.pem")
+}
+let ftpServer = new FtpServer(originalOptions);
+
+// Afterwards when the certificate is going to expire, it will need to be renewed
+let newTlsOptions = {
+   key: fs.readFileSync("\path\to\new\key.pem"),
+   cert: fs.readFileSync("\path\to\new\cert.pem")
+}
+ftpServer.renewTlsOptions(newTlsOptions);
+```
+
 ## CLI
 
 `ftp-srv` also comes with a builtin CLI.
@@ -402,23 +421,6 @@ __Used in:__ `SITE CHMOD`
 #### [`getUniqueName(fileName)`](src/fs.js#L131)
 Returns a unique file name to write to. Client requested filename available if you want to base your function on it. 
 __Used in:__ `STOU`
-
-#### [`renewTlsOptions(tlsOptions)`](src/fs.js#L172)
-```
-let originalOptions = {};
-originalOptions.tls = {
-   key: fs.readFileSync("\path\to\old\key.pem"),
-   cert: fs.readFileSync("\path\to\old\cert.pem")
-}
-let ftpServer = new FtpServer(originalOptions);
-
-// Afterwards when the certificate is going to expire, it will need to be renewed
-let newTlsOptions = {
-   key: fs.readFileSync("\path\to\new\key.pem"),
-   cert: fs.readFileSync("\path\to\new\cert.pem")
-}
-ftpServer.renewTlsOptions(newTlsOptions);
-```
 
 ## Contributing
 
