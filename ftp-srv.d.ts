@@ -41,6 +41,38 @@ export class FileSystem {
     getUniqueName(fileName: string): string;
 }
 
+export class GeneralError extends Error {
+  /**
+   * @param message The error message.
+   * @param code Default value is `400`.
+   */
+  constructor(message: string, code?: number);
+}
+
+export class SocketError extends Error {
+  /**
+   * @param message The error message.
+   * @param code Default value is `500`.
+   */
+  constructor(message: string, code?: number);
+}
+
+export class FileSystemError extends Error {
+  /**
+   * @param message The error message.
+   * @param code Default value is `400`.
+   */
+  constructor(message: string, code?: number);
+}
+
+export class ConnectorError extends Error {
+  /**
+   * @param message The error message.
+   * @param code Default value is `400`.
+   */
+  constructor(message: string, code?: number);
+}
+
 export class FtpConnection extends EventEmitter {
 	server: FtpServer;
 	id: string;
