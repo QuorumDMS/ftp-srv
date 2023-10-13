@@ -8,6 +8,7 @@ module.exports = {
 
     return Promise.try(() => this.fs.delete(command.arg))
     .then(() => {
+      this.emit('DELE', command.arg)
       return this.reply(250);
     })
     .catch((err) => {
