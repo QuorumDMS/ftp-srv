@@ -21,6 +21,11 @@ export class FileSystem {
 
     chdir(path?: string): Promise<string>;
 
+    protected _resolvePath(path?: string): {
+      clientPath: string,
+      fsPath: string
+    };
+
     write(fileName: string, {append, start}?: {
         append?: boolean;
         start?: any;
