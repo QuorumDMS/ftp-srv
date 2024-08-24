@@ -167,8 +167,13 @@ export class FtpServer extends EventEmitter {
   ): this;
 
   on(
+    event: "connect",
+    listener: (data: { connection: FtpConnection; id: string; newConnectionCount: number }) => void
+  ): this;
+
+  on(
     event: "disconnect",
-    listener: (data: { connection: FtpConnection; id: string }) => void
+    listener: (data: { connection: FtpConnection; id: string; newConnectionCount: number }) => void
   ): this;
 
   on(
