@@ -1,6 +1,6 @@
 const {expect} = require('chai');
 const Promise = require('bluebird');
-const bunyan = require('bunyan');
+const winston = require('winston');
 const sinon = require('sinon');
 
 const FtpCommands = require('../../src/commands');
@@ -10,7 +10,7 @@ describe('FtpCommands', function () {
   let commands;
   let mockConnection = {
     authenticated: false,
-    log: bunyan.createLogger({name: 'FtpCommands'}),
+    log: winston.createLogger({name: 'FtpCommands'}),
     reply: () => Promise.resolve({}),
     server: {
       options: {

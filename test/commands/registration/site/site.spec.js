@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const {expect} = require('chai');
 const sinon = require('sinon');
-const bunyan = require('bunyan');
+const winston = require('winston');
 
 const siteRegistry = require('../../../../src/commands/registration/site/registry');
 const FtpCommands = require('../../../../src/commands');
@@ -9,7 +9,7 @@ const FtpCommands = require('../../../../src/commands');
 const CMD = 'SITE';
 describe(CMD, function () {
   let sandbox;
-  const log = bunyan.createLogger({name: 'site-test'});
+  const log = winston.createLogger({name: 'site-test'});
   const mockClient = {
     reply: () => Promise.resolve(),
     commands: new FtpCommands()

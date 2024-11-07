@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const Promise = require('bluebird');
 const nodeUrl = require('url');
-const buyan = require('bunyan');
+const winston = require('winston');
 const net = require('net');
 const tls = require('tls');
 const EventEmitter = require('events');
@@ -13,7 +13,7 @@ class FtpServer extends EventEmitter {
   constructor(options = {}) {
     super();
     this.options = Object.assign({
-      log: buyan.createLogger({name: 'ftp-srv'}),
+      log: winston.createLogger({name: 'ftp-srv', silent: true}),
       url: 'ftp://127.0.0.1:21',
       pasv_min: 1024,
       pasv_max: 65535,
@@ -52,7 +52,7 @@ class FtpServer extends EventEmitter {
       socket.once('close', () => {
         this.emit('disconnect', {connection, id: connection.id, newConnectionCount: Object.keys(this.connections).length});
       })
-      
+
       this.emit('connect', {connection, id: connection.id, newConnectionCount: Object.keys(this.connections).length});
 
       const greeting = this._greeting || [];
@@ -64,10 +64,10 @@ class FtpServer extends EventEmitter {
 
     this.server = (this.isTLS ? tls : net).createServer(serverOptions, serverConnectionHandler);
     this.server.on('error', (err) => {
-      this.log.error(err, '[Event] error');
+      this.log.error('[Event] error', {err});
       this.emit('server-error', {error: err});
     });
-    
+
     const quit = _.debounce(this.quit.bind(this), 100);
 
     process.on('SIGTERM', quit);
@@ -89,11 +89,11 @@ class FtpServer extends EventEmitter {
       this.server.listen(this.url.port, this.url.hostname, (err) => {
         this.server.removeListener('error', reject);
         if (err) return reject(err);
-        this.log.info({
+        this.log.info('Listening', {
           protocol: this.url.protocol.replace(/\W/g, ''),
           ip: this.url.hostname,
           port: this.url.port
-        }, 'Listening');
+        });
         resolve('Listening');
       });
     });
@@ -136,9 +136,9 @@ class FtpServer extends EventEmitter {
       try {
         client.close(0);
       } catch (err) {
-        this.log.error(err, 'Error closing connection', {id});
+        this.log.error('Error closing connection', {id, err});
       }
-      
+
       resolve('Disconnected');
     });
   }
@@ -157,12 +157,12 @@ class FtpServer extends EventEmitter {
     .then(() => new Promise((resolve) => {
       this.server.close((err) => {
         this.log.info('Server closing...');
-        if (err) this.log.error(err, 'Error closing server');
+        if (err) this.log.error('Error closing server', {err});
         resolve('Closed');
       });
     }))
     .then(() => {
-      this.log.debug('Removing event listeners...')
+      this.log.log('debug','Removing event listeners...')
       this.emit('closed', {});
       this.removeAllListeners();
       return;

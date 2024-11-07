@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const bunyan = require('bunyan');
+const winston = require('winston');
 const {expect} = require('chai');
 const sinon = require('sinon');
 const EventEmitter = require('events');
@@ -7,7 +7,7 @@ const EventEmitter = require('events');
 const CMD = 'RETR';
 describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
+  let log = winston.createLogger({name: CMD});
   let emitter;
   const mockClient = {
     commandSocket: {

@@ -1,7 +1,7 @@
 /* eslint no-unused-expressions: 0 */
 const {expect} = require('chai');
 const sinon = require('sinon');
-const bunyan = require('bunyan');
+const winston = require('winston');
 const Promise = require('bluebird');
 const _ = require('lodash');
 const fs = require('fs');
@@ -15,7 +15,7 @@ describe('Integration', function () {
 
   let client;
   let sandbox;
-  let log = bunyan.createLogger({name: 'test-runner'});
+  let log = winston.createLogger({name: 'test-runner'});
   let server;
 
   let connection;
