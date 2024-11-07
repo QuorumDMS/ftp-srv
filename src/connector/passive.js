@@ -37,10 +37,10 @@ class Passive extends Connector {
 
       const connectionHandler = (socket) => {
         if (!ip.isEqual(this.connection.commandSocket.remoteAddress, socket.remoteAddress)) {
-          this.log.error({
+          this.log.error('Connecting addresses do not match', {
             pasv_connection: socket.remoteAddress,
             cmd_connection: this.connection.commandSocket.remoteAddress
-          }, 'Connecting addresses do not match');
+          });
 
           socket.destroy();
           return this.connection.reply(550, 'Remote addresses do not match')
@@ -48,7 +48,7 @@ class Passive extends Connector {
         }
         clearTimeout(idleServerTimeout);
 
-        this.log.trace({port, remoteAddress: socket.remoteAddress}, 'Passive connection fulfilled.');
+        this.log.log('silly', 'Passive connection fulfilled.', {port, remoteAddress: socket.remoteAddress});
 
         this.dataSocket = socket;
         this.dataSocket.on('error', (err) => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataSocket', error: err}));
@@ -65,7 +65,7 @@ class Passive extends Connector {
 
       this.dataServer.on('error', (err) => this.server && this.server.emit('client-error', {connection: this.connection, context: 'dataServer', error: err}));
       this.dataServer.once('close', () => {
-        this.log.trace('Passive server closed');
+        this.log.log('silly','Passive server closed');
         this.end();
       });
 
@@ -81,14 +81,14 @@ class Passive extends Connector {
           else {
             idleServerTimeout = setTimeout(() => this.closeServer(), CONNECT_TIMEOUT);
 
-            this.log.debug({port}, 'Passive connection listening');
+            this.log.log('debug', 'Passive connection listening', {port});
             resolve(this.dataServer);
           }
         });
       });
     })
     .catch((error) => {
-      this.log.trace(error.message);
+      this.log.log('silly', error.message);
       throw error;
     });
   }

@@ -42,7 +42,7 @@ class FtpCommands {
     if (logCommand.directive === 'PASS') logCommand.arg = '********';
 
     const log = this.connection.log.child({directive: command.directive});
-    log.trace({command: logCommand}, 'Handle command');
+    log.log('silly', 'Handle command', {command: logCommand});
 
     if (!REGISTRY.hasOwnProperty(command.directive)) {
       return this.connection.reply(502, `Command not allowed: ${command.directive}`);

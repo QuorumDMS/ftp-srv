@@ -1,9 +1,11 @@
-const bunyan = require('bunyan');
+const winston = require('winston');
 const fs = require('fs');
 const FtpServer = require('../src');
 
 const server = new FtpServer({
-  log: bunyan.createLogger({name: 'test', level: 'trace'}),
+  log: winston.createLogger({name: 'test', level: 'trace', transports: [new winston.transports.Console({
+      level: 'silly',
+    })]}),
   url: 'ftp://127.0.0.1:8880',
   pasv_url: '192.168.1.1',
   pasv_min: 8881,

@@ -1,12 +1,12 @@
 const Promise = require('bluebird');
-const bunyan = require('bunyan');
+const winston = require('winston');
 const {expect} = require('chai');
 const sinon = require('sinon');
 
 const CMD = 'NLST';
 describe(CMD, function () {
   let sandbox;
-  let log = bunyan.createLogger({name: CMD});
+  let log = winston.createLogger({name: CMD});
   const mockClient = {
     reply: () => {},
     fs: {

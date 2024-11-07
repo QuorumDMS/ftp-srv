@@ -4,7 +4,7 @@ const sinon = require('sinon');
 
 const Promise = require('bluebird');
 const net = require('net');
-const bunyan = require('bunyan');
+const winston = require('winston');
 
 const PassiveConnector = require('../../src/connector/passive');
 const {getNextPortFactory} = require('../../src/helpers/find-port');
@@ -15,7 +15,7 @@ describe('Connector - Passive //', function () {
     reply: () => Promise.resolve({}),
     close: () => Promise.resolve({}),
     encoding: 'utf8',
-    log: bunyan.createLogger({name: 'passive-test'}),
+    log: winston.createLogger({name: 'passive-test'}),
     commandSocket: {
       remoteAddress: '::ffff:127.0.0.1'
     },

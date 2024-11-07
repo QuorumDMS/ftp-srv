@@ -26,12 +26,12 @@ class FtpConnection extends EventEmitter {
     this.connector = new BaseConnector(this);
 
     this.commandSocket.on('error', (err) => {
-      this.log.error(err, 'Client error');
+      this.log.error('Client error', {err});
       this.server.emit('client-error', {connection: this, context: 'commandSocket', error: err});
     });
     this.commandSocket.on('data', this._handleData.bind(this));
     this.commandSocket.on('timeout', () => {
-      this.log.trace('Client timeout');
+      this.log.log('silly','Client timeout');
       this.close();
     });
     this.commandSocket.on('close', () => {
@@ -43,7 +43,7 @@ class FtpConnection extends EventEmitter {
 
   _handleData(data) {
     const messages = _.compact(data.toString(this.encoding).split('\r\n'));
-    this.log.trace(messages);
+    this.log.log('silly',messages);
     return Promise.mapSeries(messages, (message) => this.commands.handle(message));
   }
 
@@ -128,7 +128,7 @@ class FtpConnection extends EventEmitter {
     const processLetter = (letter) => {
       return new Promise((resolve, reject) => {
         if (letter.socket && letter.socket.writable) {
-          this.log.trace({port: letter.socket.address().port, encoding: letter.encoding, message: letter.message}, 'Reply');
+          this.log.log('silly', 'Reply', {port: letter.socket.address().port, encoding: letter.encoding, message: letter.message});
           letter.socket.write(letter.message + '\r\n', letter.encoding, (error) => {
             if (error) {
               this.log.error('[Process Letter] Socket Write Error', { error: error.message });
@@ -137,7 +137,7 @@ class FtpConnection extends EventEmitter {
             resolve();
           });
         } else {
-          this.log.trace({message: letter.message}, 'Could not write message');
+          this.log.log('silly', 'Could not write message', {message: letter.message});
           reject(new errors.SocketError('Socket not writable'));
         }
       });
