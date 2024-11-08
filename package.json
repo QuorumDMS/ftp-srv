@@ -67,7 +67,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "bunyan": "^1.8.12",
-    "ip": "^1.1.5",
+    "neoip": "^2.1.0",
     "lodash": "^4.17.15",
     "moment": "^2.22.1",
     "uuid": "^3.2.1",

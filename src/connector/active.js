@@ -1,6 +1,6 @@
 const {Socket} = require('net');
 const tls = require('tls');
-const ip = require('ip');
+const ip = require('neoip');
 const Promise = require('bluebird');
 const Connector = require('./base');
 const {SocketError} = require('../errors');
