@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "ftp-srv",
+        "License": "MIT license",
+        "License File": "LICENSE",
+        "Version Number": "v4.6.3",
+        "Owner" : "xiafeng@huawei.com",
+        "Upstream URL": "https://github.com/QuorumDMS/ftp-srv",
+        "Description": "ftp-srv is a modern and extensible FTP server designed to be simple yet configurable."
+    }
+]

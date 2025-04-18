@@ -1,0 +1,12 @@
+{
+  "name": "entry",
+  "version": "1.0.5-rc.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "MIT License",
+  "dependencies": {
+    "@ohos/ftp-srv": "file:../library"
+  }
+}
+

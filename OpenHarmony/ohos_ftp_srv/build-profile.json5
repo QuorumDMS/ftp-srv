@@ -1,0 +1,36 @@
+{
+  "app": {
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compileSdkVersion": 12,
+        //指定OpenHarmony应用/服务编译时的版本
+        "compatibleSdkVersion": 12,
+        //指定OpenHarmony应用/服务兼容的版本。
+        "targetSdkVersion": 12,
+        "runtimeOS": "OpenHarmony"
+        //指定OpenHarmony应用/服务目标版本。若没有设置，默认为compatibleSdkVersion
+      }
+    ],
+    "signingConfigs": []
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "library",
+      "srcPath": "./library"
+    }
+  ]
+}

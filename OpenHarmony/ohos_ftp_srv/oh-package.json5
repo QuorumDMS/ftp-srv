@@ -1,0 +1,14 @@
+{
+  "name": "ohos_ftp_srv",
+  "version": "1.0.5-rc.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "MIT License",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.11"
+  },
+  "modelVersion": ""
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@ohos/ftp-srv",
+  "types": "",
+  "keywords": [
+    "OpenHarmony",
+    "HarmonyOS",
+    "ftp"
+  ],
+  "author": "ohos_tpc",
+  "description": "ftp-srv是一个用于OpenHarmony的Ftp服务器库。通过ftp-srv，开发者可以轻松地创建和管理Ftp服务器，实现文件的上传、下载、目录查看、目录创建、目录删除等操作。",
+  "main": "Index.ts",
+  "repository": "https://gitcode.com/openharmony-tpc/ohos_ftp_srv",
+  "type": "module",
+  "version": "1.0.5-rc.0",
+  "tags": [
+    "Network",
+    "Tool"
+  ],
+  "license": "MIT License",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+  }
+}
