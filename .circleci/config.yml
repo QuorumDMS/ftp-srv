@@ -74,8 +74,6 @@ workflows:
           matrix:
             parameters:
               version:
-                - '12.22'
-                - '14.19'
                 - '16.14'
                 - 'current'
       - release:
@@ -91,8 +89,6 @@ workflows:
           matrix:
             parameters:
               version:
-                - '12.22'
-                - '14.19'
                 - '16.14'
                 - 'current'
       - release_dry_run:
