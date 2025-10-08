@@ -75,6 +75,7 @@ workflows:
             parameters:
               version:
                 - '16.14'
+                - '22.20'
                 - 'current'
       - release:
           context: npm-deploy-av
@@ -90,6 +91,7 @@ workflows:
             parameters:
               version:
                 - '16.14'
+                - '22.20'
                 - 'current'
       - release_dry_run:
           filters:
