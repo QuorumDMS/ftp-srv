@@ -145,7 +145,7 @@ describe('Connector - Passive //', function () {
       expect(passive.dataServer).to.exist;
 
       const {port} = passive.dataServer.address();
-      net.createConnection(port);
+      net.createConnection(port, host);
       return passive.waitForConnection();
     })
     .then(() => {

@@ -74,9 +74,8 @@ workflows:
           matrix:
             parameters:
               version:
-                - '12.22'
-                - '14.19'
                 - '16.14'
+                - '22.20'
                 - 'current'
       - release:
           context: npm-deploy-av
@@ -91,9 +90,8 @@ workflows:
           matrix:
             parameters:
               version:
-                - '12.22'
-                - '14.19'
                 - '16.14'
+                - '22.20'
                 - 'current'
       - release_dry_run:
           filters:

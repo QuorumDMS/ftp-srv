@@ -24,8 +24,10 @@ class FtpServer extends EventEmitter {
       whitelist: [],
       greeting: null,
       tls: false,
-      timeout: 0
+      timeout: 0,
+      endOnProcessSignal: true,
     }, _.pickBy(options, v => v !== undefined));
+
     this._greeting = this.setupGreeting(this.options.greeting);
     this._features = this.setupFeaturesMessage();
 
@@ -69,9 +71,11 @@ class FtpServer extends EventEmitter {
 
     const quit = _.debounce(this.quit.bind(this), 100);
 
-    process.on('SIGTERM', quit);
-    process.on('SIGINT', quit);
-    process.on('SIGQUIT', quit);
+    if (this.options.endOnProcessSignal) {
+      process.on('SIGTERM', quit);
+      process.on('SIGINT', quit);
+      process.on('SIGQUIT', quit);
+    }
   }
 
   get isTLS() {
