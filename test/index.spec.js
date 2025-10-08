@@ -477,11 +477,10 @@ describe('Integration', function () {
       .then(() => Promise.all([
         readFile(`${process.cwd()}/test/cert/server.key`),
         readFile(`${process.cwd()}/test/cert/server.crt`),
-        readFile(`${process.cwd()}/test/cert/server.csr`)
       ]))
-      .then(([key, cert, ca]) => startServer({
+      .then(([key, cert]) => startServer({
         url: 'ftp://127.0.0.1:8881',
-        tls: {key, cert, ca}
+        tls: {key, cert}
       }))
       .then(() => {
         return connectClient({
@@ -505,11 +504,10 @@ describe('Integration', function () {
       .then(() => Promise.all([
         readFile(`${process.cwd()}/test/cert/server.key`),
         readFile(`${process.cwd()}/test/cert/server.crt`),
-        readFile(`${process.cwd()}/test/cert/server.csr`)
       ]))
-      .then(([key, cert, ca]) => startServer({
+      .then(([key, cert]) => startServer({
         url: 'ftps://127.0.0.1:8882',
-        tls: {key, cert, ca}
+        tls: {key, cert}
       }))
       .then(() => {
         return connectClient({
